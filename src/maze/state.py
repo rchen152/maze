@@ -1,6 +1,6 @@
 """Game state."""
 
-from escape import color
+from common import color
 from escape import img
 from escape import room
 from escape import state

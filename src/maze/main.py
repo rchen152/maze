@@ -1,7 +1,7 @@
 """Main entrypoint."""
 
 import argparse
-from escape import state as escape_state
+from common import state as common_state
 import pygame
 from . import state
 
@@ -19,7 +19,7 @@ def main():
     screen = pygame.display.set_mode((1024, 576))
     pygame.display.set_caption('Kitty Maze')
     if not args.skip_title:
-        escape_state.TitleCard(screen).run()
+        common_state.TitleCard(screen).run()
     state.ShortEscapeEnding(screen).run()
 
 

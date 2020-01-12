@@ -16,7 +16,7 @@ def parse_args():
 def main():
     args = parse_args()
     pygame.init()
-    screen = pygame.display.set_mode((1024, 576))
+    screen = pygame.display.set_mode(common_state.RECT.size)
     pygame.display.set_caption('Kitty Maze')
     if not args.skip_title:
         common_state.TitleCard(screen).run()

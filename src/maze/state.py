@@ -1,12 +1,12 @@
 """Game state."""
 
 from common import color
-from escape import img
+from common import img
 from escape import room
-from escape import state
+from escape import state as escape_state
 
 
-class ShortEscapeEnding(state.Ending):
+class ShortEscapeEnding(escape_state.Ending):
     """The ending to kitty-escape without the congratulations card."""
 
     def __init__(self, screen):

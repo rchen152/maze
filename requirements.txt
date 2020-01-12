@@ -1,6 +1,6 @@
 flake8
 kitty-common>=0.1.1
-kitty-escape>=1.0.0
+kitty-escape>=1.1.0
 pygame==1.9.6
 pytest
 pytype

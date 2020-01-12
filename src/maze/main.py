@@ -1,11 +1,9 @@
 """Main entrypoint."""
 
 import argparse
-from escape import color
-from escape import img
-from escape import room
-from escape import state
+from escape import state as escape_state
 import pygame
+from . import state
 
 
 def parse_args():
@@ -15,32 +13,14 @@ def parse_args():
     return parser.parse_args()
 
 
-class ShortEscapeEnding(state.Ending):
-    """The ending to kitty-escape without the congratulations card."""
-
-    def __init__(self, screen):
-        keypad = img.load(screen, factory=room.KeyPad)
-        keypad.text = '9710'  # opens the keypad so 'OK' will be centered
-        keypad.text = 'OK'
-        super().__init__(screen, color.GREY, keypad)
-
-    def handle_tick(self, event):
-        ret = super().handle_tick(event)
-        if not ret:
-            return False
-        if self._frame == 3:
-            self.active = False
-        return True
-
-
 def main():
     args = parse_args()
     pygame.init()
     screen = pygame.display.set_mode((1024, 576))
     pygame.display.set_caption('Kitty Maze')
     if not args.skip_title:
-        state.TitleCard(screen).run()
-    ShortEscapeEnding(screen).run()
+        escape_state.TitleCard(screen).run()
+    state.ShortEscapeEnding(screen).run()
 
 
 if __name__ == '__main__':

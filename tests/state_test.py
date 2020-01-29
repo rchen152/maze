@@ -1,8 +1,8 @@
 """Tests for maze.state."""
 
-from common import test_utils
 import unittest
 
+from common import test_utils
 from maze import state
 
 
@@ -25,6 +25,12 @@ class ShortEscapeEndingTest(test_utils.GameStateTestCase):
         self.ending.handle_tick(
             test_utils.MockEvent(state.ShortEscapeEnding._TICK))
         self.assertFalse(self.ending.active)
+
+
+class GameTest(test_utils.GameStateTestCase):
+
+    def test_draw(self):
+        state.Game(self.screen).draw()
 
 
 if __name__ == '__main__':

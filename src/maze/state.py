@@ -1,9 +1,14 @@
 """Game state."""
 
+import pygame
+
 from common import color
 from common import img
+from common import state as common_state
 from escape import room
 from escape import state as escape_state
+from . import play_area
+from . import side_bar
 
 
 class ShortEscapeEnding(escape_state.Ending):
@@ -22,3 +27,16 @@ class ShortEscapeEnding(escape_state.Ending):
         if self._frame == 3:
             self.active = False
         return True
+
+
+class Game(common_state.GameState):
+
+    def __init__(self, screen):
+        self._play_area = play_area.Surface(screen)
+        self._side_bar = side_bar.Surface(screen)
+        super().__init__(screen)
+
+    def draw(self):
+        self._play_area.draw()
+        self._side_bar.draw()
+        pygame.display.update()

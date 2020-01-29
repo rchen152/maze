@@ -20,7 +20,8 @@ def main():
     pygame.display.set_caption('Kitty Maze')
     if not args.skip_title:
         common_state.TitleCard(screen).run()
-    state.ShortEscapeEnding(screen).run()
+        state.ShortEscapeEnding(screen).run()
+    state.Game(screen).run()
 
 
 if __name__ == '__main__':

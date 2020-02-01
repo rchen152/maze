@@ -1,7 +1,7 @@
 """Base classes for game objects."""
 
 import pygame
-from typing import Sequence, Tuple, Type
+from typing import Callable, Sequence, Tuple
 
 from common import img
 
@@ -27,7 +27,7 @@ class Rect(_Object):
 class Surface(_Object):
     """A subsurface with rectangles on it."""
 
-    OBJECTS: Sequence[Type[Rect]] = ()
+    OBJECTS: Sequence[Callable[[pygame.Surface], img.Factory]] = ()
 
     def __init__(self, screen):
         super().__init__(screen)

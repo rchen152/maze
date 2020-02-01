@@ -27,8 +27,9 @@ def ItemCell(idx):
 
     class ItemCell(objects.Rect):
 
-        RECT = (idx % 3 * _SIDE_CELL_WIDTH, idx // 3 * _SIDE_CELL_WIDTH,
-                _SIDE_CELL_WIDTH, _SIDE_CELL_WIDTH)
+        RECT = pygame.Rect(idx % 3 * _SIDE_CELL_WIDTH,
+                           idx // 3 * _SIDE_CELL_WIDTH, _SIDE_CELL_WIDTH,
+                           _SIDE_CELL_WIDTH)
         COLOR = _CREAM
 
         def draw(self):

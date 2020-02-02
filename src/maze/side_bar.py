@@ -87,4 +87,4 @@ class Surface(objects.Surface):
 
     RECT = pygame.Rect(state.RECT.h, 0, _SIDE_BAR_WIDTH, state.RECT.h)
     OBJECTS = {'mini_map': MiniMap, 'text_area': TextArea,
-               **{'cell%d' % i: ItemCell(i) for i in range(8)}}
+               **{'item_cell%d' % i: ItemCell(i) for i in range(8)}}

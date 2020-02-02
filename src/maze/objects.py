@@ -24,8 +24,13 @@ class Rect(_Object):
         pygame.draw.rect(self._screen, self.COLOR, self.RECT)
 
 
+def Image(name, **kwargs):
+    """A png image that can be placed on a Surface."""
+    return lambda screen: img.load(name, screen=screen, **kwargs)
+
+
 class Surface(_Object):
-    """A subsurface with rectangles on it."""
+    """A subsurface with objects on it."""
 
     OBJECTS: Sequence[Callable[[pygame.Surface], img.Factory]] = ()
 

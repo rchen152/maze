@@ -17,14 +17,16 @@ _PLAYER_MOVES = {
     K_LEFT: (5, 0), K_RIGHT: (-5, 0), K_UP: (0, 5), K_DOWN: (0, -5)}
 
 
-class _MovableObject(img.RectFactory):  # pytype: disable=ignored-abstractmethod
+# pytype: disable=ignored-abstractmethod
+class _MovableFactory(img.RectFactory):
 
     @abc.abstractmethod
     def move(self, delta):
         pass
+# pytype: enable=ignored-abstractmethod
 
 
-class _MovablePngFactory(img.PngFactory, _MovableObject):
+class _MovablePngFactory(img.PngFactory, _MovableFactory):
 
     def move(self, delta):
         self._pos = (self._pos[0] + delta[0], self._pos[1] + delta[1])
@@ -39,7 +41,7 @@ class Surface(objects.Surface):
     """A subsurface with movable objects on it."""
 
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
-    OBJECTS: Mapping[str, Callable[[pygame.Surface], _MovableObject]] = {
+    OBJECTS: Mapping[str, Callable[[pygame.Surface], _MovableFactory]] = {
         'house': _load('house', (150, -130)),
         'player': _load('player', (state.RECT.h / 2, state.RECT.h / 2),
                         (-0.5, -0.5))}

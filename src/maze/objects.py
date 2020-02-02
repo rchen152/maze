@@ -1,12 +1,12 @@
 """Base classes for game objects."""
 
 import pygame
-from typing import Callable, Mapping, Tuple
+from typing import Callable, Mapping
 
 from common import img
 
 
-class _Object(img.Factory):
+class Base(img.Factory):
     """A drawable object bounded by a rectangle."""
 
     RECT: pygame.Rect
@@ -15,21 +15,7 @@ class _Object(img.Factory):
         return self.RECT.collidepoint(pos)
 
 
-class Rect(_Object):
-    """A colored, drawable rectangle."""
-
-    COLOR: Tuple[int, int, int]
-
-    def draw(self):
-        pygame.draw.rect(self._screen, self.COLOR, self.RECT)
-
-
-def Image(name, **kwargs):
-    """A png image that can be placed on a Surface."""
-    return lambda screen: img.load(name, screen=screen, **kwargs)
-
-
-class Surface(_Object):
+class Surface(Base):
     """A subsurface with objects on it."""
 
     OBJECTS: Mapping[str, Callable[[pygame.Surface], img.Factory]] = {}

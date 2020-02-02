@@ -7,6 +7,16 @@ from common import test_utils
 from maze import side_bar
 
 
+class RectTest(test_utils.GameStateTestCase):
+
+    class TestRect(side_bar.Rect):
+        RECT = pygame.Rect(1, 1, 10, 10)
+        COLOR = (0, 0, 0)
+
+    def test_draw(self):
+        self.TestRect(self.screen).draw()
+
+
 class MiniMapTest(unittest.TestCase):
 
     def test_init(self):

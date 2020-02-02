@@ -1,21 +1,66 @@
 """Gameplay area."""
 
+import abc
 import pygame
+from pygame.locals import *
+from typing import Callable, Mapping
 
 from common import color
+from common import img
 from common import state
 from . import objects
 
+TICK = pygame.USEREVENT
+TICK_INTERVAL_MS = 100
+# We scroll the background instead of moving the player.
+_PLAYER_MOVES = {
+    K_LEFT: (5, 0), K_RIGHT: (-5, 0), K_UP: (0, 5), K_DOWN: (0, -5)}
+
+
+class _MovableObject(img.Factory):  # pytype: disable=ignored-abstractmethod
+
+    @abc.abstractmethod
+    def move(self, delta):
+        pass
+
+
+class _MovablePngFactory(img.PngFactory, _MovableObject):
+
+    def move(self, delta):
+        self._pos = (self._pos[0] + delta[0], self._pos[1] + delta[1])
+
+
+def _load(name, *args, **kwargs):
+    return lambda screen: _MovablePngFactory(name, screen, *args, **kwargs)
+
 
 class Surface(objects.Surface):
+    """A subsurface with movable objects on it."""
 
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
-    OBJECTS = {'house': objects.Image('house', position=(150, -130)),
-               'player': objects.Image(
-                   'player',
-                   position=(state.RECT.h / 2, state.RECT.h / 2),
-                   shift=(-0.5, -0.5))}
+    OBJECTS: Mapping[str, Callable[[pygame.Surface], _MovableObject]] = {
+        'house': _load('house', (150, -130)),
+        'player': _load('player', (state.RECT.h / 2, state.RECT.h / 2),
+                        (-0.5, -0.5))}
 
     def __init__(self, screen):
         super().__init__(screen)
+        self._scroll_speed = None
+
+    def draw(self):
         self._surface.fill(color.BLUE)
+        super().draw()
+
+    def handle_player_movement(self, event):
+        if event.type == KEYUP and event.key in _PLAYER_MOVES:
+            self._scroll_speed = None
+            return True
+        elif event.type == KEYDOWN and event.key in _PLAYER_MOVES:
+            self._scroll_speed = _PLAYER_MOVES[event.key]
+        elif event.type != TICK or not self._scroll_speed:
+            return False
+        for name, obj in self._objects.items():
+            if name == 'player':
+                continue
+            obj.move(self._scroll_speed)
+        return True

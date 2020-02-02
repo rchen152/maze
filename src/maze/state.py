@@ -39,8 +39,15 @@ class Game(common_state.GameState):
         self._side_bar = side_bar.Surface(screen)
         self._side_bar.text_area.show(self._INTRO_TEXT)
         super().__init__(screen)
+        pygame.time.set_timer(play_area.TICK, play_area.TICK_INTERVAL_MS)
 
     def draw(self):
         self._play_area.draw()
         self._side_bar.draw()
         pygame.display.update()
+
+    def handle_player_movement(self, event):
+        is_move_action = self._play_area.handle_player_movement(event)
+        if is_move_action:
+            self.draw()
+        return is_move_action

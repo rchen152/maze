@@ -9,7 +9,7 @@ from common import img
 class Surface(img.RectFactory):
     """A subsurface with objects on it."""
 
-    OBJECTS: Mapping[str, Callable[[pygame.Surface], img.Factory]] = {}
+    OBJECTS: Mapping[str, Callable[[pygame.Surface], img.RectFactory]] = {}
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -24,4 +24,5 @@ class Surface(img.RectFactory):
 
     def draw(self):
         for obj in self._objects.values():
-            obj.draw()
+            if obj.colliderect(self.RECT):
+                obj.draw()

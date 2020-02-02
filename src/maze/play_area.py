@@ -28,6 +28,7 @@ class _MovablePngFactory(img.PngFactory, _MovableObject):
 
     def move(self, delta):
         self._pos = (self._pos[0] + delta[0], self._pos[1] + delta[1])
+        self.RECT = pygame.Rect(self._pos, self._img.get_size())
 
 
 def _load(name, *args, **kwargs):

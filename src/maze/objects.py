@@ -24,5 +24,5 @@ class Surface(img.RectFactory):
 
     def draw(self):
         for obj in self._objects.values():
-            if obj.colliderect(self.RECT):
+            if obj.RECT.colliderect(self._surface.get_rect()):
                 obj.draw()

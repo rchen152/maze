@@ -13,7 +13,7 @@ class SurfaceTest(test_utils.GameStateTestCase):
     class TestSurface(objects.Surface):
 
         class CollidingMockRect(img.RectFactory):
-            RECT = pygame.Rect(0, 0, 2, 2)
+            RECT = pygame.Rect(0, 0, 1, 1)
 
             def __init__(self, unused_screen):
                 self.drawn = 0
@@ -22,7 +22,7 @@ class SurfaceTest(test_utils.GameStateTestCase):
                 self.drawn += 1
 
         class NoCollidingMockRect(img.RectFactory):
-            RECT = pygame.Rect(0, 0, 1, 1)
+            RECT = pygame.Rect(10, 10, 1, 1)
 
             def __init__(self, unused_screen):
                 self.drawn = 0

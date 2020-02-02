@@ -17,7 +17,7 @@ _PLAYER_MOVES = {
     K_LEFT: (5, 0), K_RIGHT: (-5, 0), K_UP: (0, 5), K_DOWN: (0, -5)}
 
 
-class _MovableObject(img.Factory):  # pytype: disable=ignored-abstractmethod
+class _MovableObject(img.RectFactory):  # pytype: disable=ignored-abstractmethod
 
     @abc.abstractmethod
     def move(self, delta):

@@ -6,16 +6,7 @@ from typing import Callable, Mapping
 from common import img
 
 
-class Base(img.Factory):
-    """A drawable object bounded by a rectangle."""
-
-    RECT: pygame.Rect
-
-    def collidepoint(self, pos):
-        return self.RECT.collidepoint(pos)
-
-
-class Surface(Base):
+class Surface(img.RectFactory):
     """A subsurface with objects on it."""
 
     OBJECTS: Mapping[str, Callable[[pygame.Surface], img.Factory]] = {}

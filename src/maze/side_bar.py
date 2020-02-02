@@ -4,6 +4,7 @@ import pygame
 from typing import Sequence, NamedTuple, Tuple
 
 from common import color
+from common import img
 from common import state
 from . import objects
 
@@ -11,7 +12,7 @@ _SIDE_BAR_WIDTH = state.RECT.w - state.RECT.h
 _SIDE_CELL_WIDTH = _SIDE_BAR_WIDTH / 3
 
 
-class Rect(objects.Base):
+class Rect(img.RectFactory):
     """A colored, drawable rectangle."""
 
     COLOR: Tuple[int, int, int]

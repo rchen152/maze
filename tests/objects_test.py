@@ -7,25 +7,6 @@ from common import test_utils
 from maze import objects
 
 
-class BaseTest(unittest.TestCase):
-
-    class TestObject(objects.Base):
-        RECT = pygame.Rect(1, 1, 10, 10)
-
-        def draw(self):
-            pass
-
-    def setUp(self):
-        super().setUp()
-        self.obj = self.TestObject(test_utils.MockScreen())
-
-    def test_collidepoint(self):
-        self.assertTrue(self.obj.collidepoint((5, 5)))
-
-    def test_nocollidepoint(self):
-        self.assertFalse(self.obj.collidepoint((0, 0)))
-
-
 class SurfaceTest(test_utils.GameStateTestCase):
 
     class TestSurface(objects.Surface):

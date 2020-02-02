@@ -31,7 +31,7 @@ setup(
         'console_scripts': ['kitty-maze = maze.main:main'],
     },
     install_requires=[
-        'kitty-common>=0.1.1',
+        'kitty-common>=0.1.2',
         'kitty-escape>=1.1.0',
         'pygame==1.9.6',
     ],

@@ -40,7 +40,7 @@ class SurfaceTest(test_utils.GameStateTestCase):
                 self.drawn += 1
 
         RECT = pygame.Rect((1, 1, 10, 10))
-        OBJECTS = (MockRect,)
+        OBJECTS = {'mock_rect': MockRect}
 
     def setUp(self):
         super().setUp()
@@ -54,7 +54,7 @@ class SurfaceTest(test_utils.GameStateTestCase):
 
     def test_draw(self):
         self.surface.draw()
-        self.assertEqual(self.surface._objects[0].drawn, 1)
+        self.assertEqual(self.surface.mock_rect.drawn, 1)
 
 
 if __name__ == '__main__':

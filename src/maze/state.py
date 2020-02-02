@@ -31,9 +31,13 @@ class ShortEscapeEnding(escape_state.Ending):
 
 class Game(common_state.GameState):
 
+    _INTRO_TEXT = ("You've escaped the house, but you're lost in a maze. Try "
+                   "to find the exit.")
+
     def __init__(self, screen):
         self._play_area = play_area.Surface(screen)
         self._side_bar = side_bar.Surface(screen)
+        self._side_bar.text_area.show(self._INTRO_TEXT)
         super().__init__(screen)
 
     def draw(self):

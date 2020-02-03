@@ -12,9 +12,11 @@ from . import objects
 
 TICK = pygame.USEREVENT
 TICK_INTERVAL_MS = 100
+_PLAYER_SPEED_INTERVAL = 5
 # We scroll the background instead of moving the player.
 _PLAYER_MOVES = {
-    K_LEFT: (5, 0), K_RIGHT: (-5, 0), K_UP: (0, 5), K_DOWN: (0, -5)}
+    K_LEFT: (_PLAYER_SPEED_INTERVAL, 0), K_RIGHT: (-_PLAYER_SPEED_INTERVAL, 0),
+    K_UP: (0, _PLAYER_SPEED_INTERVAL), K_DOWN: (0, -_PLAYER_SPEED_INTERVAL)}
 
 
 # pytype: disable=ignored-abstractmethod
@@ -65,7 +67,11 @@ class Surface(objects.Surface):
         elif event.type == KEYDOWN and event.key in _PLAYER_MOVES:
             self._scroll_speed = _PLAYER_MOVES[event.key]
             pygame.time.set_timer(TICK, TICK_INTERVAL_MS)
-        elif event.type != TICK or not self._scroll_speed:
+        elif event.type == TICK and self._scroll_speed:
+            self._scroll_speed = tuple(
+                s + _PLAYER_SPEED_INTERVAL * s / abs(s) if s else s
+                for s in self._scroll_speed)
+        else:
             return False
         for name, obj in self._objects.items():
             obj.move(self._scroll_speed)

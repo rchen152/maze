@@ -41,18 +41,21 @@ class Surface(objects.Surface):
     """A subsurface with movable objects on it."""
 
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
+    # We don't include the player here because he is a special fixed object.
     OBJECTS: Mapping[str, Callable[[pygame.Surface], _MovableFactory]] = {
-        'house': _load('house', (150, -130)),
-        'player': _load('player', (state.RECT.h / 2, state.RECT.h / 2),
-                        (-0.5, -0.5))}
+        'house': _load('house', (150, -130))}
 
     def __init__(self, screen):
         super().__init__(screen)
+        self.player = img.load('player', self._surface,
+                               (state.RECT.h / 2, state.RECT.h / 2),
+                               (-0.5, -0.5))
         self._scroll_speed = None
 
     def draw(self):
         self._surface.fill(color.BLUE)
         super().draw()
+        self.player.draw()
 
     def handle_player_movement(self, event):
         if event.type == KEYUP and event.key in _PLAYER_MOVES:
@@ -63,7 +66,5 @@ class Surface(objects.Surface):
         elif event.type != TICK or not self._scroll_speed:
             return False
         for name, obj in self._objects.items():
-            if name == 'player':
-                continue
             obj.move(self._scroll_speed)
         return True

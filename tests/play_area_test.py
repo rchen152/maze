@@ -32,6 +32,11 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.play_area._scroll_speed = (0, 0)
         self.assertFalse(self.play_area.check_player_collision())
 
+    def test_wall(self):
+        # This speed should collide the player with the wall below him.
+        self.play_area._scroll_speed = (0, -400)
+        self.assertTrue(self.play_area.check_player_collision())
+
     def test_start_player_movement(self):
         self.assertIs(self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT)), True)

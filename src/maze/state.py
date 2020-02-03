@@ -1,6 +1,7 @@
 """Game state."""
 
 import pygame
+from pygame.locals import *
 
 from common import color
 from common import img
@@ -46,7 +47,12 @@ class Game(common_state.GameState):
         pygame.display.update()
 
     def handle_player_movement(self, event):
-        is_move_action = self._play_area.handle_player_movement(event)
-        if is_move_action:
-            self.draw()
-        return is_move_action
+        move_result = self._play_area.handle_player_movement(event)
+        if not move_result:
+            return move_result
+        if isinstance(move_result, str):
+            self._side_bar.text_area.show(move_result)
+        elif event.type == KEYDOWN:
+            self._side_bar.text_area.show(None)
+        self.draw()
+        return True

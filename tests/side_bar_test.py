@@ -67,6 +67,10 @@ class TextAreaTest(test_utils.GameStateTestCase):
         self.assertEqual(block1.value, 'Two words')
         self.assertEqual(block2.value, 'per line.')
 
+    def test_show_none(self):
+        self.text_area.show(None)
+        self.assertFalse(self.text_area._text)
+
 
 class SurfaceTest(test_utils.GameStateTestCase):
 

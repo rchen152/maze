@@ -3,7 +3,7 @@
 import abc
 import pygame
 from pygame.locals import *
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Optional, Union
 
 from common import color
 from common import img
@@ -17,15 +17,14 @@ _PLAYER_SPEED_INTERVAL = 5
 _PLAYER_MOVES = {
     K_LEFT: (_PLAYER_SPEED_INTERVAL, 0), K_RIGHT: (-_PLAYER_SPEED_INTERVAL, 0),
     K_UP: (0, _PLAYER_SPEED_INTERVAL), K_DOWN: (0, -_PLAYER_SPEED_INTERVAL)}
+_PLAYER_FEET_HEIGHT = 15
 
 
-# pytype: disable=ignored-abstractmethod
-class _MovableFactory(img.RectFactory):
+class _MovableFactory(img.RectFactory, abc.ABC):  # ABC is to help pytype
 
     @abc.abstractmethod
     def move(self, delta):
         pass
-# pytype: enable=ignored-abstractmethod
 
 
 class _MovablePngFactory(img.PngFactory, _MovableFactory):
@@ -59,7 +58,19 @@ class Surface(objects.Surface):
         super().draw()
         self.player.draw()
 
-    def handle_player_movement(self, event):
+    def check_player_collision(self) -> Optional[str]:
+        # Check if the player's feet would hit anything if he took a step
+        # against the background scroll direction.
+        delta_x, delta_y = self._scroll_speed
+        next_player_feet_rect = pygame.Rect(
+            self.player.RECT.x - delta_x,
+            self.player.RECT.bottom - _PLAYER_FEET_HEIGHT - delta_y,
+            self.player.RECT.w, _PLAYER_FEET_HEIGHT)
+        if next_player_feet_rect.colliderect(self.house.RECT):
+            return "You don't want to go back in there."
+        return None
+
+    def handle_player_movement(self, event) -> Union[bool, str]:
         if event.type == KEYUP and event.key in _PLAYER_MOVES:
             self._scroll_speed = None
             pygame.time.set_timer(TICK, 0)
@@ -67,12 +78,16 @@ class Surface(objects.Surface):
         elif event.type == KEYDOWN and event.key in _PLAYER_MOVES:
             self._scroll_speed = _PLAYER_MOVES[event.key]
             pygame.time.set_timer(TICK, TICK_INTERVAL_MS)
-        elif event.type == TICK and self._scroll_speed:
+        elif event.type == TICK:
+            assert self._scroll_speed  # for pytype
             self._scroll_speed = tuple(
                 s + _PLAYER_SPEED_INTERVAL * s / abs(s) if s else s
                 for s in self._scroll_speed)
         else:
             return False
+        collision_reason = self.check_player_collision()
+        if collision_reason:
+            return collision_reason
         for name, obj in self._objects.items():
             obj.move(self._scroll_speed)
         return True

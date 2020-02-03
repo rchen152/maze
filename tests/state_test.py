@@ -1,8 +1,10 @@
 """Tests for maze.state."""
 
+from pygame.locals import *
 import unittest
 
 from common import test_utils
+from maze import play_area
 from maze import state
 
 
@@ -29,8 +31,43 @@ class ShortEscapeEndingTest(test_utils.GameStateTestCase):
 
 class GameTest(test_utils.GameStateTestCase):
 
+    def setUp(self):
+        super().setUp()
+        self.game = state.Game(self.screen)
+
     def test_draw(self):
-        state.Game(self.screen).draw()
+        self.game.draw()
+
+    def test_start_player_movement(self):
+        self.assertTrue(self.game.handle_player_movement(
+            test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT)))
+        self.assertFalse(self.game._side_bar.text_area._text)
+
+    def test_end_player_movement(self):
+        self.assertTrue(self.game.handle_player_movement(
+            test_utils.MockEvent(typ=KEYUP, key=K_LEFT)))
+
+    def test_tick(self):
+        self.game.handle_player_movement(
+            test_utils.MockEvent(typ=KEYDOWN, key=K_UP))
+        self.assertTrue(self.game.handle_player_movement(
+            test_utils.MockEvent(typ=play_area.TICK)))
+        self.assertFalse(self.game._side_bar.text_area._text)
+
+    def test_player_collision(self):
+        self.game.handle_player_movement(
+            test_utils.MockEvent(typ=KEYDOWN, key=K_UP))
+        # Since the player is standing with his head overlapping with the house,
+        # this speed should result in a collision.
+        self.game._play_area._scroll_speed = (
+            0, self.game._play_area.player.RECT.h)
+        self.game.handle_player_movement(
+            test_utils.MockEvent(typ=play_area.TICK))
+        self.assertTrue(self.game._side_bar.text_area._text)
+
+    def test_movement_unrelated_event(self):
+        self.assertFalse(self.game.handle_player_movement(
+            test_utils.MockEvent(typ=KEYDOWN, key=K_r)))
 
 
 if __name__ == '__main__':

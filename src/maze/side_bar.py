@@ -68,6 +68,9 @@ class TextArea(Rect):
         self._text: Sequence[_TextBlock] = []
 
     def show(self, text):
+        if text is None:
+            self._text = []
+            return
         self._text = [_TextBlock((self._LEFT_PAD, self.RECT.y), (0, 0), '')]
         text = text.split()
         for word in text:

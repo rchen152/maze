@@ -1,6 +1,5 @@
 """Gameplay area."""
 
-import abc
 import pygame
 from pygame.locals import *
 from typing import Callable, Mapping, Optional, Union
@@ -20,18 +19,10 @@ _PLAYER_MOVES = {
 _PLAYER_FEET_HEIGHT = 15
 
 
-class _MovableFactory(img.RectFactory, abc.ABC):  # ABC is to help pytype
-
-    @abc.abstractmethod
-    def move(self, delta):
-        pass
-
-
-class _MovablePngFactory(img.PngFactory, _MovableFactory):
+class _MovablePngFactory(img.PngFactory):
 
     def move(self, delta):
-        self._pos = (self._pos[0] + delta[0], self._pos[1] + delta[1])
-        self.RECT = pygame.Rect(self._pos, self._img.get_size())
+        self.RECT = self.RECT.move(delta)
 
 
 def _load(name, *args, **kwargs):
@@ -43,7 +34,7 @@ class Surface(objects.Surface):
 
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
     # We don't include the player here because he is a special fixed object.
-    OBJECTS: Mapping[str, Callable[[pygame.Surface], _MovableFactory]] = {
+    OBJECTS: Mapping[str, Callable[[pygame.Surface], _MovablePngFactory]] = {
         'house': _load('house', (150, -130)),
         'wall_1right': _load('wall_vertical', (750, -200), (-0.5, 0)),
         'wall_1bottom': _load('wall_horizontal', (-50, 600), (0, -0.5)),

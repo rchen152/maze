@@ -44,7 +44,10 @@ class Surface(objects.Surface):
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
     # We don't include the player here because he is a special fixed object.
     OBJECTS: Mapping[str, Callable[[pygame.Surface], _MovableFactory]] = {
-        'house': _load('house', (150, -130))}
+        'house': _load('house', (150, -130)),
+        'wall_1right': _load('wall_vertical', (750, -200), (-0.5, 0)),
+        'wall_1bottom': _load('wall_horizontal', (-50, 600), (0, -0.5)),
+    }
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -61,13 +64,20 @@ class Surface(objects.Surface):
     def check_player_collision(self) -> Optional[str]:
         # Check if the player's feet would hit anything if he took a step
         # against the background scroll direction.
-        delta_x, delta_y = self._scroll_speed
-        next_player_feet_rect = pygame.Rect(
-            self.player.RECT.x - delta_x,
-            self.player.RECT.bottom - _PLAYER_FEET_HEIGHT - delta_y,
+        current_feet_rect = pygame.Rect(
+            self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
             self.player.RECT.w, _PLAYER_FEET_HEIGHT)
-        if next_player_feet_rect.colliderect(self.house.RECT):
-            return "You don't want to go back in there."
+        next_feet_rect = current_feet_rect.move(
+            tuple(-s for s in self._scroll_speed))
+        player_path_rect = current_feet_rect.union(next_feet_rect)
+        for name, obj in self._objects.items():
+            if player_path_rect.colliderect(obj.RECT):
+                if name == 'house':
+                    return "You don't want to go back in the house."
+                elif name.startswith('wall'):
+                    return "That's a wall..."
+                else:
+                    raise NotImplementedError(f'Collided with {name}')
         return None
 
     def handle_player_movement(self, event) -> Union[bool, str]:

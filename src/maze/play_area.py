@@ -60,9 +60,11 @@ class Surface(objects.Surface):
     def handle_player_movement(self, event):
         if event.type == KEYUP and event.key in _PLAYER_MOVES:
             self._scroll_speed = None
+            pygame.time.set_timer(TICK, 0)
             return True
         elif event.type == KEYDOWN and event.key in _PLAYER_MOVES:
             self._scroll_speed = _PLAYER_MOVES[event.key]
+            pygame.time.set_timer(TICK, TICK_INTERVAL_MS)
         elif event.type != TICK or not self._scroll_speed:
             return False
         for name, obj in self._objects.items():

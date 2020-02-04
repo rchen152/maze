@@ -39,6 +39,20 @@ class _Collision(NamedTuple):
     reason: str
 
 
+def _closer_than(speed, collision):
+    # See check_player_collision. When two possible collisions are in the same
+    # direction, the closer one is the one for which the maximum speed that
+    # avoids collision is less.
+    if not collision:
+        return True
+    elif speed and collision.max_nocollision_speed:
+        return abs(sum(speed)) < abs(sum(collision.max_nocollision_speed))
+    elif collision.max_nocollision_speed:
+        return True
+    else:
+        return False
+
+
 class Surface(objects.Surface):
     """A subsurface with movable objects on it."""
 
@@ -74,6 +88,7 @@ class Surface(objects.Surface):
             return current_feet_rect.union(next_feet_rect)
 
         player_path_rect = _get_player_path_rect(self._scroll_speed)
+        closest_collision = None
         for name, obj in self._objects.items():
             if player_path_rect.colliderect(obj.RECT):
                 # Find the maximum speed at which the player won't collide.
@@ -88,8 +103,9 @@ class Surface(objects.Surface):
                     reason = "That's a wall..."
                 else:
                     raise NotImplementedError(f'Collided with {name}')
-                return _Collision(speed, reason)
-        return None
+                if _closer_than(speed, closest_collision):
+                    closest_collision = _Collision(speed, reason)
+        return closest_collision
 
     def handle_player_movement(self, event) -> Union[bool, str]:
         if event.type == KEYUP and event.key in _PLAYER_MOVES:

@@ -7,6 +7,13 @@ from common import test_utils
 from maze import play_area
 
 
+class CloserThanTest(unittest.TestCase):
+
+    def test_closer_than(self):
+        self.assertTrue(
+            play_area._closer_than((-2, 0), play_area._Collision((-3, 0), '')))
+
+
 class SurfaceTest(test_utils.ImgTestCase):
 
     def setUp(self):
@@ -62,6 +69,13 @@ class SurfaceTest(test_utils.ImgTestCase):
         self._set_speed_for_collision()
         self.assertIsInstance(self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=play_area.TICK)), str)
+
+    def test_collide_with_closest_object(self):
+        self.play_area.player.RECT.topleft = (1088, 135)
+        self.play_area._scroll_speed = (800, 0)
+        collision = self.play_area.check_player_collision()
+        assert collision  # for pytype
+        self.assertIn('wall', collision.reason)
 
 
 if __name__ == '__main__':

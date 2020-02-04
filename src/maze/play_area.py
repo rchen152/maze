@@ -8,6 +8,7 @@ from common import color
 from common import img
 from common import state
 from . import objects
+from . import walls
 
 TICK = pygame.USEREVENT
 TICK_INTERVAL_MS = 100
@@ -17,16 +18,6 @@ _PLAYER_MOVES = {
     K_LEFT: (_PLAYER_SPEED_INTERVAL, 0), K_RIGHT: (-_PLAYER_SPEED_INTERVAL, 0),
     K_UP: (0, _PLAYER_SPEED_INTERVAL), K_DOWN: (0, -_PLAYER_SPEED_INTERVAL)}
 _PLAYER_FEET_HEIGHT = 15
-
-
-class _MovablePngFactory(img.PngFactory):
-
-    def move(self, delta):
-        self.RECT = self.RECT.move(delta)
-
-
-def _load(name, *args, **kwargs):
-    return lambda screen: _MovablePngFactory(name, screen, *args, **kwargs)
 
 
 def _shift_speed(speed, direction):
@@ -53,10 +44,10 @@ class Surface(objects.Surface):
 
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
     # We don't include the player here because he is a special fixed object.
-    OBJECTS: Mapping[str, Callable[[pygame.Surface], _MovablePngFactory]] = {
-        'house': _load('house', (150, -130)),
-        'wall_1right': _load('wall_vertical', (750, -200), (-0.5, 0)),
-        'wall_1bottom': _load('wall_horizontal', (-50, 600), (0, -0.5)),
+    OBJECTS: Mapping[
+        str, Callable[[pygame.Surface], objects.MovablePngFactory]] = {
+            'house': objects.load_movable_png('house', (150, -130)),
+            **walls.ALL,
     }
 
     def __init__(self, screen):

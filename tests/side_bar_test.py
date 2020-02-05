@@ -5,6 +5,7 @@ import unittest
 
 from common import test_utils
 from maze import side_bar
+from maze import walls
 
 
 class RectTest(test_utils.GameStateTestCase):
@@ -23,15 +24,22 @@ class MiniMapTest(test_utils.GameStateTestCase):
         super().setUp()
         self.mini_map = side_bar.MiniMap(self.screen)
 
-    def test_update(self):
-        self.mini_map.update((0, 0))
-        self.mini_map.update((1, 1))
+    def test_update_squares(self):
+        self.mini_map.update((0, 0), set())
+        self.mini_map.update((1, 1), set())
         self.assertCountEqual(self.mini_map._explored_squares, {(0, 0), (1, 1)})
 
     def test_update_same_square(self):
-        self.mini_map.update((0, 0))
-        self.mini_map.update((0, 0))
+        self.mini_map.update((0, 0), set())
+        self.mini_map.update((0, 0), set())
         self.assertEqual(self.mini_map._explored_squares, {(0, 0)})
+
+    def test_update_seen_walls(self):
+        self.assertFalse(self.mini_map._seen_walls)
+        self.mini_map.update((0, 0), {walls.ALL['wall_sright'](self.screen)})
+        wall, = self.mini_map._seen_walls
+        self.assertEqual(wall.SQUARE, (0, 0))
+        self.assertEqual(wall.SIDE, walls.Side.RIGHT)
 
     def test_draw(self):
         self.mini_map.draw()

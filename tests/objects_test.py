@@ -17,11 +17,6 @@ class MovablePngTest(test_utils.ImgTestCase):
         obj.move((1, 1))
         self.assertEqual(obj.RECT.topleft, (pos[0] + 1, pos[1] + 1))
 
-    def test_load(self):
-        factory = objects.load_movable_png(
-            'title_card', path_type=img.PathType.COMMON)
-        self.assertIsInstance(factory(self.screen), objects.MovablePngFactory)
-
 
 class SurfaceTest(test_utils.GameStateTestCase):
 

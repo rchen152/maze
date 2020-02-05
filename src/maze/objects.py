@@ -12,10 +12,6 @@ class MovablePngFactory(img.PngFactory):
         self.RECT = self.RECT.move(delta)
 
 
-def load_movable_png(name, *args, **kwargs):
-    return lambda screen: MovablePngFactory(name, screen, *args, **kwargs)
-
-
 class Surface(img.RectFactory):
     """A subsurface with objects on it."""
 

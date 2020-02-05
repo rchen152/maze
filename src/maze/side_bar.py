@@ -35,24 +35,34 @@ class MiniMap(Rect):
         super().__init__(screen)
         self._current_square = (0, 0)
         self._explored_squares = {self._current_square}
+        self._seen_walls = set()
 
-    def update(self, square):
+    def update(self, square, seen_walls):
         self._current_square = square
         self._explored_squares.add(square)
+        self._seen_walls = seen_walls
 
     def draw(self):
         super().draw()
-        xs, ys = zip(*self._explored_squares)
-        center_x = (max(xs) + min(xs)) / 2
-        center_y = (max(ys) + min(ys)) / 2
+        center = tuple((max(coords) + min(coords)) / 2
+                       for coords in zip(*self._explored_squares))
+
+        def get_rect_at(index):
+            return self._CENTER_RECT.move(tuple(
+                (index[i] - center[i]) * self._SQUARE_LENGTH for i in range(2)))
+
         for square in self._explored_squares:
             if square == self._current_square:
                 square_color = color.BRIGHT_GREEN
             else:
                 square_color = color.BLUE
-            pygame.draw.rect(self._screen, square_color, self._CENTER_RECT.move(
-                (square[0] - center_x) * self._SQUARE_LENGTH,
-                (square[1] - center_y) * self._SQUARE_LENGTH))
+            pygame.draw.rect(self._screen, square_color, get_rect_at(square))
+        for wall in self._seen_walls:
+            if not self._explored_squares & wall.adjacent_squares:
+                continue
+            start_pos, end_pos = wall.SIDE.endpoints(get_rect_at(wall.SQUARE))
+            pygame.draw.line(
+                self._screen, color.LIGHT_CREAM, start_pos, end_pos, 2)
 
 
 def ItemCell(idx):

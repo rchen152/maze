@@ -21,6 +21,15 @@ _PLAYER_FEET_HEIGHT = 15
 _HOUSE_POS = (150, -130)
 
 
+def _load(name, *args, **kwargs):
+    return lambda screen: objects.MovablePngFactory(
+        name, screen, *args, **kwargs)
+
+
+def _is_wall(name):
+    return name.startswith('wall_')
+
+
 def _shift_speed(speed, direction):
     return tuple(s + direction * _PLAYER_SPEED_INTERVAL * s / abs(s) if s else s
                  for s in speed)
@@ -61,7 +70,7 @@ class Surface(objects.Surface):
     # We don't include the player here because he is a special fixed object.
     OBJECTS: Mapping[
         str, Callable[[pygame.Surface], objects.MovablePngFactory]] = {
-            'house': objects.load_movable_png('house', _HOUSE_POS),
+            'house': _load('house', _HOUSE_POS),
             **walls.ALL,
     }
 
@@ -82,6 +91,11 @@ class Surface(objects.Surface):
                   for i in range(2)))
         return ((effective_feet_rect.centerx - walls.START_X) // 800,
                 (effective_feet_rect.centery - walls.START_Y) // 800)
+
+    @property
+    def seen_walls(self):
+        return {wall for name, wall in self._objects.items()
+                if _is_wall(name) and wall.seen}
 
     def draw(self):
         self._surface.fill(color.BLUE)
@@ -109,7 +123,7 @@ class Surface(objects.Surface):
                     speed = _decelerate(speed)
                 if name == 'house':
                     reason = "You don't want to go back in the house."
-                elif name.startswith('wall'):
+                elif _is_wall(name):
                     reason = "That's a wall..."
                 else:
                     raise NotImplementedError(f'Collided with {name}')

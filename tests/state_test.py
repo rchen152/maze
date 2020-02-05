@@ -69,6 +69,16 @@ class GameTest(test_utils.GameStateTestCase):
         self.assertFalse(self.game.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_r)))
 
+    def test_current_square(self):
+        self.assertEqual(self.game._side_bar.mini_map._current_square, (0, 0))
+        self.game.handle_player_movement(
+            test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT))
+        self.assertEqual(self.game._side_bar.mini_map._current_square, (0, 0))
+        self.game._play_area._scroll_speed = (800, 0)
+        self.game.handle_player_movement(
+            test_utils.MockEvent(typ=play_area.TICK))
+        self.assertEqual(self.game._side_bar.mini_map._current_square, (-1, 0))
+
 
 if __name__ == '__main__':
     unittest.main()

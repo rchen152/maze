@@ -78,6 +78,12 @@ class SurfaceTest(test_utils.ImgTestCase):
         assert collision  # for pytype
         self.assertIn('wall', collision.reason)
 
+    def test_current_square(self):
+        self.assertEqual(self.play_area.current_square, (0, 0))
+        for obj in self.play_area._objects.values():
+            obj.move((800, 0))
+        self.assertEqual(self.play_area.current_square, (-1, 0))
+
 
 if __name__ == '__main__':
     unittest.main()

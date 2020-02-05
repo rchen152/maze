@@ -17,10 +17,24 @@ class RectTest(test_utils.GameStateTestCase):
         self.TestRect(self.screen).draw()
 
 
-class MiniMapTest(unittest.TestCase):
+class MiniMapTest(test_utils.GameStateTestCase):
 
-    def test_init(self):
-        side_bar.MiniMap(test_utils.MockScreen())
+    def setUp(self):
+        super().setUp()
+        self.mini_map = side_bar.MiniMap(self.screen)
+
+    def test_update(self):
+        self.mini_map.update((0, 0))
+        self.mini_map.update((1, 1))
+        self.assertCountEqual(self.mini_map._explored_squares, {(0, 0), (1, 1)})
+
+    def test_update_same_square(self):
+        self.mini_map.update((0, 0))
+        self.mini_map.update((0, 0))
+        self.assertEqual(self.mini_map._explored_squares, {(0, 0)})
+
+    def test_draw(self):
+        self.mini_map.draw()
 
 
 class ItemCellTest(unittest.TestCase):

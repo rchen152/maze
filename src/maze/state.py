@@ -54,11 +54,7 @@ class Game(common_state.GameState):
             self._side_bar.text_area.show(move_result)
         elif event.type == KEYDOWN:
             self._side_bar.text_area.show(None)
-        # A wall is not marked as seen until it's drawn, so a wall will appear
-        # in the minimap the second time it's drawn. This behavior is okay
-        # because the first bit of a wall to appear on-screen is the transparent
-        # image edge.
         self._side_bar.mini_map.update(
-            self._play_area.current_square, self._play_area.seen_walls)
+            self._play_area.current_square, self._play_area.visible_walls)
         self.draw()
         return True

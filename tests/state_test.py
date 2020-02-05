@@ -85,10 +85,9 @@ class GameTest(test_utils.GameStateTestCase):
         self.game.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_RIGHT))
         self.assertFalse(self.game._side_bar.mini_map._seen_walls)
-        self.game._play_area._scroll_speed = (-200, 0)
-        for _ in range(2):
-            self.game.handle_player_movement(
-                test_utils.MockEvent(typ=play_area.TICK))
+        self.game._play_area._scroll_speed = (-400, 0)
+        self.game.handle_player_movement(
+            test_utils.MockEvent(typ=play_area.TICK))
         wall, = self.game._side_bar.mini_map._seen_walls
         self.assertEqual(wall.SQUARE, (0, 0))
         self.assertEqual(wall.SIDE, walls.Side.RIGHT)

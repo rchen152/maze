@@ -37,10 +37,10 @@ class MiniMap(Rect):
         self._explored_squares = {self._current_square}
         self._seen_walls = set()
 
-    def update(self, square, seen_walls):
+    def update(self, square, visible_walls):
         self._current_square = square
         self._explored_squares.add(square)
-        self._seen_walls = seen_walls
+        self._seen_walls |= visible_walls
 
     def draw(self):
         super().draw()
@@ -58,8 +58,6 @@ class MiniMap(Rect):
                 square_color = color.BLUE
             pygame.draw.rect(self._screen, square_color, get_rect_at(square))
         for wall in self._seen_walls:
-            if not self._explored_squares & wall.adjacent_squares:
-                continue
             start_pos, end_pos = wall.SIDE.endpoints(get_rect_at(wall.SQUARE))
             pygame.draw.line(
                 self._screen, color.LIGHT_CREAM, start_pos, end_pos, 2)

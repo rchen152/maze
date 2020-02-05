@@ -57,7 +57,6 @@ def _Wall(delta_x, delta_y, side):
 
         def __init__(self, screen):
             super().__init__(img, screen, (wall_x, wall_y), shift)
-            self.seen = False
 
         @property
         def adjacent_squares(self):
@@ -71,10 +70,6 @@ def _Wall(delta_x, delta_y, side):
                 assert self.SIDE is Side.BOTTOM
                 square = (self.SQUARE[0], self.SQUARE[1] + 1)
             return {self.SQUARE, square}
-
-        def draw(self):
-            super().draw()
-            self.seen = True
 
     return Wall
 

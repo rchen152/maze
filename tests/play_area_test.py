@@ -85,13 +85,13 @@ class SurfaceTest(test_utils.ImgTestCase):
             obj.move((800, 0))
         self.assertEqual(self.play_area.current_square, (-1, 0))
 
-    def test_seen_walls(self):
+    def test_visible_walls(self):
         self.play_area.draw()
-        self.assertFalse(self.play_area.seen_walls)
+        self.assertFalse(self.play_area.visible_walls)
         for obj in self.play_area._objects.values():
             obj.move((-400, 0))
         self.play_area.draw()
-        wall, = self.play_area.seen_walls
+        wall, = self.play_area.visible_walls
         self.assertEqual(wall.SQUARE, (0, 0))
         self.assertEqual(wall.SIDE, walls.Side.RIGHT)
 

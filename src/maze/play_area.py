@@ -93,9 +93,10 @@ class Surface(objects.Surface):
                 (effective_feet_rect.centery - walls.START_Y) // 800)
 
     @property
-    def seen_walls(self):
+    def visible_walls(self):
         return {wall for name, wall in self._objects.items()
-                if _is_wall(name) and wall.seen}
+                if _is_wall(name) and self._visible(wall) and
+                self.current_square in wall.adjacent_squares}
 
     def draw(self):
         self._surface.fill(color.BLUE)

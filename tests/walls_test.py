@@ -17,17 +17,9 @@ class SideTest(unittest.TestCase):
 
 class WallTest(test_utils.ImgTestCase):
 
-    def setUp(self):
-        super().setUp()
-        self.wall = walls.ALL['wall_sright'](self.screen)
-
     def test_adjacent_squares(self):
-        self.assertEqual(self.wall.adjacent_squares, {(0, 0), (1, 0)})
-
-    def test_draw(self):
-        self.assertFalse(self.wall.seen)
-        self.wall.draw()
-        self.assertTrue(self.wall.seen)
+        wall = walls.ALL['wall_sright'](self.screen)
+        self.assertEqual(wall.adjacent_squares, {(0, 0), (1, 0)})
 
 
 if __name__ == '__main__':

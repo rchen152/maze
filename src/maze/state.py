@@ -54,5 +54,6 @@ class Game(common_state.GameState):
             self._side_bar.text_area.show(move_result)
         elif event.type == KEYDOWN:
             self._side_bar.text_area.show(None)
+        self._side_bar.mini_map.update(self._play_area.current_square)
         self.draw()
         return True

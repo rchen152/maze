@@ -26,6 +26,33 @@ class MiniMap(Rect):
     RECT = pygame.Rect(_SIDE_CELL_WIDTH, _SIDE_CELL_WIDTH, _SIDE_CELL_WIDTH,
                        _SIDE_CELL_WIDTH)
     COLOR = color.BLACK
+    _SQUARE_LENGTH = 20
+    _CENTER_RECT = pygame.Rect(RECT.centerx - _SQUARE_LENGTH / 2,
+                               RECT.centery - _SQUARE_LENGTH / 2,
+                               _SQUARE_LENGTH, _SQUARE_LENGTH)
+
+    def __init__(self, screen):
+        super().__init__(screen)
+        self._current_square = (0, 0)
+        self._explored_squares = {self._current_square}
+
+    def update(self, square):
+        self._current_square = square
+        self._explored_squares.add(square)
+
+    def draw(self):
+        super().draw()
+        xs, ys = zip(*self._explored_squares)
+        center_x = (max(xs) + min(xs)) / 2
+        center_y = (max(ys) + min(ys)) / 2
+        for square in self._explored_squares:
+            if square == self._current_square:
+                square_color = color.BRIGHT_GREEN
+            else:
+                square_color = color.BLUE
+            pygame.draw.rect(self._screen, square_color, self._CENTER_RECT.move(
+                (square[0] - center_x) * self._SQUARE_LENGTH,
+                (square[1] - center_y) * self._SQUARE_LENGTH))
 
 
 def ItemCell(idx):

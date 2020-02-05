@@ -3,6 +3,9 @@
 import enum
 from . import objects
 
+START_X = -50
+START_Y = -200
+
 
 class _WallPosition(enum.Enum):
     LEFT = enum.auto()
@@ -19,11 +22,9 @@ def _Wall(delta_x, delta_y, position):
       delta_y: Vertical distance from starting square in number of squares.
       position: Which side of the square the wall is on.
     """
-    starting_x = -50
-    starting_y = -200
     length = 800
-    wall_x = starting_x + length * delta_x
-    wall_y = starting_y + length * delta_y
+    wall_x = START_X + length * delta_x
+    wall_y = START_Y + length * delta_y
     if position is _WallPosition.RIGHT:
         wall_x += length
     elif position is _WallPosition.BOTTOM:

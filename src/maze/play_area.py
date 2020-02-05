@@ -18,6 +18,7 @@ _PLAYER_MOVES = {
     K_LEFT: (_PLAYER_SPEED_INTERVAL, 0), K_RIGHT: (-_PLAYER_SPEED_INTERVAL, 0),
     K_UP: (0, _PLAYER_SPEED_INTERVAL), K_DOWN: (0, -_PLAYER_SPEED_INTERVAL)}
 _PLAYER_FEET_HEIGHT = 15
+_HOUSE_POS = (150, -130)
 
 
 def _shift_speed(speed, direction):
@@ -60,7 +61,7 @@ class Surface(objects.Surface):
     # We don't include the player here because he is a special fixed object.
     OBJECTS: Mapping[
         str, Callable[[pygame.Surface], objects.MovablePngFactory]] = {
-            'house': objects.load_movable_png('house', (150, -130)),
+            'house': objects.load_movable_png('house', _HOUSE_POS),
             **walls.ALL,
     }
 
@@ -70,6 +71,17 @@ class Surface(objects.Surface):
                                (state.RECT.h / 2, state.RECT.h / 2),
                                (-0.5, -0.5))
         self._scroll_speed = None
+        self._player_feet_rect = pygame.Rect(
+            self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
+            self.player.RECT.w, _PLAYER_FEET_HEIGHT)
+
+    @property
+    def current_square(self):
+        effective_feet_rect = self._player_feet_rect.move(
+            tuple(_HOUSE_POS[i] - self.house.RECT.topleft[i]
+                  for i in range(2)))
+        return ((effective_feet_rect.centerx - walls.START_X) // 800,
+                (effective_feet_rect.centery - walls.START_Y) // 800)
 
     def draw(self):
         self._surface.fill(color.BLUE)
@@ -79,13 +91,11 @@ class Surface(objects.Surface):
     def check_player_collision(self) -> Optional[_Collision]:
         # Check if the player's feet would hit anything if he took a step
         # against the background scroll direction.
-        current_feet_rect = pygame.Rect(
-            self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
-            self.player.RECT.w, _PLAYER_FEET_HEIGHT)
 
         def _get_player_path_rect(speed):
-            next_feet_rect = current_feet_rect.move(tuple(-s for s in speed))
-            return current_feet_rect.union(next_feet_rect)
+            next_feet_rect = self._player_feet_rect.move(
+                tuple(-s for s in speed))
+            return self._player_feet_rect.union(next_feet_rect)
 
         player_path_rect = _get_player_path_rect(self._scroll_speed)
         closest_collision = None

@@ -71,7 +71,8 @@ class SurfaceTest(test_utils.ImgTestCase):
             test_utils.MockEvent(typ=play_area.TICK)), str)
 
     def test_collide_with_closest_object(self):
-        self.play_area.player.RECT.topleft = (1088, 135)
+        for obj in self.play_area._objects.values():
+            obj.move((-800, 153))
         self.play_area._scroll_speed = (800, 0)
         collision = self.play_area.check_player_collision()
         assert collision  # for pytype

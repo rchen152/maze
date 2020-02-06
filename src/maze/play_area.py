@@ -2,7 +2,7 @@
 
 import pygame
 from pygame.locals import *
-from typing import Callable, Mapping, NamedTuple, Optional, Tuple, Union
+from typing import NamedTuple, Optional, Tuple, Union
 
 from common import color
 from common import img
@@ -23,8 +23,7 @@ _HOUSE_POS = (150, -130)
 
 
 def _load(name, *args, **kwargs):
-    return lambda screen: objects.MovablePngFactory(
-        name, screen, *args, **kwargs)
+    return lambda screen: img.PngFactory(name, screen, *args, **kwargs)
 
 
 def _is_wall(name):
@@ -69,10 +68,9 @@ class Surface(objects.Surface):
 
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
     # We don't include the player here because he is a special fixed object.
-    OBJECTS: Mapping[
-        str, Callable[[pygame.Surface], objects.MovablePngFactory]] = {
-            'house': _load('house', _HOUSE_POS),
-            **walls.ALL,
+    OBJECTS = {
+        'house': _load('house', _HOUSE_POS),
+        **walls.ALL,
     }
 
     def __init__(self, screen):

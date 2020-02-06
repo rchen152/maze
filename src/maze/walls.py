@@ -1,7 +1,7 @@
 """Maze walls."""
 
 import enum
-from . import objects
+from common import img
 
 START_X = -50
 START_Y = -200
@@ -43,20 +43,20 @@ def _Wall(delta_x, delta_y, side):
     else:
         assert side in (Side.LEFT, Side.TOP)
     if side in (Side.LEFT, Side.RIGHT):
-        img = 'wall_vertical'
+        img_name = 'wall_vertical'
         shift = (-0.5, 0)
     else:
         assert side in (Side.TOP, Side.BOTTOM)
-        img = 'wall_horizontal'
+        img_name = 'wall_horizontal'
         shift = (0, -0.5)
 
-    class Wall(objects.MovablePngFactory):
+    class Wall(img.PngFactory):
 
         SQUARE = (delta_x, delta_y)
         SIDE = side
 
         def __init__(self, screen):
-            super().__init__(img, screen, (wall_x, wall_y), shift)
+            super().__init__(img_name, screen, (wall_x, wall_y), shift)
 
         @property
         def adjacent_squares(self):

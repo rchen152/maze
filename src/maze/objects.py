@@ -6,12 +6,6 @@ from typing import Callable, Mapping
 from common import img
 
 
-class MovablePngFactory(img.PngFactory):
-
-    def move(self, delta):
-        self.RECT = self.RECT.move(delta)
-
-
 class Surface(img.RectFactory):
     """A subsurface with objects on it."""
 

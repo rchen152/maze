@@ -8,16 +8,6 @@ from common import test_utils
 from maze import objects
 
 
-class MovablePngTest(test_utils.ImgTestCase):
-
-    def test_move(self):
-        obj = objects.MovablePngFactory(
-            'title_card', self.screen, path_type=img.PathType.COMMON)
-        pos = obj.RECT.topleft
-        obj.move((1, 1))
-        self.assertEqual(obj.RECT.topleft, (pos[0] + 1, pos[1] + 1))
-
-
 class SurfaceTest(test_utils.GameStateTestCase):
 
     class TestSurface(objects.Surface):

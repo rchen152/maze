@@ -34,6 +34,9 @@ class Game(common_state.GameState):
 
     _INTRO_TEXT = ("You've escaped the house, but you're lost in a maze. Try "
                    "to find the exit.")
+    _END_TEXT = ("Roses are red, I've a confession to make. There was never an "
+                 "exit, it's a closed heart shape. You've reached the end, "
+                 "Happy Valentine's Day!")
 
     def __init__(self, screen):
         self._play_area = play_area.Surface(screen)
@@ -58,5 +61,6 @@ class Game(common_state.GameState):
             self._play_area.current_square, self._play_area.visible_walls)
         if self._play_area.current_square == play_area.END_SQUARE:
             self._side_bar.mini_map.turn_red()
+            self._side_bar.text_area.show(self._END_TEXT)
         self.draw()
         return True

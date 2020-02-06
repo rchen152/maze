@@ -33,10 +33,10 @@ class ShortEscapeEnding(escape_state.Ending):
 class Game(common_state.GameState):
 
     _INTRO_TEXT = ("You've escaped the house, but you're lost in a maze. Try "
-                   "to find the exit.")
-    _END_TEXT = ("Roses are red, I've a confession to make. There was never an "
-                 "exit, it's a closed heart shape. You've reached the end, "
-                 "Happy Valentine's Day!")
+                   "to find an exit.")
+    _END_TEXT = ("Roses are red, I've a confession to make. There is no exit, "
+                 "it's a closed heart shape. You've reached the end, Happy "
+                 "Valentine's Day!")
 
     def __init__(self, screen):
         self._play_area = play_area.Surface(screen)

@@ -9,6 +9,7 @@ from common import state as common_state
 from escape import room
 from escape import state as escape_state
 from . import play_area
+from . import play_map
 from . import side_bar
 
 
@@ -59,7 +60,7 @@ class Game(common_state.GameState):
             self._side_bar.text_area.show(None)
         self._side_bar.mini_map.update(
             self._play_area.current_square, self._play_area.visible_walls)
-        if self._play_area.current_square == play_area.END_SQUARE:
+        if self._play_area.current_square == play_map.END_SQUARE:
             self._side_bar.mini_map.turn_red()
             self._side_bar.text_area.show(self._END_TEXT)
         self.draw()

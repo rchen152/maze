@@ -2,9 +2,7 @@
 
 import enum
 from common import img
-
-START_X = -50
-START_Y = -200
+from . import play_map
 
 
 class Side(enum.Enum):
@@ -25,21 +23,19 @@ class Side(enum.Enum):
             return (rect.bottomleft, rect.bottomright)
 
 
-def _Wall(delta_x, delta_y, side):
+def _Wall(coord_x, coord_y, side):
     """Returns a wall.
 
     Args:
-      delta_x: Horizontal distance from starting square in number of squares.
-      delta_y: Vertical distance from starting square in number of squares.
+      coord_x: Horizontal distance from starting square in number of squares.
+      coord_y: Vertical distance from starting square in number of squares.
       side: Which side of the square the wall is on.
     """
-    length = 800
-    wall_x = START_X + length * delta_x
-    wall_y = START_Y + length * delta_y
+    wall_x, wall_y = play_map.square_pos(coord_x, coord_y)
     if side is Side.RIGHT:
-        wall_x += length
+        wall_x += play_map.SQUARE_LENGTH
     elif side is Side.BOTTOM:
-        wall_y += length
+        wall_y += play_map.SQUARE_LENGTH
     else:
         assert side in (Side.LEFT, Side.TOP)
     if side in (Side.LEFT, Side.RIGHT):
@@ -52,7 +48,7 @@ def _Wall(delta_x, delta_y, side):
 
     class Wall(img.PngFactory):
 
-        SQUARE = (delta_x, delta_y)
+        SQUARE = (coord_x, coord_y)
         SIDE = side
 
         def __init__(self, screen):

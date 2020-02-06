@@ -59,10 +59,10 @@ class SurfaceTest(test_utils.ImgTestCase):
     def test_tick(self):
         self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT))
-        delta_x = self.play_area._scroll_speed[0]
+        speed_x = self.play_area._scroll_speed[0]
         self.assertIs(self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=play_area._TICK)), True)
-        self.assertGreater(self.play_area._scroll_speed[0], delta_x)
+        self.assertGreater(self.play_area._scroll_speed[0], speed_x)
 
     def test_handle_player_collision(self):
         self.play_area.handle_player_movement(

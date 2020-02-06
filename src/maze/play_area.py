@@ -8,9 +8,9 @@ from common import color
 from common import img
 from common import state
 from . import objects
+from . import play_map
 from . import walls
 
-END_SQUARE = (2, 4)
 _TICK = pygame.USEREVENT
 _TICK_INTERVAL_MS = 100
 _PLAYER_SPEED_INTERVAL = 5
@@ -19,7 +19,6 @@ _PLAYER_MOVES = {
     K_LEFT: (_PLAYER_SPEED_INTERVAL, 0), K_RIGHT: (-_PLAYER_SPEED_INTERVAL, 0),
     K_UP: (0, _PLAYER_SPEED_INTERVAL), K_DOWN: (0, -_PLAYER_SPEED_INTERVAL)}
 _PLAYER_FEET_HEIGHT = 15
-_HOUSE_POS = (150, -130)
 
 
 def _load(name, *args, **kwargs):
@@ -69,8 +68,8 @@ class Surface(objects.Surface):
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
     # We don't include the player here because he is a special fixed object.
     OBJECTS = {
-        'house': _load('house', _HOUSE_POS),
         **walls.ALL,
+        'house': _load('house', play_map.HOUSE_POS),
     }
 
     def __init__(self, screen):
@@ -86,10 +85,10 @@ class Surface(objects.Surface):
     @property
     def current_square(self):
         effective_feet_rect = self._player_feet_rect.move(
-            tuple(_HOUSE_POS[i] - self.house.RECT.topleft[i]
+            tuple(play_map.HOUSE_POS[i] - self.house.RECT.topleft[i]
                   for i in range(2)))
-        return ((effective_feet_rect.centerx - walls.START_X) // 800,
-                (effective_feet_rect.centery - walls.START_Y) // 800)
+        return tuple((effective_feet_rect.center[i] - play_map.START_POS[i]) //
+                     play_map.SQUARE_LENGTH for i in range(2))
 
     @property
     def visible_walls(self):

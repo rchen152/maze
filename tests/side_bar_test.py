@@ -3,6 +3,7 @@
 import pygame
 import unittest
 
+from common import color
 from common import test_utils
 from maze import side_bar
 from maze import walls
@@ -43,6 +44,11 @@ class MiniMapTest(test_utils.GameStateTestCase):
 
     def test_draw(self):
         self.mini_map.draw()
+
+    def test_turn_red(self):
+        self.assertNotEqual(self.mini_map._square_color, color.RED)
+        self.mini_map.turn_red()
+        self.assertEqual(self.mini_map._square_color, color.RED)
 
 
 class ItemCellTest(unittest.TestCase):

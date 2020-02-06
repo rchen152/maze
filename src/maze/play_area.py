@@ -10,8 +10,9 @@ from common import state
 from . import objects
 from . import walls
 
-TICK = pygame.USEREVENT
-TICK_INTERVAL_MS = 100
+END_SQUARE = (2, 4)
+_TICK = pygame.USEREVENT
+_TICK_INTERVAL_MS = 100
 _PLAYER_SPEED_INTERVAL = 5
 # We scroll the background instead of moving the player.
 _PLAYER_MOVES = {
@@ -135,12 +136,12 @@ class Surface(objects.Surface):
     def handle_player_movement(self, event) -> Union[bool, str]:
         if event.type == KEYUP and event.key in _PLAYER_MOVES:
             self._scroll_speed = None
-            pygame.time.set_timer(TICK, 0)
+            pygame.time.set_timer(_TICK, 0)
             return True
         elif event.type == KEYDOWN and event.key in _PLAYER_MOVES:
             self._scroll_speed = _PLAYER_MOVES[event.key]
-            pygame.time.set_timer(TICK, TICK_INTERVAL_MS)
-        elif event.type == TICK:
+            pygame.time.set_timer(_TICK, _TICK_INTERVAL_MS)
+        elif event.type == _TICK:
             if not self._scroll_speed:
                 # The player has been stopped by an obstacle.
                 return True

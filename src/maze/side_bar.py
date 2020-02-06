@@ -36,11 +36,18 @@ class MiniMap(Rect):
         self._current_square = (0, 0)
         self._explored_squares = {self._current_square}
         self._seen_walls = set()
+        self._current_square_color = color.BRIGHT_GREEN
+        self._square_color = color.BLUE
+        self._wall_color = color.LIGHT_CREAM
 
     def update(self, square, visible_walls):
         self._current_square = square
         self._explored_squares.add(square)
         self._seen_walls |= visible_walls
+
+    def turn_red(self):
+        self._current_square_color = self._square_color = self._wall_color = (
+            color.RED)
 
     def draw(self):
         super().draw()
@@ -53,14 +60,14 @@ class MiniMap(Rect):
 
         for square in self._explored_squares:
             if square == self._current_square:
-                square_color = color.BRIGHT_GREEN
+                square_color = self._current_square_color
             else:
-                square_color = color.BLUE
+                square_color = self._square_color
             pygame.draw.rect(self._screen, square_color, get_rect_at(square))
         for wall in self._seen_walls:
             start_pos, end_pos = wall.SIDE.endpoints(get_rect_at(wall.SQUARE))
             pygame.draw.line(
-                self._screen, color.LIGHT_CREAM, start_pos, end_pos, 2)
+                self._screen, self._wall_color, start_pos, end_pos, 2)
 
 
 def ItemCell(idx):

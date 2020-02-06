@@ -56,5 +56,7 @@ class Game(common_state.GameState):
             self._side_bar.text_area.show(None)
         self._side_bar.mini_map.update(
             self._play_area.current_square, self._play_area.visible_walls)
+        if self._play_area.current_square == play_area.END_SQUARE:
+            self._side_bar.mini_map.turn_red()
         self.draw()
         return True

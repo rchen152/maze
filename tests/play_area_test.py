@@ -61,7 +61,7 @@ class SurfaceTest(test_utils.ImgTestCase):
             test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT))
         delta_x = self.play_area._scroll_speed[0]
         self.assertIs(self.play_area.handle_player_movement(
-            test_utils.MockEvent(typ=play_area.TICK)), True)
+            test_utils.MockEvent(typ=play_area._TICK)), True)
         self.assertGreater(self.play_area._scroll_speed[0], delta_x)
 
     def test_handle_player_collision(self):
@@ -69,7 +69,7 @@ class SurfaceTest(test_utils.ImgTestCase):
             test_utils.MockEvent(typ=KEYDOWN, key=K_UP))
         self._set_speed_for_collision()
         self.assertIsInstance(self.play_area.handle_player_movement(
-            test_utils.MockEvent(typ=play_area.TICK)), str)
+            test_utils.MockEvent(typ=play_area._TICK)), str)
 
     def test_collide_with_closest_object(self):
         for obj in self.play_area._objects.values():

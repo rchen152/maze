@@ -3,6 +3,7 @@
 from pygame.locals import *
 import unittest
 
+from common import color
 from common import test_utils
 from maze import play_area
 from maze import state
@@ -52,7 +53,7 @@ class GameTest(test_utils.GameStateTestCase):
         self.game.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_UP))
         self.assertTrue(self.game.handle_player_movement(
-            test_utils.MockEvent(typ=play_area.TICK)))
+            test_utils.MockEvent(typ=play_area._TICK)))
         self.assertFalse(self.game._side_bar.text_area._text)
 
     def test_player_collision(self):
@@ -63,7 +64,7 @@ class GameTest(test_utils.GameStateTestCase):
         self.game._play_area._scroll_speed = (
             0, self.game._play_area.player.RECT.h)
         self.game.handle_player_movement(
-            test_utils.MockEvent(typ=play_area.TICK))
+            test_utils.MockEvent(typ=play_area._TICK))
         self.assertTrue(self.game._side_bar.text_area._text)
 
     def test_movement_unrelated_event(self):
@@ -77,7 +78,7 @@ class GameTest(test_utils.GameStateTestCase):
         self.assertEqual(self.game._side_bar.mini_map._current_square, (0, 0))
         self.game._play_area._scroll_speed = (800, 0)
         self.game.handle_player_movement(
-            test_utils.MockEvent(typ=play_area.TICK))
+            test_utils.MockEvent(typ=play_area._TICK))
         self.assertEqual(self.game._side_bar.mini_map._current_square, (-1, 0))
 
     def test_seen_walls(self):
@@ -87,10 +88,19 @@ class GameTest(test_utils.GameStateTestCase):
         self.assertFalse(self.game._side_bar.mini_map._seen_walls)
         self.game._play_area._scroll_speed = (-400, 0)
         self.game.handle_player_movement(
-            test_utils.MockEvent(typ=play_area.TICK))
+            test_utils.MockEvent(typ=play_area._TICK))
         wall, = self.game._side_bar.mini_map._seen_walls
         self.assertEqual(wall.SQUARE, (0, 0))
         self.assertEqual(wall.SIDE, walls.Side.RIGHT)
+
+    def test_turn_minimap_red(self):
+        self.assertNotEqual(
+            self.game._side_bar.mini_map._square_color, color.RED)
+        for obj in self.game._play_area._objects.values():
+            obj.move((-1600, -3200))
+        self.game.handle_player_movement(
+            test_utils.MockEvent(typ=KEYDOWN, key=K_DOWN))
+        self.assertEqual(self.game._side_bar.mini_map._square_color, color.RED)
 
 
 if __name__ == '__main__':

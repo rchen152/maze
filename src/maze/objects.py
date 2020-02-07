@@ -20,7 +20,7 @@ class Surface(img.RectFactory):
     def __getattr__(self, name):
         if name in self._objects:
             return self._objects[name]
-        return super().__getattr__(name)
+        return self.__getattribute__(name)
 
     def _visible(self, obj):
         return obj.RECT.colliderect(self._surface.get_rect())

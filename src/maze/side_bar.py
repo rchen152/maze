@@ -1,7 +1,8 @@
 """Side bar."""
 
+import dataclasses
 import pygame
-from typing import Sequence, NamedTuple, Tuple
+from typing import Sequence, Tuple
 
 from common import color
 from common import img
@@ -91,7 +92,8 @@ def ItemCell(idx):
     return ItemCell
 
 
-class _TextBlock(NamedTuple):
+@dataclasses.dataclass
+class _TextBlock:
     pos: Tuple[int, int]
     size: Tuple[int, int]
     value: str
@@ -123,7 +125,8 @@ class TextArea(Rect):
                 value = word
             size = self._font.size(value)
             if size[0] <= self.RECT.w - self._LEFT_PAD:
-                self._text[-1] = current_block._replace(size=size, value=value)
+                self._text[-1].size = size
+                self._text[-1].value = value
             else:
                 y = current_block.pos[-1] + current_block.size[-1]
                 self._text.append(_TextBlock(

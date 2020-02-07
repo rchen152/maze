@@ -29,6 +29,10 @@ def _is_wall(name):
     return name.startswith('wall_')
 
 
+def _shift_pos(pos, shift):
+    return tuple(pos[i] + shift[i] for i in range(2))
+
+
 def _shift_speed(speed, direction):
     return tuple(s + direction * _PLAYER_SPEED_INTERVAL * s / abs(s) if s else s
                  for s in speed)
@@ -70,6 +74,12 @@ class Surface(objects.Surface):
     OBJECTS = {
         **walls.ALL,
         'house': _load('house', play_map.HOUSE_POS),
+        'gate': _load(
+            'gate', _shift_pos(
+                play_map.square_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 0)),
+            (-0.5, -1)),
+        'item_key': _load(
+            'key', _shift_pos(play_map.square_pos(-1, 1), (150, 600))),
     }
 
     def __init__(self, screen):
@@ -120,10 +130,10 @@ class Surface(objects.Surface):
                     if not _get_player_path_rect(speed).colliderect(obj.RECT):
                         break
                     speed = _decelerate(speed)
-                if name == 'house':
-                    reason = "You don't want to go back in the house."
-                elif _is_wall(name):
+                if _is_wall(name):
                     reason = "That's a wall..."
+                elif name == 'house':
+                    reason = "You don't want to go back in the house."
                 else:
                     raise NotImplementedError(f'Collided with {name}')
                 if _closer_than(speed, closest_collision):

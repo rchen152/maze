@@ -2,11 +2,12 @@
 
 import pygame
 from pygame.locals import *
-from typing import NamedTuple, Optional, Tuple, Union
+from typing import Optional, Union
 
 from common import color
 from common import img
 from common import state
+from . import collisions
 from . import objects
 from . import play_map
 from . import walls
@@ -23,10 +24,6 @@ _PLAYER_FEET_HEIGHT = 15
 
 def _load(name, *args, **kwargs):
     return lambda screen: img.PngFactory(name, screen, *args, **kwargs)
-
-
-def _is_wall(name):
-    return name.startswith('wall_')
 
 
 def _shift_pos(pos, shift):
@@ -47,25 +44,6 @@ def _accelerate(speed):
     return _shift_speed(speed, 1)
 
 
-class _Collision(NamedTuple):
-    max_nocollision_speed: Optional[Tuple[int, int]]
-    reason: str
-
-
-def _closer_than(speed, collision):
-    # See check_player_collision. When two possible collisions are in the same
-    # direction, the closer one is the one for which the maximum speed that
-    # avoids collision is less.
-    if not collision:
-        return True
-    elif speed and collision.max_nocollision_speed:
-        return abs(sum(speed)) < abs(sum(collision.max_nocollision_speed))
-    elif collision.max_nocollision_speed:
-        return True
-    else:
-        return False
-
-
 class Surface(objects.Surface):
     """A subsurface with movable objects on it."""
 
@@ -78,8 +56,7 @@ class Surface(objects.Surface):
             'gate', _shift_pos(
                 play_map.square_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 0)),
             (-0.5, -1)),
-        'item_key': _load(
-            'key', _shift_pos(play_map.square_pos(-1, 1), (150, 600))),
+        'key': _load('key', _shift_pos(play_map.square_pos(-1, 1), (150, 600))),
     }
 
     def __init__(self, screen):
@@ -103,7 +80,7 @@ class Surface(objects.Surface):
     @property
     def visible_walls(self):
         return {wall for name, wall in self._objects.items()
-                if _is_wall(name) and self._visible(wall) and
+                if walls.match(name) and self._visible(wall) and
                 self.current_square in wall.adjacent_squares}
 
     def draw(self):
@@ -111,7 +88,7 @@ class Surface(objects.Surface):
         super().draw()
         self.player.draw()
 
-    def check_player_collision(self) -> Optional[_Collision]:
+    def check_player_collision(self) -> Optional[collisions.Object]:
         # Check if the player's feet would hit anything if he took a step
         # against the background scroll direction.
 
@@ -130,14 +107,9 @@ class Surface(objects.Surface):
                     if not _get_player_path_rect(speed).colliderect(obj.RECT):
                         break
                     speed = _decelerate(speed)
-                if _is_wall(name):
-                    reason = "That's a wall..."
-                elif name == 'house':
-                    reason = "You don't want to go back in the house."
-                else:
-                    raise NotImplementedError(f'Collided with {name}')
-                if _closer_than(speed, closest_collision):
-                    closest_collision = _Collision(speed, reason)
+                if closest_collision and closest_collision.closer_than(speed):
+                    continue
+                closest_collision = collisions.one(speed, name)
         return closest_collision
 
     def handle_player_movement(self, event) -> Union[bool, str]:

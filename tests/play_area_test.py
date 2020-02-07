@@ -8,13 +8,6 @@ from maze import play_area
 from maze import walls
 
 
-class CloserThanTest(unittest.TestCase):
-
-    def test_closer_than(self):
-        self.assertTrue(
-            play_area._closer_than((-2, 0), play_area._Collision((-3, 0), '')))
-
-
 class SurfaceTest(test_utils.ImgTestCase):
 
     def setUp(self):

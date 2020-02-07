@@ -7,6 +7,15 @@ from common import test_utils
 from maze import walls
 
 
+class MatchTest(unittest.TestCase):
+
+    def test_match(self):
+        self.assertTrue(walls.match('wall_1'))
+
+    def test_nomatch(self):
+        self.assertFalse(walls.match('wallpaper'))
+
+
 class SideTest(unittest.TestCase):
 
     def test_endpoints(self):

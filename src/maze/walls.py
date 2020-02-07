@@ -5,6 +5,10 @@ from common import img
 from . import play_map
 
 
+def match(name):
+    return name.startswith('wall_')
+
+
 class Side(enum.Enum):
     LEFT = enum.auto()
     RIGHT = enum.auto()

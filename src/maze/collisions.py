@@ -22,11 +22,6 @@ class Object:
             return False
 
 
-@dataclasses.dataclass
-class Item(Object):
-    name: str
-
-
 def one(speed, name):
     if walls.match(name):
         return Object(speed, "That's a wall...")
@@ -34,5 +29,7 @@ def one(speed, name):
         return Object(speed, "You don't want to go back in the house.")
     elif name == 'gate':
         return Object(speed, "There's a gate here, but it's locked.")
+    elif name == 'key':
+        return Object(speed, "It's some sort of key.")
     else:
-        return Item(speed, f'You pick up a {name}.', name)
+        raise NotImplementedError(f'Collided with {name}')

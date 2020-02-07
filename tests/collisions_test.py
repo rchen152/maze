@@ -1,6 +1,5 @@
 """Tests for maze.collisions."""
 
-from typing import cast
 import unittest
 from maze import collisions
 
@@ -18,15 +17,9 @@ class CloserThanTest(unittest.TestCase):
 
 class OneTest(unittest.TestCase):
 
-    def test_object(self):
+    def test_wall(self):
         collision = collisions.one((-3, 0), 'wall_1')
-        self.assertNotIsInstance(collision, collisions.Item)
         self.assertIn('wall', collision.reason)
-
-    def test_item(self):
-        collision = cast(collisions.Item, collisions.one((-3, 0), 'key'))
-        self.assertIn('key', collision.reason)
-        self.assertEqual(collision.name, 'key')
 
 
 if __name__ == '__main__':

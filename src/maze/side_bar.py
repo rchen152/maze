@@ -85,9 +85,20 @@ def ItemCell(idx):
                            _SIDE_CELL_WIDTH)
         COLOR = color.LIGHT_CREAM
 
+        def __init__(self, screen):
+            super().__init__(screen)
+            self._item = None
+
+        def add_item(self, name):
+            self._item = img.load(
+                f'item_{name}', self._screen,
+                (self.RECT.centerx, self.RECT.centery), (-0.5, -0.5))
+
         def draw(self):
             super().draw()
             pygame.draw.rect(self._screen, color.BLACK, self.RECT, 2)
+            if self._item:
+                self._item.draw()
 
     return ItemCell
 
@@ -146,3 +157,6 @@ class Surface(objects.Surface):
     RECT = pygame.Rect(state.RECT.h, 0, _SIDE_BAR_WIDTH, state.RECT.h)
     OBJECTS = {'mini_map': MiniMap, 'text_area': TextArea,
                **{'item_cell%d' % i: ItemCell(i) for i in range(8)}}
+
+    def add_item(self, name):
+        self.item_cell0.add_item(name)

@@ -142,3 +142,10 @@ class Surface(objects.Surface):
             for name, obj in self._objects.items():
                 obj.move(speed)
         return move_result
+
+    def handle_click(self, pos) -> Union[bool, interactions.Item]:
+        if self.key.collidepoint(pos):
+            if self._square(self.key.RECT) == self.current_square:
+                del self._objects['key']
+                return interactions.pick_up('key')
+        return True

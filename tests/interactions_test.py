@@ -22,5 +22,13 @@ class CollideTest(unittest.TestCase):
         self.assertIn('wall', collision.reason)
 
 
+class PickUpTest(unittest.TestCase):
+
+    def test_key(self):
+        item = interactions.pick_up('key')
+        self.assertEqual(item.name, 'key')
+        self.assertIn('key', item.reason)
+
+
 if __name__ == '__main__':
     unittest.main()

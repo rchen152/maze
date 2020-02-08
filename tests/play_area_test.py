@@ -1,9 +1,11 @@
 """Tests for maze.play_area."""
 
 from pygame.locals import *
+from typing import cast
 import unittest
 
 from common import test_utils
+from maze import interactions
 from maze import play_area
 from maze import walls
 
@@ -87,6 +89,16 @@ class SurfaceTest(test_utils.ImgTestCase):
         wall, = self.play_area.visible_walls
         self.assertEqual(wall.SQUARE, (0, 0))
         self.assertEqual(wall.SIDE, walls.Side.RIGHT)
+
+    def test_handle_click(self):
+        self.assertIs(self.play_area.handle_click((288, 288)), True)
+
+    def test_handle_key(self):
+        for obj in self.play_area._objects.values():
+            obj.move((800, -800))
+        click_result = cast(interactions.Item, self.play_area.handle_click(
+            self.play_area.key.RECT.center))
+        self.assertEqual(click_result.name, 'key')
 
 
 if __name__ == '__main__':

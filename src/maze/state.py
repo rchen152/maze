@@ -8,6 +8,7 @@ from common import img
 from common import state as common_state
 from escape import room
 from escape import state as escape_state
+from . import interactions
 from . import play_area
 from . import play_map
 from . import side_bar
@@ -63,5 +64,16 @@ class Game(common_state.GameState):
         if self._play_area.current_square == play_map.END_SQUARE:
             self._side_bar.mini_map.turn_red()
             self._side_bar.text_area.show(self._END_TEXT)
+        self.draw()
+        return True
+
+    def handle_click(self, event):
+        if event.type != MOUSEBUTTONDOWN or event.button != 1 or (
+                not self._play_area.collidepoint(event.pos)):
+            return False
+        click_result = self._play_area.handle_click(event.pos)
+        if isinstance(click_result, interactions.Item):
+            self._side_bar.text_area.show(click_result.reason)
+            self._side_bar.add_item(click_result.name)
         self.draw()
         return True

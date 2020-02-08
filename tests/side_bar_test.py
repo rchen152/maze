@@ -51,17 +51,32 @@ class MiniMapTest(test_utils.GameStateTestCase):
         self.assertEqual(self.mini_map._square_color, color.RED)
 
 
-class ItemCellTest(unittest.TestCase):
+class ItemCellTest(test_utils.GameStateTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.cell = side_bar.ItemCell(0)(self.screen)
 
     def test_basic(self):
         Cell0 = side_bar.ItemCell(0)
         self.assertEqual(Cell0.RECT.topleft, (0, 0))
-        Cell0(test_utils.MockScreen())
 
     def test_skip_center_cell(self):
         Cell4 = side_bar.ItemCell(4)
         width = Cell4.RECT.width
         self.assertEqual(Cell4.RECT.topleft, (width * 2, width))
+
+    def test_add_item(self):
+        self.assertIsNone(self.cell._item)
+        self.cell.add_item('key')
+        self.assertIsNotNone(self.cell._item)
+
+    def test_draw(self):
+        self.cell.draw()
+
+    def test_draw_item(self):
+        self.cell.add_item('key')
+        self.cell.draw()
 
 
 class TextAreaTest(test_utils.GameStateTestCase):
@@ -102,8 +117,8 @@ class TextAreaTest(test_utils.GameStateTestCase):
 
 class SurfaceTest(test_utils.GameStateTestCase):
 
-    def test_init(self):
-        side_bar.Surface(self.screen)
+    def test_add_item(self):
+        side_bar.Surface(self.screen).add_item('key')
 
 
 if __name__ == '__main__':

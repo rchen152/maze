@@ -102,6 +102,14 @@ class GameTest(test_utils.GameStateTestCase):
             test_utils.MockEvent(typ=KEYDOWN, key=K_DOWN))
         self.assertEqual(self.game._side_bar.mini_map._square_color, color.RED)
 
+    def test_non_click(self):
+        self.assertFalse(
+            self.game.handle_click(test_utils.MockEvent(typ=MOUSEBUTTONUP)))
+
+    def test_click(self):
+        self.assertTrue(self.game.handle_click(
+            test_utils.MockEvent(typ=MOUSEBUTTONDOWN, button=1, pos=(0, 0))))
+
 
 if __name__ == '__main__':
     unittest.main()

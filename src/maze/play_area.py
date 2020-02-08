@@ -54,9 +54,10 @@ class Surface(objects.Surface):
         'house': _load('house', play_map.HOUSE_POS),
         'gate': _load(
             'gate', _shift_pos(
-                play_map.square_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 0)),
+                play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 0)),
             (-0.5, -1)),
-        'key': _load('key', _shift_pos(play_map.square_pos(-1, 1), (150, 600))),
+        'key': _load(
+            'key', _shift_pos(play_map.square_to_pos(-1, 1), (150, 600))),
     }
 
     def __init__(self, screen):
@@ -69,13 +70,14 @@ class Surface(objects.Surface):
             self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
             self.player.RECT.w, _PLAYER_FEET_HEIGHT)
 
+    def _square(self, rect):
+        return play_map.pos_to_square(
+            rect.move(tuple(play_map.HOUSE_POS[i] - self.house.RECT.topleft[i]
+                            for i in range(2))).center)
+
     @property
     def current_square(self):
-        effective_feet_rect = self._player_feet_rect.move(
-            tuple(play_map.HOUSE_POS[i] - self.house.RECT.topleft[i]
-                  for i in range(2)))
-        return tuple((effective_feet_rect.center[i] - play_map.START_POS[i]) //
-                     play_map.SQUARE_LENGTH for i in range(2))
+        return self._square(self._player_feet_rect)
 
     @property
     def visible_walls(self):

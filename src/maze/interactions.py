@@ -1,4 +1,4 @@
-"""Player collisions."""
+"""Player interactions."""
 
 import dataclasses
 from typing import Optional, Tuple
@@ -6,7 +6,7 @@ from . import walls
 
 
 @dataclasses.dataclass
-class Object:
+class Collision:
     max_nocollision_speed: Optional[Tuple[int, int]]
     reason: str
 
@@ -22,14 +22,14 @@ class Object:
             return False
 
 
-def one(speed, name):
+def collide(speed, name):
     if walls.match(name):
-        return Object(speed, "That's a wall...")
+        return Collision(speed, "That's a wall...")
     elif name == 'house':
-        return Object(speed, "You don't want to go back in the house.")
+        return Collision(speed, "You don't want to go back in the house.")
     elif name == 'gate':
-        return Object(speed, "There's a gate here, but it's locked.")
+        return Collision(speed, "There's a gate here, but it's locked.")
     elif name == 'key':
-        return Object(speed, "It's some sort of key.")
+        return Collision(speed, "It's some sort of key.")
     else:
         raise NotImplementedError(f'Collided with {name}')

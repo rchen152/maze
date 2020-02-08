@@ -7,7 +7,7 @@ from typing import Optional, Union
 from common import color
 from common import img
 from common import state
-from . import collisions
+from . import interactions
 from . import objects
 from . import play_map
 from . import walls
@@ -90,7 +90,7 @@ class Surface(objects.Surface):
         super().draw()
         self.player.draw()
 
-    def check_player_collision(self) -> Optional[collisions.Object]:
+    def check_player_collision(self) -> Optional[interactions.Collision]:
         # Check if the player's feet would hit anything if he took a step
         # against the background scroll direction.
 
@@ -111,7 +111,7 @@ class Surface(objects.Surface):
                     speed = _decelerate(speed)
                 if closest_collision and closest_collision.closer_than(speed):
                     continue
-                closest_collision = collisions.one(speed, name)
+                closest_collision = interactions.collide(speed, name)
         return closest_collision
 
     def handle_player_movement(self, event) -> Union[bool, str]:

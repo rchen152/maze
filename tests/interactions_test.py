@@ -26,8 +26,13 @@ class PickUpTest(unittest.TestCase):
 
     def test_key(self):
         item = interactions.pick_up('key')
+        assert item  # for pytype
         self.assertEqual(item.name, 'key')
+        self.assertTrue(item.consumed)
         self.assertIn('key', item.reason)
+
+    def test_noop(self):
+        self.assertIsNone(interactions.pick_up('wall_1'))
 
 
 class UseTest(unittest.TestCase):

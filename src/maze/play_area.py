@@ -191,14 +191,17 @@ class Surface(objects.Surface):
     def handle_click(self, pos) -> Union[bool, interactions.Item]:
         if not self.collidepoint(pos):
             return False
-        for name in ('key',):
-            if name not in self._objects:
-                continue
-            item = self._objects[name]
-            if item.collidepoint(pos) and self._player_close_to(item.RECT):
-                del self._objects[name]
-                return interactions.pick_up(name)
-        return True
+        for name, obj in self._objects.items():
+            if obj.collidepoint(pos) and self._player_close_to(obj.RECT):
+                item = interactions.pick_up(name)
+                break
+        else:
+            return True
+        if not item:
+            return True
+        if item.consumed:
+            del self._objects[item.name]
+        return item
 
     def use_item(self, name) -> Optional[str]:
         use = interactions.use(name)

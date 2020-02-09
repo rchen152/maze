@@ -25,6 +25,7 @@ class Collision:
 @dataclasses.dataclass
 class Item:
     name: str
+    consumed: bool
     reason: str
 
 
@@ -53,8 +54,11 @@ def collide(speed, name):
 
 
 def pick_up(name):
-    if name == 'key':
-        return Item(name, 'You pick up the key.')
+    if walls.match(name) or walls.partial_match(name) or name in (
+            'house', 'gate'):
+        return None
+    elif name == 'key':
+        return Item(name, True, 'You pick up the key.')
     else:
         raise NotImplementedError(f'Picked up {name}')
 

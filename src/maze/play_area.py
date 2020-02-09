@@ -62,6 +62,15 @@ class _OpenGateRight(objects.Rect):
     COLOR = color.BROWN
 
 
+class _Hole(img.RectFactory):
+
+    RECT = pygame.Rect(play_map.square_to_pos(4, 2), (500, 500))
+
+    def draw(self):
+        pygame.draw.circle(
+            self._screen, color.BLACK, self.RECT.center, self.RECT.w // 2)
+
+
 class Surface(objects.Surface):
     """A subsurface with movable objects on it."""
 
@@ -81,6 +90,7 @@ class Surface(objects.Surface):
             (-0.5, -1)),
         'key': _load(
             'key', _shift_pos(play_map.square_to_pos(-1, 1), (150, 600))),
+        'hole': _Hole,
     }
     _HIDDEN_OBJECTS: objects.ObjectsType = {
         'open_gate_left': _OpenGateLeft,

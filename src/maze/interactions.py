@@ -46,6 +46,8 @@ def collide(speed, name):
         return Collision(speed, "It's some sort of key.")
     elif name.startswith('open_gate_'):
         return Collision(speed, 'You walk into the gate. Ouch.')
+    elif name == 'hole':
+        return Collision(speed, "It's a hole in the ground.")
     else:
         raise NotImplementedError(f'Collided with {name}')
 

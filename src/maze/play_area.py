@@ -1,5 +1,6 @@
 """Gameplay area."""
 
+import itertools
 import pygame
 from pygame.locals import *
 from typing import Optional, Union
@@ -20,6 +21,7 @@ _PLAYER_MOVES = {
     K_LEFT: (_PLAYER_SPEED_INTERVAL, 0), K_RIGHT: (-_PLAYER_SPEED_INTERVAL, 0),
     K_UP: (0, _PLAYER_SPEED_INTERVAL), K_DOWN: (0, -_PLAYER_SPEED_INTERVAL)}
 _PLAYER_FEET_HEIGHT = 15
+_OPEN_GATE_SIZE = (5, 82)
 
 
 def _load(name, *args, **kwargs):
@@ -44,6 +46,22 @@ def _accelerate(speed):
     return _shift_speed(speed, 1)
 
 
+class OpenGateLeft(objects.Rect):
+
+    RECT = pygame.Rect(
+        _shift_pos(play_map.square_to_pos(0, 0), (316, -_OPEN_GATE_SIZE[1])),
+        _OPEN_GATE_SIZE)
+    COLOR = color.BROWN
+
+
+class OpenGateRight(objects.Rect):
+
+    RECT = pygame.Rect(
+        _shift_pos(play_map.square_to_pos(1, 0), (-320, -_OPEN_GATE_SIZE[1])),
+        _OPEN_GATE_SIZE)
+    COLOR = color.BROWN
+
+
 class Surface(objects.Surface):
     """A subsurface with movable objects on it."""
 
@@ -64,9 +82,15 @@ class Surface(objects.Surface):
         'key': _load(
             'key', _shift_pos(play_map.square_to_pos(-1, 1), (150, 600))),
     }
+    _HIDDEN_OBJECTS = {
+        'open_gate_left': OpenGateLeft,
+        'open_gate_right': OpenGateRight,
+    }
 
     def __init__(self, screen):
         super().__init__(screen)
+        self._hidden_objects = {name: cls(self._surface)
+                                for name, cls in self._HIDDEN_OBJECTS.items()}
         self.player = img.load('player', self._surface,
                                (state.RECT.h / 2, state.RECT.h / 2),
                                (-0.5, -0.5))
@@ -144,7 +168,8 @@ class Surface(objects.Surface):
             speed = self._scroll_speed
             move_result = True
         if speed:
-            for obj in self._objects.values():
+            for obj in itertools.chain(self._objects.values(),
+                                       self._hidden_objects.values()):
                 obj.move(speed)
         return move_result
 
@@ -170,4 +195,7 @@ class Surface(objects.Surface):
         if not self._player_close_to(self._objects[use.name].RECT):
             return None
         del self._objects[use.name]
+        for effect in use.effects:
+            self._objects[effect] = self._hidden_objects[effect]
+            del self._hidden_objects[effect]
         return use.reason

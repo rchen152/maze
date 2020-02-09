@@ -32,10 +32,18 @@ class PickUpTest(unittest.TestCase):
 
 class UseTest(unittest.TestCase):
 
-    def test_key(self):
+    def test_name(self):
         use = interactions.use('key')
         self.assertEqual(use.name, 'gate')
+
+    def test_reason(self):
+        use = interactions.use('key')
         self.assertIn('gate', use.reason)
+
+    def test_effects(self):
+        use = interactions.use('key')
+        self.assertCountEqual(
+            use.effects, ('open_gate_left', 'open_gate_right'))
 
 
 if __name__ == '__main__':

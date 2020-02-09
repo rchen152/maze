@@ -41,10 +41,18 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.assertTrue(self.play_area.check_player_collision())
 
     def test_start_player_movement(self):
+        object_x = self.play_area.house.RECT.x
+        hidden_object_x = (
+            self.play_area._hidden_objects['open_gate_left'].RECT.x)
         self.assertIs(self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT)), True)
-        self.assertGreater(self.play_area._scroll_speed[0], 0)
-        self.assertFalse(self.play_area._scroll_speed[1])
+        speed_x, speed_y = self.play_area._scroll_speed
+        self.assertGreater(speed_x, 0)
+        self.assertFalse(speed_y)
+        self.assertEqual(self.play_area.house.RECT.x, object_x + speed_x)
+        self.assertEqual(
+            self.play_area._hidden_objects['open_gate_left'].RECT.x,
+            hidden_object_x + speed_x)
 
     def test_stop_player_movement(self):
         self.assertIs(self.play_area.handle_player_movement(
@@ -108,6 +116,10 @@ class SurfaceTest(test_utils.ImgTestCase):
             obj.move((0, 300))
         use_result = cast(str, self.play_area.use_item('key'))
         self.assertIn('gate', use_result)
+        self.assertNotIn('gate', self.play_area._objects)
+        for gate_half in ('open_gate_left', 'open_gate_right'):
+            self.assertIn(gate_half, self.play_area._objects)
+            self.assertNotIn(gate_half, self.play_area._hidden_objects)
 
     def test_use_key_too_far(self):
         self.assertIsNone(self.play_area.use_item('key'))

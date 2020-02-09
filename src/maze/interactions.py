@@ -1,7 +1,7 @@
 """Player interactions."""
 
 import dataclasses
-from typing import Optional, Tuple
+from typing import Optional, Sequence, Tuple
 from . import walls
 
 
@@ -31,6 +31,7 @@ class Item:
 @dataclasses.dataclass
 class Use:
     name: str
+    effects: Sequence[str]
     reason: str
 
 
@@ -43,6 +44,8 @@ def collide(speed, name):
         return Collision(speed, "There's a gate here, but it's locked.")
     elif name == 'key':
         return Collision(speed, "It's some sort of key.")
+    elif name.startswith('open_gate_'):
+        return Collision(speed, 'You walk into the gate. Ouch.')
     else:
         raise NotImplementedError(f'Collided with {name}')
 
@@ -56,6 +59,7 @@ def pick_up(name):
 
 def use(name):
     if name == 'key':
-        return Use('gate', 'You unlock the gate.')
+        return Use('gate', ('open_gate_left', 'open_gate_right'),
+                   'You unlock the gate.')
     else:
         raise NotImplementedError(f'Used {name}')

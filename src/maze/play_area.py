@@ -63,19 +63,37 @@ class _OpenGateRight(objects.Rect):
     COLOR = color.BROWN
 
 
+class _HoleRect(pygame.Rect):
+
+    @property
+    def radius(self):
+        return self.w // 2
+
+    def collidepoint(self, pos):
+        if not super().collidepoint(pos):
+            return False
+        return math.hypot(
+            *(pos[i] - self.center[i] for i in range(2))) <= self.radius
+
+    def colliderect(self, rect):
+        if not super().colliderect(rect):
+            return False
+        for pos in (rect.center, rect.topleft, rect.bottomleft, rect.topright,
+                    rect.bottomright, rect.midtop, rect.midleft, rect.midbottom,
+                    rect.midright):
+            if self.collidepoint(pos):
+                return True
+        return False
+
+
 class _Hole(img.RectFactory):
 
-    RECT = pygame.Rect(_shift_pos(play_map.square_to_pos(4, 2), (100, 100)),
-                       (500, 500))
-    _RADIUS = RECT.w // 2
+    RECT = _HoleRect(_shift_pos(play_map.square_to_pos(4, 2), (100, 100)),
+                     (500, 500))
 
     def draw(self):
         pygame.draw.circle(
-            self._screen, color.BLACK, self.RECT.center, self._RADIUS)
-
-    def collidepoint(self, pos):
-        return math.hypot(
-            *(pos[i] - self.RECT.center[i] for i in range(2))) <= self._RADIUS
+            self._screen, color.BLACK, self.RECT.center, self.RECT.radius)
 
 
 class Surface(objects.Surface):
@@ -148,11 +166,11 @@ class Surface(objects.Surface):
         player_path_rect = _get_player_path_rect(self._scroll_speed)
         closest_collision = None
         for name, obj in self._objects.items():
-            if player_path_rect.colliderect(obj.RECT):
+            if obj.RECT.colliderect(player_path_rect):
                 # Find the maximum speed at which the player won't collide.
                 speed = _decelerate(self._scroll_speed)
                 while speed:
-                    if not _get_player_path_rect(speed).colliderect(obj.RECT):
+                    if not obj.RECT.colliderect(_get_player_path_rect(speed)):
                         break
                     speed = _decelerate(speed)
                 if closest_collision and closest_collision.closer_than(speed):
@@ -193,7 +211,7 @@ class Surface(objects.Surface):
     def _player_close_to(self, rect):
         if self.current_square != self._square(rect):
             return False
-        return self.player.RECT.colliderect(rect.inflate(100, 100))
+        return rect.inflate(100, 100).colliderect(self.player.RECT)
 
     def handle_click(self, pos) -> Union[bool, interactions.Item]:
         if not self.collidepoint(pos):

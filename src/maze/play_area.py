@@ -47,20 +47,27 @@ def _accelerate(speed):
     return _shift_speed(speed, 1)
 
 
-class _OpenGateLeft(objects.Rect):
+class _OpenGateHalf(objects.Rect):
+
+    COLOR = color.BROWN
+
+    def draw(self):
+        super().draw()
+        pygame.draw.rect(self._screen, color.BLACK, self.RECT, 1)
+
+
+class _OpenGateLeft(_OpenGateHalf):
 
     RECT = pygame.Rect(
         _shift_pos(play_map.square_to_pos(0, 0), (316, -_OPEN_GATE_SIZE[1])),
         _OPEN_GATE_SIZE)
-    COLOR = color.BROWN
 
 
-class _OpenGateRight(objects.Rect):
+class _OpenGateRight(_OpenGateHalf):
 
     RECT = pygame.Rect(
         _shift_pos(play_map.square_to_pos(1, 0), (-320, -_OPEN_GATE_SIZE[1])),
         _OPEN_GATE_SIZE)
-    COLOR = color.BROWN
 
 
 class _HoleRect(pygame.Rect):

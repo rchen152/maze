@@ -1,6 +1,7 @@
 """Gameplay area."""
 
 import itertools
+import math
 import pygame
 from pygame.locals import *
 from typing import Optional, Union
@@ -66,10 +67,15 @@ class _Hole(img.RectFactory):
 
     RECT = pygame.Rect(_shift_pos(play_map.square_to_pos(4, 2), (100, 100)),
                        (500, 500))
+    _RADIUS = RECT.w // 2
 
     def draw(self):
         pygame.draw.circle(
-            self._screen, color.BLACK, self.RECT.center, self.RECT.w // 2)
+            self._screen, color.BLACK, self.RECT.center, self._RADIUS)
+
+    def collidepoint(self, pos):
+        return math.hypot(
+            *(pos[i] - self.RECT.center[i] for i in range(2))) <= self._RADIUS
 
 
 class Surface(objects.Surface):

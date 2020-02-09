@@ -53,14 +53,14 @@ def collide(speed, name):
         raise NotImplementedError(f'Collided with {name}')
 
 
-def pick_up(name):
+def obtain(name):
     if walls.match(name) or walls.partial_match(name) or name in (
             'house', 'gate'):
         return None
     elif name == 'key':
         return Item(name, True, 'You pick up the key.')
     else:
-        raise NotImplementedError(f'Picked up {name}')
+        raise NotImplementedError(f'Obtained {name}')
 
 
 def use(name):

@@ -193,7 +193,7 @@ class Surface(objects.Surface):
             return False
         for name, obj in self._objects.items():
             if obj.collidepoint(pos) and self._player_close_to(obj.RECT):
-                item = interactions.pick_up(name)
+                item = interactions.obtain(name)
                 break
         else:
             return True

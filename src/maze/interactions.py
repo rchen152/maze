@@ -35,7 +35,7 @@ class Use:
 
 
 def collide(speed, name):
-    if walls.match(name):
+    if walls.match(name) or walls.partial_match(name):
         return Collision(speed, "That's a wall...")
     elif name == 'house':
         return Collision(speed, "You don't want to go back in the house.")

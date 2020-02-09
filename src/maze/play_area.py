@@ -52,9 +52,14 @@ class Surface(objects.Surface):
     OBJECTS = {
         **walls.ALL,
         'house': _load('house', play_map.HOUSE_POS),
+        'partial_wall_gateleft': _load(
+            'partial_wall_horizontal', play_map.square_to_pos(0, 0), (0, -0.5)),
+        'partial_wall_gateright': _load(
+            'partial_wall_horizontal', play_map.square_to_pos(1, 0),
+            (-1, -0.5)),
         'gate': _load(
             'gate', _shift_pos(
-                play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 0)),
+                play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 15)),
             (-0.5, -1)),
         'key': _load(
             'key', _shift_pos(play_map.square_to_pos(-1, 1), (150, 600))),

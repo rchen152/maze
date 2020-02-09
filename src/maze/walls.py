@@ -9,6 +9,10 @@ def match(name):
     return name.startswith('wall_')
 
 
+def partial_match(name):
+    return name.startswith('partial_wall_')
+
+
 class Side(enum.Enum):
     LEFT = enum.auto()
     RIGHT = enum.auto()

@@ -16,6 +16,15 @@ class MatchTest(unittest.TestCase):
         self.assertFalse(walls.match('wallpaper'))
 
 
+class PartialMatchTest(unittest.TestCase):
+
+    def test_match(self):
+        self.assertTrue(walls.partial_match('partial_wall_1'))
+
+    def test_nomatch(self):
+        self.assertFalse(walls.partial_match('partial_wallpaper'))
+
+
 class SideTest(unittest.TestCase):
 
     def test_endpoints(self):

@@ -28,6 +28,7 @@ class ObtainTest(unittest.TestCase):
         item = interactions.obtain('key')
         assert item  # for pytype
         self.assertEqual(item.name, 'key')
+        self.assertTrue(item.success)
         self.assertTrue(item.consumed)
         self.assertIn('key', item.reason)
 

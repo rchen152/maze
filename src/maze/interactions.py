@@ -25,6 +25,7 @@ class Collision:
 @dataclasses.dataclass
 class Item:
     name: str
+    success: bool
     consumed: bool
     reason: str
 
@@ -58,7 +59,10 @@ def obtain(name):
             'house', 'gate'):
         return None
     elif name == 'key':
-        return Item(name, True, 'You pick up the key.')
+        return Item(name, True, True, 'You pick up the key.')
+    elif name == 'hole':
+        return Item(name, False, False, 'You fall into the hole and climb back '
+                    'out. You feel foolish.')
     else:
         raise NotImplementedError(f'Obtained {name}')
 

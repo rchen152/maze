@@ -75,7 +75,8 @@ class Game(common_state.GameState):
         click_result = self._play_area.handle_click(event.pos)
         if click_result:
             if isinstance(click_result, interactions.Item):
-                self._side_bar.add_item(click_result.name)
+                if click_result.success:
+                    self._side_bar.add_item(click_result.name)
                 self._side_bar.text_area.show(click_result.reason)
         else:
             click_result = self._side_bar.handle_click(event.pos)

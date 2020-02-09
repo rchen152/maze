@@ -113,7 +113,7 @@ class SurfaceTest(test_utils.ImgTestCase):
 
     def test_use_key(self):
         for obj in self.play_area._objects.values():
-            obj.move((0, 300))
+            obj.move((-50, 450))
         use_result = cast(str, self.play_area.use_item('key'))
         self.assertIn('gate', use_result)
         self.assertNotIn('gate', self.play_area._objects)

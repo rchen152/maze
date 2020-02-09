@@ -64,7 +64,8 @@ class _OpenGateRight(objects.Rect):
 
 class _Hole(img.RectFactory):
 
-    RECT = pygame.Rect(play_map.square_to_pos(4, 2), (500, 500))
+    RECT = pygame.Rect(_shift_pos(play_map.square_to_pos(4, 2), (100, 100)),
+                       (500, 500))
 
     def draw(self):
         pygame.draw.circle(
@@ -186,7 +187,7 @@ class Surface(objects.Surface):
     def _player_close_to(self, rect):
         if self.current_square != self._square(rect):
             return False
-        return self.player.RECT.colliderect(rect.inflate(rect.w, rect.h))
+        return self.player.RECT.colliderect(rect.inflate(100, 100))
 
     def handle_click(self, pos) -> Union[bool, interactions.Item]:
         if not self.collidepoint(pos):

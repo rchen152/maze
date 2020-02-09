@@ -73,7 +73,7 @@ class Surface(objects.Surface):
     def _square(self, rect):
         return play_map.pos_to_square(
             rect.move(tuple(play_map.HOUSE_POS[i] - self.house.RECT.topleft[i]
-                            for i in range(2))).center)
+                            for i in range(2))).midbottom)
 
     @property
     def current_square(self):
@@ -139,12 +139,12 @@ class Surface(objects.Surface):
             speed = self._scroll_speed
             move_result = True
         if speed:
-            for name, obj in self._objects.items():
+            for obj in self._objects.values():
                 obj.move(speed)
         return move_result
 
-    def _player_close_to(self, square, rect):
-        if self.current_square != square:
+    def _player_close_to(self, rect):
+        if self.current_square != self._square(rect):
             return False
         return self.player.RECT.colliderect(rect.inflate(rect.w, rect.h))
 
@@ -155,17 +155,14 @@ class Surface(objects.Surface):
             if name not in self._objects:
                 continue
             item = self._objects[name]
-            if item.collidepoint(pos) and self._player_close_to(
-                    self._square(item.RECT), item.RECT):
+            if item.collidepoint(pos) and self._player_close_to(item.RECT):
                 del self._objects[name]
                 return interactions.pick_up(name)
         return True
 
     def use_item(self, name) -> Optional[str]:
-        if name == 'key':
-            if self._player_close_to((0, 0), self._objects['gate'].RECT):
-                del self._objects['gate']
-                return 'You unlock the gate.'
+        use = interactions.use(name)
+        if not self._player_close_to(self._objects[use.name].RECT):
             return None
-        else:
-            raise NotImplementedError(f'Used {name}')
+        del self._objects[use.name]
+        return use.reason

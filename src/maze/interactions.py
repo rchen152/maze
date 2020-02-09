@@ -28,6 +28,12 @@ class Item:
     reason: str
 
 
+@dataclasses.dataclass
+class Use:
+    name: str
+    reason: str
+
+
 def collide(speed, name):
     if walls.match(name):
         return Collision(speed, "That's a wall...")
@@ -46,3 +52,10 @@ def pick_up(name):
         return Item(name, 'You pick up the key.')
     else:
         raise NotImplementedError(f'Picked up {name}')
+
+
+def use(name):
+    if name == 'key':
+        return Use('gate', 'You unlock the gate.')
+    else:
+        raise NotImplementedError(f'Used {name}')

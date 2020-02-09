@@ -30,5 +30,13 @@ class PickUpTest(unittest.TestCase):
         self.assertIn('key', item.reason)
 
 
+class UseTest(unittest.TestCase):
+
+    def test_key(self):
+        use = interactions.use('key')
+        self.assertEqual(use.name, 'gate')
+        self.assertIn('gate', use.reason)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,6 @@
 """Gameplay area."""
 
+import abc
 import itertools
 import math
 import pygame
@@ -47,6 +48,19 @@ def _accelerate(speed):
     return _shift_speed(speed, 1)
 
 
+class _MultiRect(pygame.Rect, metaclass=abc.ABCMeta):
+
+    @abc.abstractmethod
+    def _get_rects(self):
+        pass
+
+    def colliderect(self, rect):
+        if not super().colliderect(rect):
+            return False
+        return any(
+            self_rect.colliderect(rect) for self_rect in self._get_rects())
+
+
 class _OpenGateHalf(objects.Rect):
 
     COLOR = color.BROWN
@@ -70,27 +84,33 @@ class _OpenGateRight(_OpenGateHalf):
         _OPEN_GATE_SIZE)
 
 
-class _HoleRect(pygame.Rect):
+class _HoleRect(_MultiRect):
+
+    _WIDTHS = (220, 300, 360, 400, 435, 460, 480)
+    _HEIGHT = 25
 
     @property
     def radius(self):
         return self.w // 2
+
+    def _get_rects(self):
+        rects = []
+        for width in self._WIDTHS:
+            y = self.top if not rects else rects[-1].bottom
+            rects.append(
+                pygame.Rect(self.centerx - width / 2, y, width, self._HEIGHT))
+        rects.append(pygame.Rect(self.x, rects[-1].bottom, self.w,
+                                 self.h - 2 * len(rects) * self._HEIGHT))
+        for width in reversed(self._WIDTHS):
+            rects.append(pygame.Rect(self.centerx - width / 2, rects[-1].bottom,
+                                     width, self._HEIGHT))
+        return rects
 
     def collidepoint(self, pos):
         if not super().collidepoint(pos):
             return False
         return math.hypot(
             *(pos[i] - self.center[i] for i in range(2))) <= self.radius
-
-    def colliderect(self, rect):
-        if not super().colliderect(rect):
-            return False
-        for pos in (rect.center, rect.topleft, rect.bottomleft, rect.topright,
-                    rect.bottomright, rect.midtop, rect.midleft, rect.midbottom,
-                    rect.midright):
-            if self.collidepoint(pos):
-                return True
-        return False
 
 
 class _Hole(img.RectFactory):

@@ -143,9 +143,29 @@ class Surface(objects.Surface):
                 obj.move(speed)
         return move_result
 
+    def _player_close_to(self, square, rect):
+        if self.current_square != square:
+            return False
+        return self.player.RECT.colliderect(rect.inflate(rect.w, rect.h))
+
     def handle_click(self, pos) -> Union[bool, interactions.Item]:
-        if self.key.collidepoint(pos):
-            if self._square(self.key.RECT) == self.current_square:
-                del self._objects['key']
-                return interactions.pick_up('key')
+        if not self.collidepoint(pos):
+            return False
+        for name in ('key',):
+            if name not in self._objects:
+                continue
+            item = self._objects[name]
+            if item.collidepoint(pos) and self._player_close_to(
+                    self._square(item.RECT), item.RECT):
+                del self._objects[name]
+                return interactions.pick_up(name)
         return True
+
+    def use_item(self, name) -> Optional[str]:
+        if name == 'key':
+            if self._player_close_to((0, 0), self._objects['gate'].RECT):
+                del self._objects['gate']
+                return 'You unlock the gate.'
+            return None
+        else:
+            raise NotImplementedError(f'Used {name}')

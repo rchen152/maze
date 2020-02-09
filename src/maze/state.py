@@ -69,11 +69,21 @@ class Game(common_state.GameState):
 
     def handle_click(self, event):
         if event.type != MOUSEBUTTONDOWN or event.button != 1 or (
-                not self._play_area.collidepoint(event.pos)):
+                not self._play_area.collidepoint(event.pos) and
+                not self._side_bar.collidepoint(event.pos)):
             return False
         click_result = self._play_area.handle_click(event.pos)
-        if isinstance(click_result, interactions.Item):
-            self._side_bar.text_area.show(click_result.reason)
-            self._side_bar.add_item(click_result.name)
+        if click_result:
+            if isinstance(click_result, interactions.Item):
+                self._side_bar.add_item(click_result.name)
+                self._side_bar.text_area.show(click_result.reason)
+        else:
+            click_result = self._side_bar.handle_click(event.pos)
+            assert click_result
+            if isinstance(click_result, str):
+                use_result = self._play_area.use_item(click_result)
+                if use_result:
+                    self._side_bar.consume_item(click_result)
+                    self._side_bar.text_area.show(use_result)
         self.draw()
         return True

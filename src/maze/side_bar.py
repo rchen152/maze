@@ -2,7 +2,7 @@
 
 import dataclasses
 import pygame
-from typing import Sequence, Tuple
+from typing import Sequence, Tuple, Union
 
 from common import color
 from common import img
@@ -71,6 +71,12 @@ class MiniMap(Rect):
                 self._screen, self._wall_color, start_pos, end_pos, 2)
 
 
+@dataclasses.dataclass
+class _Item:
+    name: str
+    icon: img.PngFactory
+
+
 def ItemCell(idx):
 
     # Item cells are laid out in a 3x3 grid. The center square is empty because
@@ -89,16 +95,23 @@ def ItemCell(idx):
             super().__init__(screen)
             self._item = None
 
-        def add_item(self, name):
-            self._item = img.load(
+        @property
+        def item(self):
+            return self._item.name if self._item else None
+
+        def set_item(self, name):
+            self._item = _Item(name, img.load(
                 f'item_{name}', self._screen,
-                (self.RECT.centerx, self.RECT.centery), (-0.5, -0.5))
+                (self.RECT.centerx, self.RECT.centery), (-0.5, -0.5)))
+
+        def del_item(self):
+            self._item = None
 
         def draw(self):
             super().draw()
             pygame.draw.rect(self._screen, color.BLACK, self.RECT, 2)
             if self._item:
-                self._item.draw()
+                self._item.icon.draw()
 
     return ItemCell
 
@@ -156,7 +169,34 @@ class Surface(objects.Surface):
 
     RECT = pygame.Rect(state.RECT.h, 0, _SIDE_BAR_WIDTH, state.RECT.h)
     OBJECTS = {'mini_map': MiniMap, 'text_area': TextArea,
-               **{'item_cell%d' % i: ItemCell(i) for i in range(8)}}
+               **{f'item_cell{i}': ItemCell(i) for i in range(8)}}
+
+    @property
+    def _item_cells(self):
+        for i in range(8):
+            yield self._objects[f'item_cell{i}']
 
     def add_item(self, name):
-        self.item_cell0.add_item(name)
+        for item_cell in self._item_cells:
+            if not item_cell.item:
+                item_cell.set_item(name)
+                return
+        raise NotImplementedError(f'Cannot add item to full inventory: {name}')
+
+    def handle_click(self, pos) -> Union[bool, str]:
+        if not self.collidepoint(pos):
+            return False
+        pos = tuple(pos[i] - self.RECT.topleft[i] for i in range(2))
+        for item_cell in self._item_cells:
+            if item_cell.collidepoint(pos):
+                break
+        else:
+            return True
+        return item_cell.item or True
+
+    def consume_item(self, name):
+        for item_cell in self._item_cells:
+            if item_cell.item == name:
+                item_cell.del_item()
+                return
+        raise ValueError(f'Did not find item: {name}')

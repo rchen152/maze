@@ -95,10 +95,22 @@ class SurfaceTest(test_utils.ImgTestCase):
 
     def test_handle_key(self):
         for obj in self.play_area._objects.values():
-            obj.move((800, -800))
+            obj.move((950, -950))
         click_result = cast(interactions.Item, self.play_area.handle_click(
             self.play_area.key.RECT.center))
         self.assertEqual(click_result.name, 'key')
+
+    def test_handle_outside_click(self):
+        self.assertIs(self.play_area.handle_click((580, 288)), False)
+
+    def test_use_key(self):
+        for obj in self.play_area._objects.values():
+            obj.move((0, 300))
+        use_result = cast(str, self.play_area.use_item('key'))
+        self.assertIn('gate', use_result)
+
+    def test_use_key_too_far(self):
+        self.assertIsNone(self.play_area.use_item('key'))
 
 
 if __name__ == '__main__':

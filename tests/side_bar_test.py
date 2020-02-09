@@ -66,16 +66,22 @@ class ItemCellTest(test_utils.GameStateTestCase):
         width = Cell4.RECT.width
         self.assertEqual(Cell4.RECT.topleft, (width * 2, width))
 
-    def test_add_item(self):
-        self.assertIsNone(self.cell._item)
-        self.cell.add_item('key')
-        self.assertIsNotNone(self.cell._item)
+    def test_set_item(self):
+        self.assertIsNone(self.cell.item)
+        self.cell.set_item('key')
+        self.assertEqual(self.cell.item, 'key')
+
+    def test_del_item(self):
+        self.cell.set_item('key')
+        self.assertIsNotNone(self.cell.item)
+        self.cell.del_item()
+        self.assertIsNone(self.cell.item)
 
     def test_draw(self):
         self.cell.draw()
 
     def test_draw_item(self):
-        self.cell.add_item('key')
+        self.cell.set_item('key')
         self.cell.draw()
 
 
@@ -117,8 +123,36 @@ class TextAreaTest(test_utils.GameStateTestCase):
 
 class SurfaceTest(test_utils.GameStateTestCase):
 
+    def setUp(self):
+        super().setUp()
+        self.side_bar = side_bar.Surface(self.screen)
+
     def test_add_item(self):
-        side_bar.Surface(self.screen).add_item('key')
+        self.assertIsNone(self.side_bar.item_cell0.item)
+        self.side_bar.add_item('key')
+        self.assertIsNotNone(self.side_bar.item_cell0.item)
+
+    def test_handle_outside_click(self):
+        self.assertIs(self.side_bar.handle_click((288, 288)), False)
+
+    def test_handle_noop_click(self):
+        self.assertIs(self.side_bar.handle_click(
+            self.side_bar.text_area.RECT.move(576, 0).center), True)
+
+    def test_handle_empty_cell_click(self):
+        self.assertIs(self.side_bar.handle_click(
+            self.side_bar.item_cell0.RECT.move(576, 0).center), True)
+
+    def test_handle_item_cell_click(self):
+        self.side_bar.add_item('key')
+        self.assertEqual(self.side_bar.handle_click(
+            self.side_bar.item_cell0.RECT.move(576, 0).center), 'key')
+
+    def test_consume_item(self):
+        self.side_bar.add_item('key')
+        self.assertIsNotNone(self.side_bar.item_cell0.item)
+        self.side_bar.consume_item('key')
+        self.assertIsNone(self.side_bar.item_cell0.item)
 
 
 if __name__ == '__main__':

@@ -9,16 +9,6 @@ from maze import side_bar
 from maze import walls
 
 
-class RectTest(test_utils.GameStateTestCase):
-
-    class TestRect(side_bar.Rect):
-        RECT = pygame.Rect(1, 1, 10, 10)
-        COLOR = (0, 0, 0)
-
-    def test_draw(self):
-        self.TestRect(self.screen).draw()
-
-
 class MiniMapTest(test_utils.GameStateTestCase):
 
     def setUp(self):

@@ -13,16 +13,7 @@ _SIDE_BAR_WIDTH = state.RECT.w - state.RECT.h
 _SIDE_CELL_WIDTH = _SIDE_BAR_WIDTH / 3
 
 
-class Rect(img.RectFactory):
-    """A colored, drawable rectangle."""
-
-    COLOR: Tuple[int, int, int]
-
-    def draw(self):
-        pygame.draw.rect(self._screen, self.COLOR, self.RECT)
-
-
-class MiniMap(Rect):
+class MiniMap(objects.Rect):
 
     RECT = pygame.Rect(_SIDE_CELL_WIDTH, _SIDE_CELL_WIDTH, _SIDE_CELL_WIDTH,
                        _SIDE_CELL_WIDTH)
@@ -84,7 +75,7 @@ def ItemCell(idx):
     if idx >= 4:
         idx += 1
 
-    class ItemCell(Rect):
+    class ItemCell(objects.Rect):
 
         RECT = pygame.Rect(idx % 3 * _SIDE_CELL_WIDTH,
                            idx // 3 * _SIDE_CELL_WIDTH, _SIDE_CELL_WIDTH,
@@ -123,7 +114,7 @@ class _TextBlock:
     value: str
 
 
-class TextArea(Rect):
+class TextArea(objects.Rect):
 
     RECT = pygame.Rect(0, _SIDE_BAR_WIDTH, _SIDE_BAR_WIDTH,
                        state.RECT.h - _SIDE_BAR_WIDTH)

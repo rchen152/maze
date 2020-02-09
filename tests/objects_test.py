@@ -8,6 +8,16 @@ from common import test_utils
 from maze import objects
 
 
+class RectTest(test_utils.GameStateTestCase):
+
+    class TestRect(objects.Rect):
+        RECT = pygame.Rect(1, 1, 10, 10)
+        COLOR = (0, 0, 0)
+
+    def test_draw(self):
+        self.TestRect(self.screen).draw()
+
+
 class SurfaceTest(test_utils.GameStateTestCase):
 
     class TestSurface(objects.Surface):

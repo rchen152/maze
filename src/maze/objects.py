@@ -1,9 +1,18 @@
 """Base classes for game objects."""
 
 import pygame
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Tuple
 
 from common import img
+
+
+class Rect(img.RectFactory):
+    """A colored, drawable rectangle."""
+
+    COLOR: Tuple[int, int, int]
+
+    def draw(self):
+        pygame.draw.rect(self._screen, self.COLOR, self.RECT)
 
 
 class Surface(img.RectFactory):

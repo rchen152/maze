@@ -46,7 +46,7 @@ def _accelerate(speed):
     return _shift_speed(speed, 1)
 
 
-class OpenGateLeft(objects.Rect):
+class _OpenGateLeft(objects.Rect):
 
     RECT = pygame.Rect(
         _shift_pos(play_map.square_to_pos(0, 0), (316, -_OPEN_GATE_SIZE[1])),
@@ -54,7 +54,7 @@ class OpenGateLeft(objects.Rect):
     COLOR = color.BROWN
 
 
-class OpenGateRight(objects.Rect):
+class _OpenGateRight(objects.Rect):
 
     RECT = pygame.Rect(
         _shift_pos(play_map.square_to_pos(1, 0), (-320, -_OPEN_GATE_SIZE[1])),
@@ -82,9 +82,9 @@ class Surface(objects.Surface):
         'key': _load(
             'key', _shift_pos(play_map.square_to_pos(-1, 1), (150, 600))),
     }
-    _HIDDEN_OBJECTS = {
-        'open_gate_left': OpenGateLeft,
-        'open_gate_right': OpenGateRight,
+    _HIDDEN_OBJECTS: objects.ObjectsType = {
+        'open_gate_left': _OpenGateLeft,
+        'open_gate_right': _OpenGateRight,
     }
 
     def __init__(self, screen):

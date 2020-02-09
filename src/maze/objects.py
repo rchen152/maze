@@ -5,6 +5,8 @@ from typing import Callable, Mapping, Tuple
 
 from common import img
 
+ObjectsType = Mapping[str, Callable[[pygame.Surface], img.RectFactory]]
+
 
 class Rect(img.RectFactory):
     """A colored, drawable rectangle."""
@@ -18,7 +20,7 @@ class Rect(img.RectFactory):
 class Surface(img.RectFactory):
     """A subsurface with objects on it."""
 
-    OBJECTS: Mapping[str, Callable[[pygame.Surface], img.RectFactory]] = {}
+    OBJECTS: ObjectsType = {}
 
     def __init__(self, screen):
         super().__init__(screen)

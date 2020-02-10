@@ -36,6 +36,7 @@ class Game(common_state.GameState):
 
     _INTRO_TEXT = ("You've escaped the house, but you're lost in a maze. Try "
                    "to find an exit.")
+    _USE_FAIL_TEXT = "You can't do anything with the {} right now."
     _END_TEXT = ("Roses are red, I've a confession to make. There is no exit, "
                  "it's a closed heart shape. You've reached the end, Happy "
                  "Valentine's Day!")
@@ -86,5 +87,8 @@ class Game(common_state.GameState):
                 if use_result:
                     self._side_bar.consume_item(click_result)
                     self._side_bar.text_area.show(use_result)
+                else:
+                    self._side_bar.text_area.show(
+                        self._USE_FAIL_TEXT.format(click_result))
         self.draw()
         return True

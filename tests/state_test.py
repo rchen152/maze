@@ -41,6 +41,7 @@ class GameTest(test_utils.GameStateTestCase):
         self.game.draw()
 
     def test_start_player_movement(self):
+        self.assertTrue(self.game._side_bar.text_area._text)
         self.assertTrue(self.game.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT)))
         self.assertFalse(self.game._side_bar.text_area._text)
@@ -50,6 +51,7 @@ class GameTest(test_utils.GameStateTestCase):
             test_utils.MockEvent(typ=KEYUP, key=K_LEFT)))
 
     def test_tick(self):
+        self.assertTrue(self.game._side_bar.text_area._text)
         self.game.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_UP))
         self.assertTrue(self.game.handle_player_movement(
@@ -63,6 +65,7 @@ class GameTest(test_utils.GameStateTestCase):
         # this speed should result in a collision.
         self.game._play_area._scroll_speed = (
             0, self.game._play_area.player.RECT.h)
+        self.assertFalse(self.game._side_bar.text_area._text)
         self.game.handle_player_movement(
             test_utils.MockEvent(typ=play_area._TICK))
         self.assertTrue(self.game._side_bar.text_area._text)
@@ -113,6 +116,7 @@ class GameTest(test_utils.GameStateTestCase):
     def test_click_key(self):
         for obj in self.game._play_area._objects.values():
             obj.move((950, -950))
+        self.game._side_bar.text_area.show(None)
         self.assertTrue(self.game.handle_click(
             test_utils.MockEvent(typ=MOUSEBUTTONDOWN, button=1,
                                  pos=self.game._play_area.key.RECT.center)))
@@ -125,12 +129,25 @@ class GameTest(test_utils.GameStateTestCase):
         self.game._side_bar.add_item('key')
         for obj in self.game._play_area._objects.values():
             obj.move((0, 480))
+        self.game._side_bar.text_area.show(None)
         self.assertTrue(self.game.handle_click(
             test_utils.MockEvent(
                 typ=MOUSEBUTTONDOWN, button=1,
                 pos=self.game._side_bar.item_cell0.RECT.move((576, 0)).center)))
         self.assertNotIn('gate', self.game._play_area._objects)
         self.assertIsNone(self.game._side_bar.item_cell0.item)
+        self.assertTrue(self.game._side_bar.text_area._text)
+
+    def test_fail_use_key(self):
+        del self.game._play_area._objects['key']
+        self.game._side_bar.add_item('key')
+        self.game._side_bar.text_area.show(None)
+        self.assertTrue(self.game.handle_click(
+            test_utils.MockEvent(
+                typ=MOUSEBUTTONDOWN, button=1,
+                pos=self.game._side_bar.item_cell0.RECT.move((576, 0)).center)))
+        self.assertIn('gate', self.game._play_area._objects)
+        self.assertIsNotNone(self.game._side_bar.item_cell0.item)
         self.assertTrue(self.game._side_bar.text_area._text)
 
 

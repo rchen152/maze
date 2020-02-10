@@ -56,7 +56,7 @@ def collide(speed, name):
 
 def obtain(name):
     if walls.match(name) or walls.partial_match(name) or name in (
-            'house', 'gate'):
+            'house', 'gate', 'open_gate_left', 'open_gate_right'):
         return None
     elif name == 'key':
         return Item(name, True, True, 'You pick up the key.')

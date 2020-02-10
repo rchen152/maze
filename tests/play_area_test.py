@@ -1,5 +1,6 @@
 """Tests for maze.play_area."""
 
+import itertools
 from pygame.locals import *
 from typing import cast
 import unittest
@@ -123,6 +124,25 @@ class SurfaceTest(test_utils.ImgTestCase):
 
     def test_use_key_too_far(self):
         self.assertIsNone(self.play_area.use_item('key'))
+
+    def test_can_collide(self):
+        for name in itertools.chain(self.play_area._objects,
+                                    self.play_area._hidden_objects):
+            self.assertIsInstance(interactions.collide((0, 0), name),
+                                  interactions.Collision)
+
+    def test_can_obtain(self):
+        for name in itertools.chain(self.play_area._objects,
+                                    self.play_area._hidden_objects):
+            self.assertIsInstance(interactions.obtain(name),
+                                  (type(None), interactions.Item))
+
+    def test_can_use(self):
+        for name in itertools.chain(self.play_area._objects,
+                                    self.play_area._hidden_objects):
+            item = interactions.obtain(name)
+            if item and item.success:
+                self.assertIsInstance(interactions.use(name), interactions.Use)
 
 
 if __name__ == '__main__':

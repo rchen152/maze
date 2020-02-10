@@ -13,3 +13,7 @@ def square_to_pos(*coords):
 
 def pos_to_square(pos):
     return tuple((pos[i] - START_POS[i]) // SQUARE_LENGTH for i in range(2))
+
+
+def shift_pos(pos, shift):
+    return tuple(pos[i] + shift[i] for i in range(2))

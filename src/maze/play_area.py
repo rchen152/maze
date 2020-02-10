@@ -112,7 +112,7 @@ class _OpenGateRight(_OpenGateHalf):
 
 class _HoleRect(_MultiRect):
 
-    _WIDTHS = (220, 300, 360, 400, 435, 460, 480)
+    _WIDTHS = (180, 260, 320, 370, 410, 430, 450)
     _HEIGHT = 25
 
     @property

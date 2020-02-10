@@ -61,6 +61,32 @@ class _MultiRect(pygame.Rect, metaclass=abc.ABCMeta):
             self_rect.colliderect(rect) for self_rect in self._get_rects())
 
 
+class _HouseRect(_MultiRect):
+
+    _ROOF_WIDTHS = (50, 110, 180, 255, 325, 395, 455, 550)
+    _ROOF_STEP_HEIGHT = 25
+    _BODY_INDENT = 60
+    _BODY_WIDTH = 440
+
+    def _get_rects(self):
+        rects = []
+        for width in self._ROOF_WIDTHS:
+            y = rects[-1].bottom if rects else self.y
+            rects.append(pygame.Rect(
+                self.centerx - width / 2, y, width, self._ROOF_STEP_HEIGHT))
+        rects.append(pygame.Rect(
+            self.x + self._BODY_INDENT, rects[-1].bottom, self._BODY_WIDTH,
+            self.bottom - rects[-1].bottom))
+        return rects
+
+
+class _House(img.PngFactory):
+
+    def __init__(self, screen):
+        super().__init__('house', screen, play_map.HOUSE_POS)
+        self.RECT = _HouseRect(self.RECT.topleft, self.RECT.size)
+
+
 class _OpenGateHalf(objects.Rect):
 
     COLOR = color.BROWN
@@ -130,7 +156,7 @@ class Surface(objects.Surface):
     # We don't include the player here because he is a special fixed object.
     OBJECTS = {
         **walls.ALL,
-        'house': _load('house', play_map.HOUSE_POS),
+        'house': _House,
         'partial_wall_gateleft': _load(
             'partial_wall_horizontal', play_map.square_to_pos(0, 0), (0, -0.5)),
         'partial_wall_gateright': _load(

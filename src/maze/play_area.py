@@ -24,10 +24,6 @@ _PLAYER_MOVES = {
 _PLAYER_FEET_HEIGHT = 15
 
 
-def _load(name, *args, **kwargs):
-    return lambda screen: img.PngFactory(name, screen, *args, **kwargs)
-
-
 def _shift_speed(speed, direction):
     return tuple(s + direction * _PLAYER_SPEED_INTERVAL * s / abs(s) if s else s
                  for s in speed)
@@ -47,26 +43,8 @@ class Surface(objects.Surface):
 
     RECT = pygame.Rect(0, 0, state.RECT.h, state.RECT.h)
     # We don't include the player here because he is a special fixed object.
-    OBJECTS = {
-        **walls.ALL,
-        'house': play_objects.House,
-        'partial_wall_gateleft': _load(
-            'partial_wall_horizontal', play_map.square_to_pos(0, 0), (0, -0.5)),
-        'partial_wall_gateright': _load(
-            'partial_wall_horizontal', play_map.square_to_pos(1, 0),
-            (-1, -0.5)),
-        'gate': _load(
-            'gate', play_map.shift_pos(
-                play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 15)),
-            (-0.5, -1)),
-        'key': _load('key', play_map.shift_pos(
-            play_map.square_to_pos(-1, 1), (150, 600))),
-        'hole': play_objects.Hole,
-    }
-    _HIDDEN_OBJECTS: objects.ObjectsType = {
-        'open_gate_left': play_objects.OpenGateLeft,
-        'open_gate_right': play_objects.OpenGateRight,
-    }
+    OBJECTS = play_objects.VISIBLE
+    _HIDDEN_OBJECTS: objects.ObjectsType = play_objects.HIDDEN
 
     def __init__(self, screen):
         super().__init__(screen)

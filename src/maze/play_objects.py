@@ -8,6 +8,7 @@ from common import color
 from common import img
 from . import objects
 from . import play_map
+from . import walls
 
 _OPEN_GATE_SIZE = (5, 82)
 
@@ -113,3 +114,31 @@ class Hole(img.RectFactory):
     def draw(self):
         pygame.draw.circle(
             self._screen, color.BLACK, self.RECT.center, self.RECT.radius)
+
+
+def _load(name, *args, **kwargs):
+    return lambda screen: img.PngFactory(name, screen, *args, **kwargs)
+
+
+VISIBLE = {
+    **walls.ALL,
+    'house': House,
+    'partial_wall_gateleft': _load(
+        'partial_wall_horizontal', play_map.square_to_pos(0, 0), (0, -0.5)),
+    'partial_wall_gateright': _load(
+        'partial_wall_horizontal', play_map.square_to_pos(1, 0),
+        (-1, -0.5)),
+    'gate': _load(
+        'gate', play_map.shift_pos(
+            play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 15)),
+        (-0.5, -1)),
+    'key': _load('key', play_map.shift_pos(
+        play_map.square_to_pos(-1, 1), (150, 600))),
+    'hole': Hole,
+}
+
+
+HIDDEN = {
+    'open_gate_left': OpenGateLeft,
+    'open_gate_right': OpenGateRight,
+}

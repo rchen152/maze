@@ -48,6 +48,8 @@ def collide(speed, name):
         return Collision(speed, "It's some sort of key.")
     elif name.startswith('open_gate_'):
         return Collision(speed, 'You walk into the gate. Ouch.')
+    elif name == 'angry_cat':
+        return Collision(speed, 'Your way is blocked by an angry cat.')
     elif name == 'hole':
         return Collision(speed, "It's a hole in the ground.")
     else:
@@ -55,16 +57,13 @@ def collide(speed, name):
 
 
 def obtain(name):
-    if walls.match(name) or walls.partial_match(name) or name in (
-            'house', 'gate', 'open_gate_left', 'open_gate_right'):
-        return None
-    elif name == 'key':
+    if name == 'key':
         return Item(name, True, True, 'You pick up the key.')
     elif name == 'hole':
         return Item(name, False, False, 'You fall into the hole and climb back '
                     'out. You feel foolish.')
     else:
-        raise NotImplementedError(f'Obtained {name}')
+        return None
 
 
 def use(name):

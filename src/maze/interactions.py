@@ -37,23 +37,27 @@ class Use:
     reason: str
 
 
-def collide(speed, name):
+def _collision_reason(name):
     if walls.match(name) or walls.partial_match(name):
-        return Collision(speed, "That's a wall...")
+        return "That's a wall..."
     elif name == 'house':
-        return Collision(speed, "You don't want to go back in the house.")
+        return "You don't want to go back in the house."
     elif name == 'gate':
-        return Collision(speed, "There's a gate here, but it's locked.")
+        return "There's a gate here, but it's locked."
     elif name == 'key':
-        return Collision(speed, "It's some sort of key.")
+        return "It's some sort of key."
     elif name.startswith('open_gate_'):
-        return Collision(speed, 'You walk into the gate. Ouch.')
+        return 'You walk into the gate. Ouch.'
     elif name == 'angry_cat':
-        return Collision(speed, 'Your way is blocked by an angry cat.')
+        return 'Your way is blocked by an angry cat.'
     elif name == 'hole':
-        return Collision(speed, "It's a hole in the ground.")
+        return "It's a hole in the ground."
     else:
         raise NotImplementedError(f'Collided with {name}')
+
+
+def collide(speed, name):
+    return Collision(speed, _collision_reason(name))
 
 
 def obtain(name):

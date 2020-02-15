@@ -96,6 +96,7 @@ class Game(common_state.GameState):
                     self._side_bar.text_area.show(use_result)
                 else:
                     self._side_bar.text_area.show(
-                        self._USE_FAIL_TEXT.format(click_result))
+                        self._USE_FAIL_TEXT.format(
+                            click_result.replace('_', ' ')))
         self.draw()
         return True

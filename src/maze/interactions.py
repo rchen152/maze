@@ -70,6 +70,10 @@ def _collision_reason(name):
         return 'You walk into the gate. Ouch.'
     elif name == 'eggplant':
         return 'An eggplant. Ew.'
+    elif name == 'fishing_rod':
+        return 'Who left a fishing rod here?'
+    elif name == 'lake':
+        return 'What a lovely calm lake.'
     elif name == 'angry_cat':
         return 'Your way is blocked by an angry cat.'
     elif name == 'hole':
@@ -88,6 +92,8 @@ def obtain(name):
     elif name == 'eggplant':
         return Item(
             name, True, True, 'You gingerly pick up the disgusting vegetable.')
+    elif name == 'fishing_rod':
+        return Item(name, True, True, "You steal someone's fishing rod.")
     elif name == 'hole':
         return Item(name, False, False, 'You fall into the hole and climb back '
                     'out. You feel foolish.')
@@ -104,5 +110,7 @@ def use(name):
     elif name == 'eggplant':
         return Use('angry_cat', (),
                    'You feed the cat the eggplant. It is even angrier now.')
+    elif name == 'fishing_rod':
+        return Use('lake', (), "You can't catch fish yet.")
     else:
         raise NotImplementedError(f'Used {name}')

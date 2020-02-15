@@ -29,6 +29,32 @@ class OpenGateTest(test_utils.GameStateTestCase):
         play_objects.OpenGateRight(self.screen).draw()
 
 
+class FishingRodTest(test_utils.GameStateTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.fishing_rod = play_objects.FishingRod(self.screen)
+
+    def test_colliderect(self):
+        self.assertTrue(self.fishing_rod.RECT.colliderect(
+            pygame.Rect(self.fishing_rod.RECT.center, (10, 10))))
+
+    def test_nocolliderect(self):
+        self.assertFalse(self.fishing_rod.RECT.colliderect(
+            pygame.Rect(self.fishing_rod.RECT.topleft, (10, 10))))
+
+    def test_collidepoint(self):
+        self.assertTrue(self.fishing_rod.collidepoint(
+            self.fishing_rod.RECT.center))
+
+    def test_nocollidepoint(self):
+        self.assertFalse(self.fishing_rod.collidepoint(
+            self.fishing_rod.RECT.topleft))
+
+    def test_draw(self):
+        self.fishing_rod.draw()
+
+
 class HoleTest(test_utils.GameStateTestCase):
 
     def setUp(self):

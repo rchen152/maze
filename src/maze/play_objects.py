@@ -3,6 +3,7 @@
 import abc
 import math
 import pygame
+from typing import Type
 
 from common import color
 from common import img
@@ -26,6 +27,15 @@ class _MultiRect(pygame.Rect, metaclass=abc.ABCMeta):
             self_rect.colliderect(rect) for self_rect in self._get_rects())
 
 
+class _CustomShapePngFactory(img.PngFactory):
+
+    _ShapeFactory: Type[_MultiRect]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.RECT = self._ShapeFactory(self.RECT.topleft, self.RECT.size)
+
+
 class _HouseRect(_MultiRect):
 
     _ROOF_WIDTHS = (50, 110, 180, 255, 325, 395, 455, 550)
@@ -45,11 +55,12 @@ class _HouseRect(_MultiRect):
         return rects
 
 
-class House(img.PngFactory):
+class House(_CustomShapePngFactory):
+
+    _ShapeFactory = _HouseRect
 
     def __init__(self, screen):
         super().__init__('house', screen, play_map.HOUSE_POS)
-        self.RECT = _HouseRect(self.RECT.topleft, self.RECT.size)
 
 
 class _OpenGateHalf(objects.Rect):
@@ -75,6 +86,34 @@ class OpenGateRight(_OpenGateHalf):
         play_map.shift_pos(
             play_map.square_to_pos(1, 0), (-320, -_OPEN_GATE_SIZE[1])),
         _OPEN_GATE_SIZE)
+
+
+class _FishingRodRect(_MultiRect):
+
+    def _get_rects(self):
+        w = self.w * 0.2
+        rects = [pygame.Rect(self.right - w, self.top, w, w)]
+        for i in range(8):
+            grow = 1.2 if i == 3 else 1
+            rects.append(
+                pygame.Rect(rects[-1].left - 0.5 * w, rects[-1].centery,
+                            grow * w, grow * w))
+        return rects
+
+    def collidepoint(self, pos):
+        if not super().collidepoint(pos):
+            return False
+        return any(
+            self_rect.collidepoint(pos) for self_rect in self._get_rects())
+
+
+class FishingRod(_CustomShapePngFactory):
+
+    _ShapeFactory = _FishingRodRect
+
+    def __init__(self, screen):
+        super().__init__('fishing_rod', screen, play_map.shift_pos(
+            play_map.square_to_pos(1, 2), (500, 750)), (0, -1))
 
 
 class _HoleRect(_MultiRect):
@@ -136,6 +175,11 @@ VISIBLE = {
         play_map.square_to_pos(-1, 1), (150, 600))),
     'eggplant': _load('eggplant', play_map.shift_pos(
         play_map.square_to_pos(1, 1), (300, 200))),
+    'fishing_rod': FishingRod,
+    'lake': _load(
+        'lake', play_map.shift_pos(
+            play_map.square_to_pos(4, -1), (play_map.SQUARE_LENGTH / 2,) * 2),
+        (-0.5, -0.5)),
     'partial_wall_catabove': _load(
         'partial_wall_vertical', play_map.square_to_pos(2, 1), (-0.5, 0)),
     'partial_wall_catbelow': _load(

@@ -150,6 +150,18 @@ class GameTest(test_utils.GameStateTestCase):
         self.assertIsNotNone(self.game._side_bar.item_cell0.item)
         self.assertTrue(self.game._side_bar.text_area._text)
 
+    def test_fail_text_multiword_object(self):
+        del self.game._play_area._objects['fishing_rod']
+        self.game._side_bar.add_item('fishing_rod')
+        self.game._side_bar.text_area.show(None)
+        self.assertTrue(self.game.handle_click(
+            test_utils.MockEvent(
+                typ=MOUSEBUTTONDOWN, button=1,
+                pos=self.game._side_bar.item_cell0.RECT.move((576, 0)).center)))
+        text = ' '.join(
+            block.value for block in self.game._side_bar.text_area._text)
+        self.assertIn('fishing rod', text)
+
 
 if __name__ == '__main__':
     unittest.main()

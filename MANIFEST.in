@@ -1,1 +1,2 @@
 include src/maze/img/*
+include src/maze/img/item/*

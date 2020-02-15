@@ -1,6 +1,7 @@
 """Side bar."""
 
 import dataclasses
+import os
 import pygame
 from typing import Sequence, Tuple, Union
 
@@ -92,7 +93,7 @@ def ItemCell(idx):
 
         def set_item(self, name):
             self._item = _Item(name, img.load(
-                f'item_{name}', self._screen,
+                os.path.join('item', name), self._screen,
                 (self.RECT.centerx, self.RECT.centery), (-0.5, -0.5)))
 
         def del_item(self):

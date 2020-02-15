@@ -35,7 +35,7 @@ class GameTest(test_utils.GameStateTestCase):
 
     def setUp(self):
         super().setUp()
-        self.game = state.Game(self.screen)
+        self.game = state.Game(self.screen, None)
 
     def test_draw(self):
         self.game.draw()

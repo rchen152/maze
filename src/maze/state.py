@@ -1,5 +1,6 @@
 """Game state."""
 
+import itertools
 import pygame
 from pygame.locals import *
 
@@ -41,10 +42,16 @@ class Game(common_state.GameState):
                  "it's a closed heart shape. You've reached the end, Happy "
                  "Valentine's Day!")
 
-    def __init__(self, screen):
+    def __init__(self, screen, cheat):
         self._play_area = play_area.Surface(screen)
         self._side_bar = side_bar.Surface(screen)
         self._side_bar.text_area.show(self._INTRO_TEXT)
+        if cheat:
+            x, y = cheat
+            for obj in itertools.chain(
+                    self._play_area._objects.values(),
+                    self._play_area._hidden_objects.values()):
+                obj.move((-x * 800, -y * 800))
         super().__init__(screen)
 
     def draw(self):

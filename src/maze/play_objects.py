@@ -134,6 +134,8 @@ VISIBLE = {
         (-0.5, -1)),
     'key': _load('key', play_map.shift_pos(
         play_map.square_to_pos(-1, 1), (150, 600))),
+    'eggplant': _load('eggplant', play_map.shift_pos(
+        play_map.square_to_pos(1, 1), (300, 200))),
     'partial_wall_catabove': _load(
         'partial_wall_vertical', play_map.square_to_pos(2, 1), (-0.5, 0)),
     'partial_wall_catbelow': _load(

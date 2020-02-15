@@ -40,7 +40,7 @@ class UseTest(unittest.TestCase):
 
     def test_name(self):
         use = interactions.use('key')
-        self.assertEqual(use.name, 'gate')
+        self.assertEqual(use.activator, 'gate')
 
     def test_reason(self):
         use = interactions.use('key')
@@ -49,7 +49,9 @@ class UseTest(unittest.TestCase):
     def test_effects(self):
         use = interactions.use('key')
         self.assertCountEqual(
-            use.effects, ('open_gate_left', 'open_gate_right'))
+            use.effects, (interactions.UseEffect.remove('gate'),
+                          interactions.UseEffect.add('open_gate_left'),
+                          interactions.UseEffect.add('open_gate_right')))
 
 
 if __name__ == '__main__':

@@ -142,7 +142,10 @@ class SurfaceTest(test_utils.ImgTestCase):
                                     self.play_area._hidden_objects):
             item = interactions.obtain(name)
             if item and item.success:
-                self.assertIsInstance(interactions.use(name), interactions.Use)
+                uses = interactions.use(name)
+                self.assertTrue(uses)
+                for use in uses:
+                    self.assertIsInstance(use, interactions.Use)
 
 
 if __name__ == '__main__':

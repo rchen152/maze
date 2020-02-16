@@ -217,6 +217,8 @@ VISIBLE = {
         play_map.square_to_pos(-1, 1), (150, 600))),
     'eggplant': _load('eggplant', play_map.shift_pos(
         play_map.square_to_pos(1, 1), (300, 200))),
+    'trash_can': _load('trash_can', play_map.shift_pos(
+        play_map.square_to_pos(2, 1), (400, 100))),
     'fishing_rod': FishingRod,
     'lake': Lake,
     'partial_wall_catabove': _load(

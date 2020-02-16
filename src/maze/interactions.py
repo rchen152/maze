@@ -70,6 +70,8 @@ def _collision_reason(name):
         return 'You walk into the gate. Ouch.'
     elif name == 'eggplant':
         return 'An eggplant. Ew.'
+    elif name == 'trash_can':
+        return 'Do you still have the eggplant?'
     elif name == 'fishing_rod':
         return 'Who left a fishing rod here?'
     elif name == 'lake':
@@ -103,14 +105,15 @@ def obtain(name):
 
 def use(name):
     if name == 'key':
-        return Use('gate', (UseEffect.remove('gate'),
-                            UseEffect.add('open_gate_left'),
-                            UseEffect.add('open_gate_right')),
-                   'You unlock the gate.')
+        return [Use('gate', (UseEffect.remove('gate'),
+                             UseEffect.add('open_gate_left'),
+                             UseEffect.add('open_gate_right')),
+                    'You unlock the gate.')]
     elif name == 'eggplant':
-        return Use('angry_cat', (),
-                   'You feed the cat the eggplant. It is even angrier now.')
+        return [Use('angry_cat', (),
+                    'You feed the cat the eggplant. It is even angrier now.'),
+                Use('trash_can', (), "Yeah, you don't need that.")]
     elif name == 'fishing_rod':
-        return Use('lake', (), "You can't catch fish yet.")
+        return [Use('lake', (), "You can't catch fish yet.")]
     else:
         raise NotImplementedError(f'Used {name}')

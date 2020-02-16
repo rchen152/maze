@@ -55,6 +55,24 @@ class FishingRodTest(test_utils.GameStateTestCase):
         self.fishing_rod.draw()
 
 
+class LakeTest(test_utils.GameStateTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.lake = play_objects.Lake(self.screen)
+
+    def test_colliderect(self):
+        self.assertTrue(self.lake.RECT.colliderect(
+            pygame.Rect(self.lake.RECT.center, (10, 10))))
+
+    def test_nocolliderect(self):
+        self.assertFalse(self.lake.RECT.colliderect(
+            pygame.Rect(self.lake.RECT.topleft, (10, 10))))
+
+    def test_draw(self):
+        self.lake.draw()
+
+
 class HoleTest(test_utils.GameStateTestCase):
 
     def setUp(self):

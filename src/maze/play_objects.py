@@ -116,6 +116,48 @@ class FishingRod(_CustomShapePngFactory):
             play_map.square_to_pos(1, 2), (500, 750)), (0, -1))
 
 
+class _LakeRect(_MultiRect):
+
+    _MEASUREMENTS = [
+        (220, 535, 1),
+        (165, 435, 2),
+        (135, 400, 2),
+        (110, 360, 2),
+        (100, 190, 1),
+        (90, 140, 1),
+        (80, 80, 1),
+        (50, 50, 2),
+        (20, 20, 2),
+        (0, 0, 2),
+        (0, 50, 2),
+        (30, 170, None),
+    ]
+
+    def _get_rects(self):
+        height_unit = self.h / 20
+        rects = []
+        for left_indent, width_decrement, height_factor in self._MEASUREMENTS:
+            x = self.x + left_indent
+            y = rects[-1].bottom if rects else self.top
+            w = self.w - width_decrement
+            if height_factor:
+                h = height_factor * height_unit
+            else:
+                h = self.bottom - rects[-1].bottom
+            rects.append(pygame.Rect(x, y, w, h))
+        return rects
+
+
+class Lake(_CustomShapePngFactory):
+
+    _ShapeFactory = _LakeRect
+
+    def __init__(self, screen):
+        pos = play_map.shift_pos(
+            play_map.square_to_pos(4, -1), (play_map.SQUARE_LENGTH / 2,) * 2)
+        super().__init__('lake', screen, pos, (-0.5, -0.5))
+
+
 class _HoleRect(_MultiRect):
 
     _WIDTHS = (180, 260, 320, 370, 410, 430, 450)
@@ -176,10 +218,7 @@ VISIBLE = {
     'eggplant': _load('eggplant', play_map.shift_pos(
         play_map.square_to_pos(1, 1), (300, 200))),
     'fishing_rod': FishingRod,
-    'lake': _load(
-        'lake', play_map.shift_pos(
-            play_map.square_to_pos(4, -1), (play_map.SQUARE_LENGTH / 2,) * 2),
-        (-0.5, -0.5)),
+    'lake': Lake,
     'partial_wall_catabove': _load(
         'partial_wall_vertical', play_map.square_to_pos(2, 1), (-0.5, 0)),
     'partial_wall_catbelow': _load(

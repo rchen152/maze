@@ -62,12 +62,14 @@ def _collision_reason(name):
         return "That's a wall..."
     elif name == 'house':
         return "You don't want to go back in the house."
-    elif name == 'gate':
-        return "There's a gate here, but it's locked."
     elif name == 'key':
         return "It's some sort of key."
+    elif name == 'gate':
+        return "There's a gate here, but it's locked."
     elif name.startswith('open_gate_'):
         return 'You walk into the gate. Ouch.'
+    elif name.startswith('block_'):
+        return 'An oversized alphabet block. How curious.'
     elif name == 'eggplant':
         return 'An eggplant. Ew.'
     elif name == 'trash_can':
@@ -91,6 +93,10 @@ def collide(speed, name):
 def obtain(name):
     if name == 'key':
         return Item(name, True, True, 'You pick up the key.')
+    elif name.startswith('block_'):
+        return Item(
+            name, True, True,
+            'You decide to carry the giant wooden block around with you.')
     elif name == 'eggplant':
         return Item(
             name, True, True, 'You gingerly pick up the disgusting vegetable.')
@@ -109,6 +115,8 @@ def use(name):
                              UseEffect.add('open_gate_left'),
                              UseEffect.add('open_gate_right')),
                     'You unlock the gate.')]
+    elif name.startswith('block_'):
+        return []
     elif name == 'eggplant':
         return [Use('angry_cat', (),
                     'You feed the cat the eggplant. It is even angrier now.'),

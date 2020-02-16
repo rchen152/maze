@@ -204,6 +204,8 @@ def _load(name, *args, **kwargs):
 VISIBLE = {
     **walls.ALL,
     'house': House,
+    'key': _load('key', play_map.shift_pos(
+        play_map.square_to_pos(-1, 1), (150, 600))),
     'partial_wall_gateleft': _load(
         'partial_wall_horizontal', play_map.square_to_pos(0, 0), (0, -0.5)),
     'partial_wall_gateright': _load(
@@ -213,8 +215,16 @@ VISIBLE = {
         'gate', play_map.shift_pos(
             play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 15)),
         (-0.5, -1)),
-    'key': _load('key', play_map.shift_pos(
-        play_map.square_to_pos(-1, 1), (150, 600))),
+    'block_V': _load(
+        'block_V', play_map.shift_pos(play_map.square_to_pos(0, -1), (25, 50))),
+    'block_O': _load(
+        'block_O', play_map.shift_pos(play_map.square_to_pos(1, 3), (50, 700))),
+    'block_E': _load(
+        'block_E', play_map.shift_pos(
+            play_map.square_to_pos(5, 1), (625, 150))),
+    'block_L': _load(
+        'block_L', play_map.shift_pos(
+            play_map.square_to_pos(3, 3), (600, 700))),
     'eggplant': _load('eggplant', play_map.shift_pos(
         play_map.square_to_pos(1, 1), (300, 200))),
     'trash_can': _load('trash_can', play_map.shift_pos(

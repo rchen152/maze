@@ -143,7 +143,6 @@ class SurfaceTest(test_utils.ImgTestCase):
             item = interactions.obtain(name)
             if item and item.success:
                 uses = interactions.use(name)
-                self.assertTrue(uses)
                 for use in uses:
                     self.assertIsInstance(use, interactions.Use)
 

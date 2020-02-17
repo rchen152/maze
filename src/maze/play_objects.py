@@ -286,9 +286,9 @@ HIDDEN = {
 }
 
 
-# By default, effects can be applied to an object when the player is in the same
+# By default, the player can interact with an object when he is in the same
 # square as the middle of the bottom of the object.
-CUSTOM_EFFECT_SQUARES = {
+CUSTOM_INTERACTION_SQUARES = {
     'shrubbery': {(3, 1), (4, 1)},
     'fire': {(3, 1), (4, 1)},
 }

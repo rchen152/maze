@@ -139,7 +139,7 @@ class Surface(objects.Surface):
 
     def _player_close_to(self, name):
         rect = self._objects[name].RECT
-        close_enough_squares = play_objects.CUSTOM_EFFECT_SQUARES.get(
+        close_enough_squares = play_objects.CUSTOM_INTERACTION_SQUARES.get(
             name, {self._square(rect)})
         if self.current_square not in close_enough_squares:
             return False

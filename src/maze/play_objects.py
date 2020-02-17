@@ -262,6 +262,7 @@ VISIBLE = {
         'partial_wall_vertical', play_map.square_to_pos(2, 2), (-0.5, -1)),
     'angry_cat': _load('angry_cat', play_map.shift_pos(
         play_map.square_to_pos(2, 1), (0, 400)), (-0.75, -0.5)),
+    'shrubbery': _load('shrubbery', play_map.square_to_pos(4, 2), (0, -0.5)),
     'hole': Hole,
     'billboard_16': _load('billboard_right', play_map.shift_pos(
         play_map.square_to_pos(3, 2), (485, 400)), (0, -0.5)),

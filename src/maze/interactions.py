@@ -108,6 +108,8 @@ def _collision_reason(name):
         return 'Your way is blocked by an angry cat.'
     elif name == 'happy_cat':
         return 'The well-fed cat purrs when you pet it.'
+    elif name == 'shrubbery':
+        return 'Your way is blocked by a shrubbery.'
     elif name == 'hole':
         return "It's a hole in the ground."
     elif name == 'billboard_16':

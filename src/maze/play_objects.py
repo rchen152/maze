@@ -242,6 +242,10 @@ VISIBLE = {
     'angry_cat': _load('angry_cat', play_map.shift_pos(
         play_map.square_to_pos(2, 1), (0, 400)), (-0.75, -0.5)),
     'hole': Hole,
+    'billboard_16': _load('billboard_right', play_map.shift_pos(
+        play_map.square_to_pos(3, 2), (485, 400)), (0, -0.5)),
+    'billboard_10': _load('billboard_right', play_map.shift_pos(
+        play_map.square_to_pos(2, 2), (625, 400)), (0, -0.5)),
 }
 
 

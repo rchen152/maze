@@ -106,6 +106,11 @@ def _collision_reason(name):
         return 'The well-fed cat purrs when you pet it.'
     elif name == 'hole':
         return "It's a hole in the ground."
+    elif name == 'billboard_16':
+        return '"Go down."'
+    elif name == 'billboard_10':
+        return ('"Roses are red, violets are blue. Believe it or not, I '
+                'sometimes tell the truth =P"')
     else:
         raise NotImplementedError(f'Collided with {name}')
 

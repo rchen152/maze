@@ -245,4 +245,6 @@ VISIBLE = {
 HIDDEN = {
     'open_gate_left': OpenGateLeft,
     'open_gate_right': OpenGateRight,
+    'happy_cat': _load('happy_cat', play_map.shift_pos(
+        play_map.square_to_pos(2, 1), (25, 25))),
 }

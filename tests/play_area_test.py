@@ -143,11 +143,14 @@ class SurfaceTest(test_utils.ImgTestCase):
             item = interactions.obtain(name)
             if not item:
                 continue
-            for effect in item.item_effects:
-                if effect.type is interactions.ItemEffectType.ADD:
-                    uses = interactions.use(effect.target)
-                    for use in uses:
-                        self.assertIsInstance(use, interactions.Use)
+            effects = list(item.item_effects)
+            while effects:
+                effect = effects.pop(0)
+                if effect.type is not interactions.ItemEffectType.ADD:
+                    continue
+                for use in interactions.use(effect.target):
+                    self.assertIsInstance(use, interactions.Use)
+                    effects.extend(use.item_effects)
 
 
 if __name__ == '__main__':

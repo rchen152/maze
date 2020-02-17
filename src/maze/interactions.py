@@ -88,13 +88,15 @@ def _collision_reason(name):
     elif name == 'eggplant':
         return 'An eggplant. Ew.'
     elif name == 'trash_can':
-        return 'Do you still have the eggplant?'
+        return 'Do you have the eggplant?'
     elif name == 'fishing_rod':
         return 'Who left a fishing rod here?'
     elif name == 'lake':
         return 'What a lovely calm lake.'
     elif name == 'angry_cat':
         return 'Your way is blocked by an angry cat.'
+    elif name == 'happy_cat':
+        return 'The well-fed cat purrs when you pet it.'
     elif name == 'hole':
         return "It's a hole in the ground."
     else:
@@ -140,11 +142,20 @@ def use(name) -> Sequence[Use]:
     elif name.startswith('block_'):
         return []
     elif name == 'eggplant':
-        return [Use('angry_cat', (Effect.remove_item('eggplant'),), (),
-                    'You feed the cat the eggplant. It is even angrier now.'),
-                Use('trash_can', (Effect.remove_item('eggplant'),), (),
-                    "Yeah, you don't need that.")]
+        return [
+            Use('angry_cat', (Effect.remove_item('eggplant'),), (),
+                'You feed the cat the eggplant. The cat is even angrier now.'),
+            Use('trash_can', (Effect.remove_item('eggplant'),), (),
+                "Yeah, you don't need that.")]
     elif name == 'fishing_rod':
-        return [Use('lake', (), (), "You can't catch fish yet.")]
+        item_effects = (Effect.remove_item('fishing_rod'),
+                        Effect.add_item('fish'))
+        return [
+            Use('lake', item_effects, (), "You catch a tasty-looking fish.")]
+    elif name == 'fish':
+        object_effects = (Effect.remove_object('angry_cat'),
+                          Effect.add_object('happy_cat'))
+        return [Use('angry_cat', (Effect.remove_item('fish'),), object_effects,
+                    'You feed the cat the fish. The cat is happy.')]
     else:
         raise NotImplementedError(f'Used {name}')

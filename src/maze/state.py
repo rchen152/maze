@@ -92,8 +92,14 @@ class Game(common_state.GameState):
             if isinstance(click_result, str):
                 use_result = self._play_area.use_item(click_result)
                 if use_result:
-                    self._side_bar.consume_item(click_result)
-                    self._side_bar.text_area.show(use_result)
+                    for effect in use_result.item_effects:
+                        typ = effect.type
+                        if typ is interactions.ItemEffectType.REMOVE:
+                            self._side_bar.consume_item(effect.target)
+                        else:
+                            assert typ is interactions.ItemEffectType.ADD
+                            self._side_bar.add_item(effect.target)
+                    self._side_bar.text_area.show(use_result.reason)
                 else:
                     self._side_bar.text_area.show(
                         self._USE_FAIL_TEXT.format(

@@ -152,19 +152,19 @@ class Surface(objects.Surface):
             del self._objects[item.name]
         return item
 
-    def use_item(self, name) -> Optional[str]:
+    def use_item(self, name) -> Optional[interactions.Use]:
         uses = interactions.use(name)
         for use in uses:
             if use.activator not in self._objects or not self._player_close_to(
                     self._objects[use.activator].RECT):
                 continue
-            for effect in use.effects:
+            for effect in use.object_effects:
                 target = effect.target
-                if effect.type is interactions.UseEffectType.REMOVE_OBJECT:
+                if effect.type is interactions.ObjectEffectType.REMOVE:
                     del self._objects[target]
                 else:
-                    assert effect.type is interactions.UseEffectType.ADD_OBJECT
+                    assert effect.type is interactions.ObjectEffectType.ADD
                     self._objects[target] = self._hidden_objects[target]
                     del self._hidden_objects[target]
-            return use.reason
+            return use
         return None

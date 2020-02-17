@@ -2,7 +2,7 @@
 
 import dataclasses
 import enum
-from typing import Optional, Sequence, Tuple
+from typing import Optional, Sequence, Tuple, Union
 from . import walls
 
 
@@ -31,29 +31,43 @@ class Item:
     reason: str
 
 
-class UseEffectType(enum.Enum):
-    REMOVE_OBJECT = enum.auto()
-    ADD_OBJECT = enum.auto()
+class ItemEffectType(enum.Enum):
+    REMOVE = enum.auto()
+    ADD = enum.auto()
+
+
+class ObjectEffectType(enum.Enum):
+    REMOVE = enum.auto()
+    ADD = enum.auto()
 
 
 @dataclasses.dataclass
-class UseEffect:
-    type: UseEffectType
+class Effect:
+    type: Union[ItemEffectType, ObjectEffectType]
     target: str
 
     @classmethod
-    def remove(cls, obj):
-        return cls(UseEffectType.REMOVE_OBJECT, obj)
+    def remove_item(cls, item):
+        return cls(ItemEffectType.REMOVE, item)
 
     @classmethod
-    def add(cls, obj):
-        return cls(UseEffectType.ADD_OBJECT, obj)
+    def add_item(cls, item):
+        return cls(ItemEffectType.ADD, item)
+
+    @classmethod
+    def remove_object(cls, obj):
+        return cls(ObjectEffectType.REMOVE, obj)
+
+    @classmethod
+    def add_object(cls, obj):
+        return cls(ObjectEffectType.ADD, obj)
 
 
 @dataclasses.dataclass
 class Use:
     activator: str
-    effects: Sequence[UseEffect]
+    item_effects: Sequence[Effect]
+    object_effects: Sequence[Effect]
     reason: str
 
 
@@ -111,17 +125,19 @@ def obtain(name):
 
 def use(name):
     if name == 'key':
-        return [Use('gate', (UseEffect.remove('gate'),
-                             UseEffect.add('open_gate_left'),
-                             UseEffect.add('open_gate_right')),
+        object_effects = (Effect.remove_object('gate'),
+                          Effect.add_object('open_gate_left'),
+                          Effect.add_object('open_gate_right'))
+        return [Use('gate', (Effect.remove_item('key'),), object_effects,
                     'You unlock the gate.')]
     elif name.startswith('block_'):
         return []
     elif name == 'eggplant':
-        return [Use('angry_cat', (),
+        return [Use('angry_cat', (Effect.remove_item('eggplant'),), (),
                     'You feed the cat the eggplant. It is even angrier now.'),
-                Use('trash_can', (), "Yeah, you don't need that.")]
+                Use('trash_can', (Effect.remove_item('eggplant'),), (),
+                    "Yeah, you don't need that.")]
     elif name == 'fishing_rod':
-        return [Use('lake', (), "You can't catch fish yet.")]
+        return [Use('lake', (), (), "You can't catch fish yet.")]
     else:
         raise NotImplementedError(f'Used {name}')

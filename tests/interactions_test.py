@@ -15,6 +15,29 @@ class CloserThanTest(unittest.TestCase):
         self.assertFalse(collision.closer_than((-2, 0)))
 
 
+class EffectTest(unittest.TestCase):
+
+    def test_remove_item(self):
+        effect = interactions.Effect.remove_item('key')
+        self.assertEqual(effect.type, interactions.ItemEffectType.REMOVE)
+        self.assertEqual(effect.target, 'key')
+
+    def test_add_item(self):
+        effect = interactions.Effect.add_item('key')
+        self.assertEqual(effect.type, interactions.ItemEffectType.ADD)
+        self.assertEqual(effect.target, 'key')
+
+    def test_remove_object(self):
+        effect = interactions.Effect.remove_object('key')
+        self.assertEqual(effect.type, interactions.ObjectEffectType.REMOVE)
+        self.assertEqual(effect.target, 'key')
+
+    def test_add_object(self):
+        effect = interactions.Effect.add_object('key')
+        self.assertEqual(effect.type, interactions.ObjectEffectType.ADD)
+        self.assertEqual(effect.target, 'key')
+
+
 class CollideTest(unittest.TestCase):
 
     def test_wall(self):
@@ -48,10 +71,12 @@ class UseTest(unittest.TestCase):
 
     def test_effects(self):
         use, = interactions.use('key')
-        self.assertCountEqual(
-            use.effects, (interactions.UseEffect.remove('gate'),
-                          interactions.UseEffect.add('open_gate_left'),
-                          interactions.UseEffect.add('open_gate_right')))
+        self.assertCountEqual(use.item_effects, (
+            interactions.Effect.remove_item('key'),))
+        self.assertCountEqual(use.object_effects, (
+            interactions.Effect.remove_object('gate'),
+            interactions.Effect.add_object('open_gate_left'),
+            interactions.Effect.add_object('open_gate_right')))
 
 
 if __name__ == '__main__':

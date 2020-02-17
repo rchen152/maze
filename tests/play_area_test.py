@@ -115,8 +115,8 @@ class SurfaceTest(test_utils.ImgTestCase):
     def test_use_key(self):
         for obj in self.play_area._objects.values():
             obj.move((-50, 450))
-        use_result = cast(str, self.play_area.use_item('key'))
-        self.assertIn('gate', use_result)
+        use_result = cast(interactions.Use, self.play_area.use_item('key'))
+        self.assertIn('gate', use_result.reason)
         self.assertNotIn('gate', self.play_area._objects)
         for gate_half in ('open_gate_left', 'open_gate_right'):
             self.assertIn(gate_half, self.play_area._objects)

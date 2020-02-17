@@ -264,6 +264,8 @@ VISIBLE = {
         play_map.square_to_pos(2, 1), (0, 400)), (-0.75, -0.5)),
     'matches': _load('matches', play_map.shift_pos(
         play_map.square_to_pos(3, -1), (100, 150))),
+    'doll': _load('doll', play_map.shift_pos(
+        play_map.square_to_pos(3, 0), (250, 475))),
     'shrubbery': _load('shrubbery', play_map.shift_pos(
         play_map.square_to_pos(4, 2), (-5, 0)), (0, -0.5)),
     'hole': Hole,

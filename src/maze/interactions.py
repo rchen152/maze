@@ -110,6 +110,8 @@ def _collision_reason(name):
         return 'The well-fed cat purrs when you pet it.'
     elif name == 'matches':
         return 'Ooh, matches.'
+    elif name == 'doll':
+        return "It's a worn cloth doll with button eyes and yarn hair."
     elif name == 'shrubbery':
         return 'Your way is blocked by a shrubbery.'
     elif name == 'hole':
@@ -182,6 +184,7 @@ def use(name) -> Sequence[Use]:
         return [Use('angry_cat', (Effect.remove_item('fish'),), object_effects,
                     'You feed the cat the fish. The cat is happy.')]
     elif name == 'matches':
-        return []
+        return [Use('doll', (), (Effect.remove_object('doll'),),
+                    'You burn the well-loved doll to ashes. You monster.')]
     else:
         raise NotImplementedError(f'Used {name}')

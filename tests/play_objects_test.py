@@ -51,9 +51,6 @@ class FishingRodTest(test_utils.GameStateTestCase):
         self.assertFalse(self.fishing_rod.collidepoint(
             self.fishing_rod.RECT.topleft))
 
-    def test_draw(self):
-        self.fishing_rod.draw()
-
 
 class LakeTest(test_utils.GameStateTestCase):
 
@@ -69,8 +66,21 @@ class LakeTest(test_utils.GameStateTestCase):
         self.assertFalse(self.lake.RECT.colliderect(
             pygame.Rect(self.lake.RECT.topleft, (10, 10))))
 
-    def test_draw(self):
-        self.lake.draw()
+
+class BunnyPrintsTest(test_utils.GameStateTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.bunny_prints = play_objects.BunnyPrints(self.screen)
+
+    def test_colliderect(self):
+        self.assertTrue(self.bunny_prints.RECT.colliderect(
+            pygame.Rect(self.bunny_prints.RECT.left,
+                        self.bunny_prints.RECT.bottom - 10, 10, 10)))
+
+    def test_nocolliderect(self):
+        self.assertFalse(self.bunny_prints.RECT.colliderect(
+            pygame.Rect(self.bunny_prints.RECT.topleft, (10, 10))))
 
 
 class HoleTest(test_utils.GameStateTestCase):

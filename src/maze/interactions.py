@@ -100,6 +100,8 @@ def _collision_reason(name):
         return 'Who left a fishing rod here?'
     elif name == 'lake':
         return 'What a lovely calm lake.'
+    elif name == 'bunny_prints':
+        return 'What are these tracks?'
     elif name == 'angry_cat':
         return 'Your way is blocked by an angry cat.'
     elif name == 'happy_cat':

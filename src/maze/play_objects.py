@@ -158,6 +158,24 @@ class Lake(_CustomShapePngFactory):
         super().__init__('lake', screen, pos, (-0.5, -0.5))
 
 
+class _BunnyPrintsRect(_MultiRect):
+
+    def _get_rects(self):
+        return (pygame.Rect(self.left, self.bottom - 50, 40, 50),
+                pygame.Rect(self.left + 20, self.bottom - 115, 50, 50),
+                pygame.Rect(self.left + 70, self.top + 35, 45, 40),
+                pygame.Rect(self.right - 50, self.top, 50, 35))
+
+
+class BunnyPrints(_CustomShapePngFactory):
+
+    _ShapeFactory = _BunnyPrintsRect
+
+    def __init__(self, screen):
+        super().__init__('bunny_prints', screen, play_map.shift_pos(
+            play_map.square_to_pos(4, 0), (600, 200)))
+
+
 class _HoleRect(_MultiRect):
 
     _WIDTHS = (180, 260, 320, 370, 410, 430, 450)
@@ -235,6 +253,7 @@ VISIBLE = {
         play_map.square_to_pos(2, 1), (400, 100))),
     'fishing_rod': FishingRod,
     'lake': Lake,
+    'bunny_prints': BunnyPrints,
     'partial_wall_catabove': _load(
         'partial_wall_vertical', play_map.square_to_pos(2, 1), (-0.5, 0)),
     'partial_wall_catbelow': _load(

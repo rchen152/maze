@@ -254,6 +254,8 @@ VISIBLE = {
     'fishing_rod': FishingRod,
     'lake': Lake,
     'bunny_prints': BunnyPrints,
+    'bunny': _load('bunny', play_map.shift_pos(
+        play_map.square_to_pos(5, 0), (200, 125))),
     'partial_wall_catabove': _load(
         'partial_wall_vertical', play_map.square_to_pos(2, 1), (-0.5, 0)),
     'partial_wall_catbelow': _load(

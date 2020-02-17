@@ -215,17 +215,20 @@ VISIBLE = {
         'gate', play_map.shift_pos(
             play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 15)),
         (-0.5, -1)),
-    'block_V': _load(
-        'block_V', play_map.shift_pos(
-            play_map.square_to_pos(0, -1), (50, 700))),
+    'block_V': _load('block_V', play_map.shift_pos(
+        play_map.square_to_pos(0, -1), (50, 700))),
     'block_O': _load(
         'block_O', play_map.shift_pos(play_map.square_to_pos(1, 3), (25, 50))),
-    'block_E': _load(
-        'block_E', play_map.shift_pos(
-            play_map.square_to_pos(5, 1), (625, 150))),
-    'block_L': _load(
-        'block_L', play_map.shift_pos(
-            play_map.square_to_pos(3, 3), (600, 700))),
+    'block_E': _load('block_E', play_map.shift_pos(
+        play_map.square_to_pos(5, 1), (625, 150))),
+    'block_L': _load('block_L', play_map.shift_pos(
+        play_map.square_to_pos(3, 3), (600, 700))),
+    'billboard_2': _load('billboard_down', play_map.shift_pos(
+        play_map.square_to_pos(0, -1), (200, 400))),
+    'billboard_3': _load('billboard_left', play_map.shift_pos(
+        play_map.square_to_pos(1, -1), (50, 400))),
+    'billboard_4': _load('billboard_down', play_map.shift_pos(
+        play_map.square_to_pos(1, 0), (300, 50))),
     'eggplant': _load('eggplant', play_map.shift_pos(
         play_map.square_to_pos(1, 1), (300, 200))),
     'trash_can': _load('trash_can', play_map.shift_pos(

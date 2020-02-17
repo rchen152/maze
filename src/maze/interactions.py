@@ -85,6 +85,13 @@ def _collision_reason(name):
         return 'You walk into the gate. Ouch.'
     elif name.startswith('block_'):
         return 'An oversized alphabet block. How curious.'
+    elif name == 'billboard_2':
+        return 'It\'s a billboard. It says, "Go up."'
+    elif name == 'billboard_3':
+        return '"Seriously, go up."'
+    elif name == 'billboard_4':
+        return ('"Roses are red, violets are blue. My billboards are lies, '
+                'did I fool you?"')
     elif name == 'eggplant':
         return 'An eggplant. Ew.'
     elif name == 'trash_can':

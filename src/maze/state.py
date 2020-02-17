@@ -75,6 +75,14 @@ class Game(common_state.GameState):
         self.draw()
         return True
 
+    def _apply_effects(self, effects):
+        for effect in effects:
+            if effect.type is interactions.ItemEffectType.REMOVE:
+                self._side_bar.consume_item(effect.target)
+            else:
+                assert effect.type is interactions.ItemEffectType.ADD
+                self._side_bar.add_item(effect.target)
+
     def handle_click(self, event):
         if event.type != MOUSEBUTTONDOWN or event.button != 1 or (
                 not self._play_area.collidepoint(event.pos) and
@@ -83,8 +91,7 @@ class Game(common_state.GameState):
         click_result = self._play_area.handle_click(event.pos)
         if click_result:
             if isinstance(click_result, interactions.Item):
-                if click_result.success:
-                    self._side_bar.add_item(click_result.name)
+                self._apply_effects(click_result.item_effects)
                 self._side_bar.text_area.show(click_result.reason)
         else:
             click_result = self._side_bar.handle_click(event.pos)
@@ -92,13 +99,7 @@ class Game(common_state.GameState):
             if isinstance(click_result, str):
                 use_result = self._play_area.use_item(click_result)
                 if use_result:
-                    for effect in use_result.item_effects:
-                        typ = effect.type
-                        if typ is interactions.ItemEffectType.REMOVE:
-                            self._side_bar.consume_item(effect.target)
-                        else:
-                            assert typ is interactions.ItemEffectType.ADD
-                            self._side_bar.add_item(effect.target)
+                    self._apply_effects(use_result.item_effects)
                     self._side_bar.text_area.show(use_result.reason)
                 else:
                     self._side_bar.text_area.show(

@@ -50,9 +50,10 @@ class ObtainTest(unittest.TestCase):
     def test_key(self):
         item = interactions.obtain('key')
         assert item  # for pytype
-        self.assertEqual(item.name, 'key')
-        self.assertTrue(item.success)
-        self.assertTrue(item.consumed)
+        self.assertCountEqual(item.item_effects,
+                              (interactions.Effect.add_item('key'),))
+        self.assertCountEqual(item.object_effects,
+                              (interactions.Effect.remove_object('key'),))
         self.assertIn('key', item.reason)
 
     def test_noop(self):

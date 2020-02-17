@@ -137,6 +137,16 @@ class Surface(objects.Surface):
             return False
         return rect.inflate(100, 100).colliderect(self.player.RECT)
 
+    def _apply_effects(self, effects):
+        for effect in effects:
+            target = effect.target
+            if effect.type is interactions.ObjectEffectType.REMOVE:
+                del self._objects[target]
+            else:
+                assert effect.type is interactions.ObjectEffectType.ADD
+                self._objects[target] = self._hidden_objects[target]
+                del self._hidden_objects[target]
+
     def handle_click(self, pos) -> Union[bool, interactions.Item]:
         if not self.collidepoint(pos):
             return False
@@ -148,8 +158,7 @@ class Surface(objects.Surface):
             return True
         if not item:
             return True
-        if item.consumed:
-            del self._objects[item.name]
+        self._apply_effects(item.object_effects)
         return item
 
     def use_item(self, name) -> Optional[interactions.Use]:
@@ -158,13 +167,6 @@ class Surface(objects.Surface):
             if use.activator not in self._objects or not self._player_close_to(
                     self._objects[use.activator].RECT):
                 continue
-            for effect in use.object_effects:
-                target = effect.target
-                if effect.type is interactions.ObjectEffectType.REMOVE:
-                    del self._objects[target]
-                else:
-                    assert effect.type is interactions.ObjectEffectType.ADD
-                    self._objects[target] = self._hidden_objects[target]
-                    del self._hidden_objects[target]
+            self._apply_effects(use.object_effects)
             return use
         return None

@@ -23,14 +23,6 @@ class Collision:
             return False
 
 
-@dataclasses.dataclass
-class Item:
-    name: str
-    success: bool
-    consumed: bool
-    reason: str
-
-
 class ItemEffectType(enum.Enum):
     REMOVE = enum.auto()
     ADD = enum.auto()
@@ -61,6 +53,13 @@ class Effect:
     @classmethod
     def add_object(cls, obj):
         return cls(ObjectEffectType.ADD, obj)
+
+
+@dataclasses.dataclass
+class Item:
+    item_effects: Sequence[Effect]
+    object_effects: Sequence[Effect]
+    reason: str
 
 
 @dataclasses.dataclass
@@ -104,21 +103,27 @@ def collide(speed, name):
     return Collision(speed, _collision_reason(name))
 
 
+def _simple_obtain_effects(name):
+    return [(Effect.add_item(name),), (Effect.remove_object(name),)]
+
+
 def obtain(name):
     if name == 'key':
-        return Item(name, True, True, 'You pick up the key.')
+        return Item(*_simple_obtain_effects(name), 'You pick up the key.')
     elif name.startswith('block_'):
         return Item(
-            name, True, True,
+            *_simple_obtain_effects(name),
             'You decide to carry the giant wooden block around with you.')
     elif name == 'eggplant':
-        return Item(
-            name, True, True, 'You gingerly pick up the disgusting vegetable.')
+        return Item(*_simple_obtain_effects(name),
+                    'You gingerly pick up the disgusting vegetable.')
     elif name == 'fishing_rod':
-        return Item(name, True, True, "You steal someone's fishing rod.")
+        return Item(*_simple_obtain_effects(name),
+                    "You steal someone's fishing rod.")
     elif name == 'hole':
-        return Item(name, False, False, 'You fall into the hole and climb back '
-                    'out. You feel foolish.')
+        return Item(
+            (), (),
+            'You fall into the hole and climb back out. You feel foolish.')
     else:
         return None
 

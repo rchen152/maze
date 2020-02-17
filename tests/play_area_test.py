@@ -107,7 +107,7 @@ class SurfaceTest(test_utils.ImgTestCase):
             obj.move((950, -950))
         click_result = cast(interactions.Item, self.play_area.handle_click(
             self.play_area.key.RECT.center))
-        self.assertEqual(click_result.name, 'key')
+        self.assertIn('key', click_result.reason)
 
     def test_handle_outside_click(self):
         self.assertIs(self.play_area.handle_click((580, 288)), False)
@@ -141,10 +141,13 @@ class SurfaceTest(test_utils.ImgTestCase):
         for name in itertools.chain(self.play_area._objects,
                                     self.play_area._hidden_objects):
             item = interactions.obtain(name)
-            if item and item.success:
-                uses = interactions.use(name)
-                for use in uses:
-                    self.assertIsInstance(use, interactions.Use)
+            if not item:
+                continue
+            for effect in item.item_effects:
+                if effect.type is interactions.ItemEffectType.ADD:
+                    uses = interactions.use(effect.target)
+                    for use in uses:
+                        self.assertIsInstance(use, interactions.Use)
 
 
 if __name__ == '__main__':

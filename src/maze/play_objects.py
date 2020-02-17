@@ -247,21 +247,23 @@ VISIBLE = {
         play_map.square_to_pos(1, -1), (50, 400))),
     'billboard_4': _load('billboard_down', play_map.shift_pos(
         play_map.square_to_pos(1, 0), (300, 50))),
+    'bunny_prints': BunnyPrints,
+    'bunny': _load('bunny', play_map.shift_pos(
+        play_map.square_to_pos(5, 0), (200, 125))),
     'eggplant': _load('eggplant', play_map.shift_pos(
         play_map.square_to_pos(1, 1), (300, 200))),
     'trash_can': _load('trash_can', play_map.shift_pos(
         play_map.square_to_pos(2, 1), (400, 100))),
     'fishing_rod': FishingRod,
     'lake': Lake,
-    'bunny_prints': BunnyPrints,
-    'bunny': _load('bunny', play_map.shift_pos(
-        play_map.square_to_pos(5, 0), (200, 125))),
     'partial_wall_catabove': _load(
         'partial_wall_vertical', play_map.square_to_pos(2, 1), (-0.5, 0)),
     'partial_wall_catbelow': _load(
         'partial_wall_vertical', play_map.square_to_pos(2, 2), (-0.5, -1)),
     'angry_cat': _load('angry_cat', play_map.shift_pos(
         play_map.square_to_pos(2, 1), (0, 400)), (-0.75, -0.5)),
+    'matches': _load('matches', play_map.shift_pos(
+        play_map.square_to_pos(3, -1), (100, 150))),
     'shrubbery': _load('shrubbery', play_map.square_to_pos(4, 2), (0, -0.5)),
     'hole': Hole,
     'billboard_16': _load('billboard_right', play_map.shift_pos(

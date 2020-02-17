@@ -92,6 +92,10 @@ def _collision_reason(name):
     elif name == 'billboard_4':
         return ('"Roses are red, violets are blue. My billboards are lies, '
                 'did I fool you?"')
+    elif name == 'bunny_prints':
+        return 'What are these tracks?'
+    elif name == 'bunny':
+        return 'A bunny! Your heart melts.'
     elif name == 'eggplant':
         return 'An eggplant. Ew.'
     elif name == 'trash_can':
@@ -100,14 +104,12 @@ def _collision_reason(name):
         return 'Who left a fishing rod here?'
     elif name == 'lake':
         return 'What a lovely calm lake.'
-    elif name == 'bunny_prints':
-        return 'What are these tracks?'
-    elif name == 'bunny':
-        return 'A bunny! Your heart melts.'
     elif name == 'angry_cat':
         return 'Your way is blocked by an angry cat.'
     elif name == 'happy_cat':
         return 'The well-fed cat purrs when you pet it.'
+    elif name == 'matches':
+        return 'Ooh, matches.'
     elif name == 'shrubbery':
         return 'Your way is blocked by a shrubbery.'
     elif name == 'hole':
@@ -142,6 +144,10 @@ def obtain(name) -> Optional[Item]:
     elif name == 'fishing_rod':
         return Item(*_simple_obtain_effects(name),
                     "You steal someone's fishing rod.")
+    elif name == 'matches':
+        return Item(
+            *_simple_obtain_effects(name),
+            'You never know when you may want to set something on fire.')
     elif name == 'hole':
         return Item(
             (), (),
@@ -175,5 +181,7 @@ def use(name) -> Sequence[Use]:
                           Effect.add_object('happy_cat'))
         return [Use('angry_cat', (Effect.remove_item('fish'),), object_effects,
                     'You feed the cat the fish. The cat is happy.')]
+    elif name == 'matches':
+        return []
     else:
         raise NotImplementedError(f'Used {name}')

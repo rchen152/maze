@@ -137,8 +137,11 @@ class Surface(objects.Surface):
                 obj.move(speed)
         return move_result
 
-    def _player_close_to(self, rect):
-        if self.current_square != self._square(rect):
+    def _player_close_to(self, name):
+        rect = self._objects[name].RECT
+        close_enough_squares = play_objects.CUSTOM_EFFECT_SQUARES.get(
+            name, {self._square(rect)})
+        if self.current_square not in close_enough_squares:
             return False
         return rect.inflate(100, 100).colliderect(self.player.RECT)
 
@@ -156,7 +159,7 @@ class Surface(objects.Surface):
         if not self.collidepoint(pos):
             return False
         for name, obj in self._objects.items():
-            if obj.collidepoint(pos) and self._player_close_to(obj.RECT):
+            if obj.collidepoint(pos) and self._player_close_to(name):
                 item: Optional[interactions.Item] = interactions.obtain(name)
                 break
         else:
@@ -170,7 +173,7 @@ class Surface(objects.Surface):
         uses: Sequence[interactions.Use] = interactions.use(name)
         for use in uses:
             if use.activator not in self._objects or not self._player_close_to(
-                    self._objects[use.activator].RECT):
+                    use.activator):
                 continue
             self._apply_effects(use.object_effects)
             return use

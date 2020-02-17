@@ -114,6 +114,8 @@ def _collision_reason(name):
         return "It's a worn cloth doll with button eyes and yarn hair."
     elif name == 'shrubbery':
         return 'Your way is blocked by a shrubbery.'
+    elif name == 'fire':
+        return 'Your way is blocked by a flaming shrubbery.'
     elif name == 'hole':
         return "It's a hole in the ground."
     elif name == 'billboard_16':
@@ -147,9 +149,8 @@ def obtain(name) -> Optional[Item]:
         return Item(*_simple_obtain_effects(name),
                     "You steal someone's fishing rod.")
     elif name == 'matches':
-        return Item(
-            *_simple_obtain_effects(name),
-            'You never know when you may want to set something on fire.')
+        return Item(*_simple_obtain_effects(name),
+                    'You never know what you may want to set on fire.')
     elif name == 'hole':
         return Item(
             (), (),
@@ -184,7 +185,11 @@ def use(name) -> Sequence[Use]:
         return [Use('angry_cat', (Effect.remove_item('fish'),), object_effects,
                     'You feed the cat the fish. The cat is happy.')]
     elif name == 'matches':
-        return [Use('doll', (), (Effect.remove_object('doll'),),
-                    'You burn the well-loved doll to ashes. You monster.')]
+        return [
+            Use('doll', (), (Effect.remove_object('doll'),),
+                'You burn the well-loved doll to ashes. You monster.'),
+            Use('shrubbery', (Effect.remove_item('matches'),),
+                (Effect.add_object('fire'),),
+                'Your way is now blocked by a flaming shrubbery.')]
     else:
         raise NotImplementedError(f'Used {name}')

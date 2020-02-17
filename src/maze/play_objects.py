@@ -267,7 +267,7 @@ VISIBLE = {
     'doll': _load('doll', play_map.shift_pos(
         play_map.square_to_pos(3, 0), (250, 475))),
     'shrubbery': _load('shrubbery', play_map.shift_pos(
-        play_map.square_to_pos(4, 2), (-5, 0)), (0, -0.5)),
+        play_map.square_to_pos(4, 2), (-5, -50))),
     'hole': Hole,
     'billboard_16': _load('billboard_right', play_map.shift_pos(
         play_map.square_to_pos(3, 2), (485, 400)), (0, -0.5)),
@@ -281,4 +281,14 @@ HIDDEN = {
     'open_gate_right': OpenGateRight,
     'happy_cat': _load('happy_cat', play_map.shift_pos(
         play_map.square_to_pos(2, 1), (25, 25))),
+    'fire': _load('fire', play_map.shift_pos(
+        play_map.square_to_pos(4, 2), (-5, -50))),
+}
+
+
+# By default, effects can be applied to an object when the player is in the same
+# square as the middle of the bottom of the object.
+CUSTOM_EFFECT_SQUARES = {
+    'shrubbery': {(3, 1), (4, 1)},
+    'fire': {(3, 1), (4, 1)},
 }

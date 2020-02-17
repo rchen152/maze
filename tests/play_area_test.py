@@ -125,6 +125,16 @@ class SurfaceTest(test_utils.ImgTestCase):
     def test_use_key_too_far(self):
         self.assertIsNone(self.play_area.use_item('key'))
 
+    def test_collide_flaming_shrubbery(self):
+        for obj in itertools.chain(self.play_area._objects.values(),
+                                   self.play_area._hidden_objects.values()):
+            obj.move((-3200, -1000))
+        self.play_area.use_item('matches')
+        self.play_area._scroll_speed = (0, -100)
+        collision = self.play_area._check_player_collision()
+        assert collision  # for pytype
+        self.assertIn('flaming shrubbery', collision.reason)
+
     def test_can_collide(self):
         for name in itertools.chain(self.play_area._objects,
                                     self.play_area._hidden_objects):

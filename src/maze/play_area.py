@@ -58,10 +58,13 @@ class Surface(objects.Surface):
             self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
             self.player.RECT.w, _PLAYER_FEET_HEIGHT)
 
+    def _effective_rect(self, rect):
+        return rect.move(
+            tuple(play_map.HOUSE_POS[i] - self.house.RECT.topleft[i]
+                  for i in range(2)))
+
     def _square(self, rect):
-        return play_map.pos_to_square(
-            rect.move(tuple(play_map.HOUSE_POS[i] - self.house.RECT.topleft[i]
-                            for i in range(2))).midbottom)
+        return play_map.pos_to_square(self._effective_rect(rect).midbottom)
 
     @property
     def current_square(self):

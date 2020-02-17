@@ -13,6 +13,7 @@ from escape import state as escape_state
 from . import interactions
 from . import play_area
 from . import play_map
+from . import play_objects
 from . import side_bar
 
 
@@ -43,10 +44,11 @@ class Game(common_state.GameState):
                  "it's a closed heart shape. You've reached the end, Happy "
                  "Valentine's Day!")
 
-    def __init__(self, screen, cheat):
+    def __init__(self, screen, debug, cheat):
         self._play_area = play_area.Surface(screen)
         self._side_bar = side_bar.Surface(screen)
         self._side_bar.text_area.show(self._INTRO_TEXT)
+        self._debug = debug
         if cheat:
             x, y = cheat
             for obj in itertools.chain(
@@ -55,9 +57,22 @@ class Game(common_state.GameState):
                 obj.move((-x * 800, -y * 800))
         super().__init__(screen)
 
+    def _debug_draw(self):
+        rects = [self._play_area._player_feet_rect]
+        for obj in self._play_area._objects.values():
+            if isinstance(obj, play_objects._CustomShapePngFactory):
+                rects.extend(obj.RECT._get_rects())
+            else:
+                rects.append(obj.RECT)
+        for rect in rects:
+            pygame.draw.rect(
+                self._play_area._surface, color.BRIGHT_GREEN, rect, 2)
+
     def draw(self):
         self._play_area.draw()
         self._side_bar.draw()
+        if self._debug:
+            self._debug_draw()
         pygame.display.update()
 
     def handle_player_movement(self, event):
@@ -111,4 +126,18 @@ class Game(common_state.GameState):
                         self._USE_FAIL_TEXT.format(
                             click_result.replace('_', ' ')))
         self.draw()
+        return True
+
+    def handle_debug_location_request(self, event):
+        if not self._debug or event.type != KEYDOWN or event.key != K_l:
+            return False
+        effective_player_feet_pos = self._play_area._effective_rect(
+            self._play_area._player_feet_rect).midbottom
+        square = []
+        offsets = []
+        for i in range(2):
+            shift = effective_player_feet_pos[i] - play_map.START_POS[i]
+            square.append(shift // play_map.SQUARE_LENGTH)
+            offsets.append(shift % play_map.SQUARE_LENGTH)
+        print(tuple(square), tuple(offsets))
         return True

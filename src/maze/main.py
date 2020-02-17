@@ -14,6 +14,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='kitty maze game')
     parser.add_argument('-s', '--skip-title', action='store_true',
                         default=False, help='skip the title card')
+    parser.add_argument('--debug', action='store_true')
     parser.add_argument('--cheat', action='store', default=None,
                         type=_parse_cheat)
     return parser.parse_args()
@@ -27,7 +28,7 @@ def main():
     if not args.skip_title:
         common_state.TitleCard(screen).run()
         state.ShortEscapeEnding(screen).run()
-    state.Game(screen, args.cheat).run()
+    state.Game(screen, args.debug, args.cheat).run()
 
 
 if __name__ == '__main__':

@@ -264,7 +264,8 @@ VISIBLE = {
         play_map.square_to_pos(2, 1), (0, 400)), (-0.75, -0.5)),
     'matches': _load('matches', play_map.shift_pos(
         play_map.square_to_pos(3, -1), (100, 150))),
-    'shrubbery': _load('shrubbery', play_map.square_to_pos(4, 2), (0, -0.5)),
+    'shrubbery': _load('shrubbery', play_map.shift_pos(
+        play_map.square_to_pos(4, 2), (-5, 0)), (0, -0.5)),
     'hole': Hole,
     'billboard_16': _load('billboard_right', play_map.shift_pos(
         play_map.square_to_pos(3, 2), (485, 400)), (0, -0.5)),

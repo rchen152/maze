@@ -216,9 +216,10 @@ VISIBLE = {
             play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 15)),
         (-0.5, -1)),
     'block_V': _load(
-        'block_V', play_map.shift_pos(play_map.square_to_pos(0, -1), (25, 50))),
+        'block_V', play_map.shift_pos(
+            play_map.square_to_pos(0, -1), (50, 700))),
     'block_O': _load(
-        'block_O', play_map.shift_pos(play_map.square_to_pos(1, 3), (50, 700))),
+        'block_O', play_map.shift_pos(play_map.square_to_pos(1, 3), (25, 50))),
     'block_E': _load(
         'block_E', play_map.shift_pos(
             play_map.square_to_pos(5, 1), (625, 150))),

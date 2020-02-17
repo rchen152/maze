@@ -85,7 +85,7 @@ def ItemCell(idx):
 
         def __init__(self, screen):
             super().__init__(screen)
-            self._item = None
+            self._item: Optional[_Item] = None
 
         @property
         def item(self) -> Optional[str]:

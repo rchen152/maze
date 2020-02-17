@@ -3,7 +3,7 @@
 import itertools
 import pygame
 from pygame.locals import *
-from typing import Optional, Tuple, Union
+from typing import Optional, Union
 
 from common import color
 from common import img
@@ -29,7 +29,7 @@ def _shift_speed(speed, direction):
                  for s in speed)
 
 
-def _decelerate(speed) -> Optional[Tuple[int, int]]:
+def _decelerate(speed) -> Optional[interactions.Speed]:
     speed = _shift_speed(speed, -1)
     return None if speed == (0, 0) else speed
 
@@ -53,7 +53,7 @@ class Surface(objects.Surface):
         self.player = img.load('player', self._surface,
                                (state.RECT.h / 2, state.RECT.h / 2),
                                (-0.5, -0.5))
-        self._scroll_speed = None
+        self._scroll_speed: Optional[interactions.Speed] = None
         self._player_feet_rect = pygame.Rect(
             self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
             self.player.RECT.w, _PLAYER_FEET_HEIGHT)
@@ -78,7 +78,7 @@ class Surface(objects.Surface):
         super().draw()
         self.player.draw()
 
-    def check_player_collision(self) -> Optional[interactions.Collision]:
+    def _check_player_collision(self) -> Optional[interactions.Collision]:
         # Check if the player's feet would hit anything if he took a step
         # against the background scroll direction.
 
@@ -88,11 +88,11 @@ class Surface(objects.Surface):
             return self._player_feet_rect.union(next_feet_rect)
 
         player_path_rect = _get_player_path_rect(self._scroll_speed)
-        closest_collision = None
+        closest_collision: Optional[interactions.Collision] = None
         for name, obj in self._objects.items():
             if obj.RECT.colliderect(player_path_rect):
                 # Find the maximum speed at which the player won't collide.
-                speed: Optional[Tuple[int, int]] = _decelerate(
+                speed: Optional[interactions.Speed] = _decelerate(
                     self._scroll_speed)
                 while speed:
                     if not obj.RECT.colliderect(_get_player_path_rect(speed)):
@@ -119,7 +119,7 @@ class Surface(objects.Surface):
         else:
             return False
         collision: Optional[interactions.Collision] = (
-            self.check_player_collision())
+            self._check_player_collision())
         if collision:
             # Move the player as close to the obstacle as possible.
             speed = collision.max_nocollision_speed
@@ -164,7 +164,7 @@ class Surface(objects.Surface):
         return item
 
     def use_item(self, name) -> Optional[interactions.Use]:
-        uses = interactions.use(name)
+        uses: Sequence[interactions.Use] = interactions.use(name)
         for use in uses:
             if use.activator not in self._objects or not self._player_close_to(
                     self._objects[use.activator].RECT):

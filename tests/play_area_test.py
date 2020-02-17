@@ -30,16 +30,16 @@ class SurfaceTest(test_utils.ImgTestCase):
 
     def test_check_player_collision(self):
         self._set_speed_for_collision()
-        self.assertTrue(self.play_area.check_player_collision())
+        self.assertTrue(self.play_area._check_player_collision())
 
     def test_check_player_nocollision(self):
         self.play_area._scroll_speed = (0, 0)
-        self.assertFalse(self.play_area.check_player_collision())
+        self.assertFalse(self.play_area._check_player_collision())
 
     def test_wall(self):
         # This speed should collide the player with the wall below him.
         self.play_area._scroll_speed = (0, -400)
-        self.assertTrue(self.play_area.check_player_collision())
+        self.assertTrue(self.play_area._check_player_collision())
 
     def test_start_player_movement(self):
         object_x = self.play_area.house.RECT.x
@@ -79,7 +79,7 @@ class SurfaceTest(test_utils.ImgTestCase):
         for obj in self.play_area._objects.values():
             obj.move((-800, 153))
         self.play_area._scroll_speed = (800, 0)
-        collision = self.play_area.check_player_collision()
+        collision = self.play_area._check_player_collision()
         assert collision  # for pytype
         self.assertIn('wall', collision.reason)
 

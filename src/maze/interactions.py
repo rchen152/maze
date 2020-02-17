@@ -5,14 +5,16 @@ import enum
 from typing import Optional, Sequence, Tuple, Union
 from . import walls
 
+Speed = Tuple[int, int]
+
 
 @dataclasses.dataclass
 class Collision:
-    max_nocollision_speed: Optional[Tuple[int, int]]
+    max_nocollision_speed: Optional[Speed]
     reason: str
 
     def closer_than(self, speed):
-        # See play_area.Surface.check_player_collision. When two possible
+        # See play_area.Surface._check_player_collision. When two possible
         # collisions are in the same direction, the closer one is the one for
         # which the maximum speed that avoids collision is less.
         if self.max_nocollision_speed and speed:

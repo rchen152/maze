@@ -3,7 +3,7 @@
 import itertools
 import pygame
 from pygame.locals import *
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 from common import color
 from common import img
@@ -29,7 +29,7 @@ def _shift_speed(speed, direction):
                  for s in speed)
 
 
-def _decelerate(speed):
+def _decelerate(speed) -> Optional[Tuple[int, int]]:
     speed = _shift_speed(speed, -1)
     return None if speed == (0, 0) else speed
 
@@ -92,7 +92,8 @@ class Surface(objects.Surface):
         for name, obj in self._objects.items():
             if obj.RECT.colliderect(player_path_rect):
                 # Find the maximum speed at which the player won't collide.
-                speed = _decelerate(self._scroll_speed)
+                speed: Optional[Tuple[int, int]] = _decelerate(
+                    self._scroll_speed)
                 while speed:
                     if not obj.RECT.colliderect(_get_player_path_rect(speed)):
                         break
@@ -117,7 +118,8 @@ class Surface(objects.Surface):
             self._scroll_speed = _accelerate(self._scroll_speed)
         else:
             return False
-        collision = self.check_player_collision()
+        collision: Optional[interactions.Collision] = (
+            self.check_player_collision())
         if collision:
             # Move the player as close to the obstacle as possible.
             speed = collision.max_nocollision_speed
@@ -152,7 +154,7 @@ class Surface(objects.Surface):
             return False
         for name, obj in self._objects.items():
             if obj.collidepoint(pos) and self._player_close_to(obj.RECT):
-                item = interactions.obtain(name)
+                item: Optional[interactions.Item] = interactions.obtain(name)
                 break
         else:
             return True

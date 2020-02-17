@@ -99,7 +99,7 @@ def _collision_reason(name):
         raise NotImplementedError(f'Collided with {name}')
 
 
-def collide(speed, name):
+def collide(speed, name) -> Collision:
     return Collision(speed, _collision_reason(name))
 
 
@@ -107,7 +107,7 @@ def _simple_obtain_effects(name):
     return [(Effect.add_item(name),), (Effect.remove_object(name),)]
 
 
-def obtain(name):
+def obtain(name) -> Optional[Item]:
     if name == 'key':
         return Item(*_simple_obtain_effects(name), 'You pick up the key.')
     elif name.startswith('block_'):
@@ -128,7 +128,7 @@ def obtain(name):
         return None
 
 
-def use(name):
+def use(name) -> Sequence[Use]:
     if name == 'key':
         object_effects = (Effect.remove_object('gate'),
                           Effect.add_object('open_gate_left'),

@@ -3,6 +3,7 @@
 import itertools
 import pygame
 from pygame.locals import *
+from typing import Optional, Union
 
 from common import color
 from common import img
@@ -60,7 +61,8 @@ class Game(common_state.GameState):
         pygame.display.update()
 
     def handle_player_movement(self, event):
-        move_result = self._play_area.handle_player_movement(event)
+        move_result: Union[bool, str] = self._play_area.handle_player_movement(
+            event)
         if not move_result:
             return move_result
         if isinstance(move_result, str):
@@ -88,16 +90,19 @@ class Game(common_state.GameState):
                 not self._play_area.collidepoint(event.pos) and
                 not self._side_bar.collidepoint(event.pos)):
             return False
-        click_result = self._play_area.handle_click(event.pos)
+        click_result: Union[bool, interactions.Item] = (
+            self._play_area.handle_click(event.pos))
         if click_result:
             if isinstance(click_result, interactions.Item):
                 self._apply_effects(click_result.item_effects)
                 self._side_bar.text_area.show(click_result.reason)
         else:
-            click_result = self._side_bar.handle_click(event.pos)
+            click_result: Union[bool, str] = self._side_bar.handle_click(
+                event.pos)
             assert click_result
             if isinstance(click_result, str):
-                use_result = self._play_area.use_item(click_result)
+                use_result: Optional[interactions.Use] = (
+                    self._play_area.use_item(click_result))
                 if use_result:
                     self._apply_effects(use_result.item_effects)
                     self._side_bar.text_area.show(use_result.reason)

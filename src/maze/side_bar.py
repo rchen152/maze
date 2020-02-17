@@ -3,7 +3,7 @@
 import dataclasses
 import os
 import pygame
-from typing import Sequence, Tuple, Union
+from typing import Optional, Sequence, Tuple, Union
 
 from common import color
 from common import img
@@ -88,7 +88,7 @@ def ItemCell(idx):
             self._item = None
 
         @property
-        def item(self):
+        def item(self) -> Optional[str]:
             return self._item.name if self._item else None
 
         def set_item(self, name):

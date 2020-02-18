@@ -63,6 +63,30 @@ class House(_CustomShapePngFactory):
         super().__init__('house', screen, play_map.HOUSE_POS)
 
 
+class _TreeRect(_MultiRect):
+
+    def _get_rects(self):
+        rect1 = pygame.Rect(self.x, self.y, self.w, 3 * self.h / 5)
+        rect2 = pygame.Rect(
+            self.x + self.w / 4 - 20, rect1.bottom, self.w / 2, 2 * self.h / 5)
+        return (rect1, rect2)
+
+    def collidepoint(self, pos):
+        if not super().collidepoint(pos):
+            return False
+        return any(
+            self_rect.collidepoint(pos) for self_rect in self._get_rects())
+
+
+class TreePeach(_CustomShapePngFactory):
+
+    _ShapeFactory = _TreeRect
+
+    def __init__(self, screen):
+        super().__init__('tree_peach', screen, play_map.shift_pos(
+            play_map.square_to_pos(-1, 0), (300, 150)))
+
+
 class _OpenGateHalf(objects.Rect):
 
     COLOR = color.BROWN
@@ -86,6 +110,42 @@ class OpenGateRight(_OpenGateHalf):
         play_map.shift_pos(
             play_map.square_to_pos(1, 0), (-320, -_OPEN_GATE_SIZE[1])),
         _OPEN_GATE_SIZE)
+
+
+class Tree(_CustomShapePngFactory):
+
+    _ShapeFactory = _TreeRect
+
+    def __init__(self, screen):
+        return super().__init__('tree', screen, play_map.shift_pos(
+            play_map.square_to_pos(0, 1), (100, 300)))
+
+
+class TreeApple(_CustomShapePngFactory):
+
+    _ShapeFactory = _TreeRect
+
+    def __init__(self, screen):
+        return super().__init__('tree_apple', screen, play_map.shift_pos(
+            play_map.square_to_pos(2, 0), (200, -200)))
+
+
+class _BunnyPrintsRect(_MultiRect):
+
+    def _get_rects(self):
+        return (pygame.Rect(self.left, self.bottom - 50, 40, 50),
+                pygame.Rect(self.left + 20, self.bottom - 115, 50, 50),
+                pygame.Rect(self.left + 70, self.top + 35, 45, 40),
+                pygame.Rect(self.right - 50, self.top, 50, 35))
+
+
+class BunnyPrints(_CustomShapePngFactory):
+
+    _ShapeFactory = _BunnyPrintsRect
+
+    def __init__(self, screen):
+        super().__init__('bunny_prints', screen, play_map.shift_pos(
+            play_map.square_to_pos(4, 0), (600, 200)))
 
 
 class _FishingRodRect(_MultiRect):
@@ -158,24 +218,6 @@ class Lake(_CustomShapePngFactory):
         super().__init__('lake', screen, pos, (-0.5, -0.5))
 
 
-class _BunnyPrintsRect(_MultiRect):
-
-    def _get_rects(self):
-        return (pygame.Rect(self.left, self.bottom - 50, 40, 50),
-                pygame.Rect(self.left + 20, self.bottom - 115, 50, 50),
-                pygame.Rect(self.left + 70, self.top + 35, 45, 40),
-                pygame.Rect(self.right - 50, self.top, 50, 35))
-
-
-class BunnyPrints(_CustomShapePngFactory):
-
-    _ShapeFactory = _BunnyPrintsRect
-
-    def __init__(self, screen):
-        super().__init__('bunny_prints', screen, play_map.shift_pos(
-            play_map.square_to_pos(4, 0), (600, 200)))
-
-
 class _HoleRect(_MultiRect):
 
     _WIDTHS = (180, 260, 320, 370, 410, 430, 450)
@@ -222,6 +264,7 @@ def _load(name, *args, **kwargs):
 VISIBLE = {
     **walls.ALL,
     'house': House,
+    'tree_peach': TreePeach,
     'key': _load('key', play_map.shift_pos(
         play_map.square_to_pos(-1, 1), (150, 600))),
     'partial_wall_gateleft': _load(
@@ -247,6 +290,8 @@ VISIBLE = {
         play_map.square_to_pos(1, -1), (50, 400))),
     'billboard_4': _load('billboard_down', play_map.shift_pos(
         play_map.square_to_pos(1, 0), (300, 50))),
+    'tree': Tree,
+    'tree_apple': TreeApple,
     'bunny_prints': BunnyPrints,
     'bunny': _load('bunny', play_map.shift_pos(
         play_map.square_to_pos(5, 0), (200, 125))),

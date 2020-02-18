@@ -77,6 +77,8 @@ def _collision_reason(name):
         return "That's a wall..."
     elif name == 'house':
         return "You don't want to go back in the house."
+    elif name == 'tree' or name.startswith('tree_'):
+        return 'The tree leaves rustle gently in the breeze.'
     elif name == 'key':
         return "It's some sort of key."
     elif name == 'gate':

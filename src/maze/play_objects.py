@@ -262,6 +262,8 @@ VISIBLE = {
         'partial_wall_vertical', play_map.square_to_pos(2, 2), (-0.5, -1)),
     'angry_cat': _load('angry_cat', play_map.shift_pos(
         play_map.square_to_pos(2, 1), (0, 400)), (-0.75, -0.5)),
+    'bucket': _load('bucket', play_map.shift_pos(
+        play_map.square_to_pos(0, 2), (400, 400))),
     'matches': _load('matches', play_map.shift_pos(
         play_map.square_to_pos(3, -1), (100, 150))),
     'doll': _load('doll', play_map.shift_pos(

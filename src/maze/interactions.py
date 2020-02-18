@@ -108,6 +108,8 @@ def _collision_reason(name):
         return 'Your way is blocked by an angry cat.'
     elif name == 'happy_cat':
         return 'The well-fed cat purrs when you pet it.'
+    elif name == 'bucket':
+        return 'You wonder why random stuff is scattered all over the place.'
     elif name == 'matches':
         return 'Ooh, matches.'
     elif name == 'doll':
@@ -148,6 +150,8 @@ def obtain(name) -> Optional[Item]:
     elif name == 'fishing_rod':
         return Item(*_simple_obtain_effects(name),
                     "You steal someone's fishing rod.")
+    elif name == 'bucket':
+        return Item(*_simple_obtain_effects(name), 'Finders keepers, right?')
     elif name == 'matches':
         return Item(*_simple_obtain_effects(name),
                     'You never know what you may want to set on fire.')
@@ -184,6 +188,17 @@ def use(name) -> Sequence[Use]:
                           Effect.add_object('happy_cat'))
         return [Use('angry_cat', (Effect.remove_item('fish'),), object_effects,
                     'You feed the cat the fish. The cat is happy.')]
+    elif name == 'bucket':
+        item_effects = (Effect.remove_item('bucket'),
+                        Effect.add_item('filled_bucket'))
+        return [Use('lake', item_effects, (),
+                    'You fill the bucket with lake water.')]
+    elif name == 'filled_bucket':
+        object_effects = (Effect.remove_object('shrubbery'),
+                          Effect.remove_object('fire'))
+        return [Use(
+            'fire', (Effect.remove_item('filled_bucket'),), object_effects,
+            'You put out the fire. The shrubbery has been burned down.')]
     elif name == 'matches':
         return [
             Use('doll', (), (Effect.remove_object('doll'),),

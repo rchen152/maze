@@ -125,6 +125,8 @@ def _collision_reason(name):
     elif name == 'billboard_10':
         return ('"Roses are red, violets are blue. Believe it or not, I '
                 'sometimes tell the truth =P"')
+    elif name.startswith('flowers_'):
+        return 'The sweet scent of wildflowers makes your nose itch.'
     else:
         raise NotImplementedError(f'Collided with {name}')
 

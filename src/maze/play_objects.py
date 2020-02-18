@@ -275,6 +275,8 @@ VISIBLE = {
         play_map.square_to_pos(3, 2), (485, 400)), (0, -0.5)),
     'billboard_10': _load('billboard_right', play_map.shift_pos(
         play_map.square_to_pos(2, 2), (625, 400)), (0, -0.5)),
+    'flowers_18': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(2, 3), (175, 425))),
 }
 
 

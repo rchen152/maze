@@ -26,7 +26,7 @@ class TreeTest(test_utils.ImgTestCase):
 
     def setUp(self):
         super().setUp()
-        self.tree = play_objects.Tree(self.screen)
+        self.tree = play_objects.Tree((0, 0))(self.screen)
 
     def test_colliderect(self):
         self.assertTrue(self.tree.RECT.colliderect(

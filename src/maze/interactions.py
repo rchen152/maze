@@ -3,6 +3,7 @@
 import dataclasses
 import enum
 from typing import Optional, Sequence, Tuple, Union
+from . import play_objects
 from . import walls
 
 Speed = Tuple[int, int]
@@ -77,7 +78,7 @@ def _collision_reason(name):
         return "That's a wall..."
     elif name == 'house':
         return "You don't want to go back in the house."
-    elif name == 'tree' or name.startswith('tree_'):
+    elif name.startswith('tree_'):
         return 'The tree leaves rustle gently in the breeze.'
     elif name == 'key':
         return "It's some sort of key."
@@ -146,7 +147,7 @@ def _simple_obtain_effects(name):
 
 
 def obtain(name) -> Optional[Item]:
-    if name.startswith('tree_'):
+    if name in (f'tree_{fruit}' for fruit in play_objects.FRUITS):
         fruit = name[len('tree_'):]
         return Item((Effect.add_item(fruit),), (), f'You pick a ripe {fruit}.')
     elif name == 'key':
@@ -178,7 +179,7 @@ def obtain(name) -> Optional[Item]:
 
 
 def use(name, player_craving_started) -> Sequence[Use]:
-    if name in ('peach', 'apple'):
+    if name in play_objects.FRUITS:
         reason = f'You eat the {name}. '
         if player_craving_started:
             object_effects = (Effect.remove_object('invisible_wall'),)

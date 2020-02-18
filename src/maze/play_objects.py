@@ -11,6 +11,7 @@ from . import objects
 from . import play_map
 from . import walls
 
+FRUITS = ('peach', 'apple')
 _OPEN_GATE_SIZE = (5, 82)
 
 
@@ -112,13 +113,16 @@ class OpenGateRight(_OpenGateHalf):
         _OPEN_GATE_SIZE)
 
 
-class Tree(_CustomShapePngFactory):
+def Tree(*args, **kwargs):
 
-    _ShapeFactory = _TreeRect
+    class Tree(_CustomShapePngFactory):
 
-    def __init__(self, screen):
-        return super().__init__('tree', screen, play_map.shift_pos(
-            play_map.square_to_pos(0, 1), (100, 300)))
+        _ShapeFactory = _TreeRect
+
+        def __init__(self, screen):
+            return super().__init__('tree', screen, *args, **kwargs)
+
+    return Tree
 
 
 class TreeApple(_CustomShapePngFactory):
@@ -265,6 +269,8 @@ VISIBLE = {
     **walls.ALL,
     'house': House,
     'tree_peach': TreePeach,
+    'flowers_7': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(-1, 1), (500, 200))),
     'key': _load('key', play_map.shift_pos(
         play_map.square_to_pos(-1, 1), (150, 600))),
     'partial_wall_gateleft': _load(
@@ -290,8 +296,21 @@ VISIBLE = {
         play_map.square_to_pos(1, -1), (50, 400))),
     'billboard_4': _load('billboard_down', play_map.shift_pos(
         play_map.square_to_pos(1, 0), (300, 50))),
-    'tree': Tree,
+    'tree_3': Tree(play_map.shift_pos(
+        play_map.square_to_pos(1, -1), (350, 25))),
+    'flowers_4': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(1, 0), (450, 600))),
+    'flowers_5': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(1, 1), (225, 450))),
+    'tree_6': Tree(
+        play_map.shift_pos(play_map.square_to_pos(0, 1), (100, 300))),
     'tree_apple': TreeApple,
+    'tree_11': Tree(play_map.shift_pos(
+        play_map.square_to_pos(1, 2), (0, 200))),
+    'flowers_12': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(0, 2), (550, 500))),
+    'flowers_19': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(1, 3), (400, 400))),
     'bunny_prints': BunnyPrints,
     'bunny': _load('bunny', play_map.shift_pos(
         play_map.square_to_pos(5, 0), (200, 125))),

@@ -110,6 +110,8 @@ def _collision_reason(name):
         return 'Your way is blocked by an angry cat.'
     elif name == 'happy_cat':
         return 'The well-fed cat purrs when you pet it.'
+    elif name == 'cake':
+        return 'A huge chocolate cake!'
     elif name == 'bucket':
         return 'You wonder why random stuff is scattered all over the place.'
     elif name == 'matches':
@@ -157,6 +159,9 @@ def obtain(name) -> Optional[Item]:
     elif name == 'fishing_rod':
         return Item(*_simple_obtain_effects(name),
                     "You steal someone's fishing rod.")
+    elif name == 'cake':
+        return Item((), (),
+                    'On closer inspection, the cake is made of styrofoam.')
     elif name == 'bucket':
         return Item(*_simple_obtain_effects(name), 'Finders keepers, right?')
     elif name == 'matches':

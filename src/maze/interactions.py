@@ -66,7 +66,7 @@ class Item:
 
 @dataclasses.dataclass
 class Use:
-    activator: str
+    activator: Optional[str]
     item_effects: Sequence[Effect]
     object_effects: Sequence[Effect]
     reason: str
@@ -142,7 +142,10 @@ def _simple_obtain_effects(name):
 
 
 def obtain(name) -> Optional[Item]:
-    if name == 'key':
+    if name.startswith('tree_'):
+        fruit = name[len('tree_'):]
+        return Item((Effect.add_item(fruit),), (), f'You pick a ripe {fruit}.')
+    elif name == 'key':
         return Item(*_simple_obtain_effects(name), 'You pick up the key.')
     elif name.startswith('block_'):
         return Item(
@@ -168,7 +171,10 @@ def obtain(name) -> Optional[Item]:
 
 
 def use(name) -> Sequence[Use]:
-    if name == 'key':
+    if name in ('peach', 'apple'):
+        return [Use(None, (Effect.remove_item(name),), (),
+                    f'You eat the {name}. Yum.')]
+    elif name == 'key':
         object_effects = (Effect.remove_object('gate'),
                           Effect.add_object('open_gate_left'),
                           Effect.add_object('open_gate_right'))

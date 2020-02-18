@@ -5,6 +5,7 @@ import unittest
 
 from common import color
 from common import test_utils
+from maze import interactions
 from maze import side_bar
 from maze import walls
 
@@ -141,8 +142,56 @@ class SurfaceTest(test_utils.GameStateTestCase):
     def test_consume_item(self):
         self.side_bar.add_item('key')
         self.assertIsNotNone(self.side_bar.item_cell0.item)
-        self.side_bar.consume_item('key')
+        self.side_bar.consume_item('key', None)
         self.assertIsNone(self.side_bar.item_cell0.item)
+
+    def test_item_multiples_no_pos(self):
+        self.side_bar.add_item('peach')
+        self.side_bar.add_item('peach')
+        self.side_bar.consume_item('peach', None)
+        self.assertIsNone(self.side_bar.item_cell0.item)
+        self.assertIsNotNone(self.side_bar.item_cell1.item)
+
+    def test_item_multiples_with_pos(self):
+        self.side_bar.add_item('peach')
+        self.side_bar.add_item('peach')
+        self.side_bar.consume_item(
+            'peach', self.side_bar.item_cell1.RECT.move(576, 0).center)
+        self.assertIsNotNone(self.side_bar.item_cell0.item)
+        self.assertIsNone(self.side_bar.item_cell1.item)
+
+    def test_has_space_for_remove_item(self):
+        self.assertTrue(self.side_bar.has_space_for(
+            (interactions.Effect.remove_item('key'),)))
+
+    def test_has_space_for_add_item(self):
+        self.assertTrue(
+            self.side_bar.has_space_for((interactions.Effect.add_item('key'),)))
+
+    def test_no_space_for_add_item(self):
+        for _ in range(8):
+            self.side_bar.add_item('peach')
+        self.assertFalse(
+            self.side_bar.has_space_for((interactions.Effect.add_item('key'),)))
+
+    def test_has_space_for_remove_then_add_item(self):
+        for _ in range(8):
+            self.side_bar.add_item('peach')
+        self.assertTrue(self.side_bar.has_space_for(
+            (interactions.Effect.remove_item('peach'),
+             interactions.Effect.add_item('key'))))
+
+    def test_no_space_for_add_then_remove_item(self):
+        for _ in range(8):
+            self.side_bar.add_item('peach')
+        self.assertFalse(self.side_bar.has_space_for(
+            (interactions.Effect.add_item('key'),
+             interactions.Effect.remove_item('peach'))))
+
+    def test_no_space_after_noop_remove_item(self):
+        item_effects = (interactions.Effect.remove_item('peach'),) + (
+            interactions.Effect.add_item('peach'),) * 9
+        self.assertFalse(self.side_bar.has_space_for(item_effects))
 
 
 if __name__ == '__main__':

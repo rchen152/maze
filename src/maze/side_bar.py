@@ -8,6 +8,7 @@ from typing import Optional, Sequence, Tuple, Union
 from common import color
 from common import img
 from common import state
+from . import interactions
 from . import objects
 
 _SIDE_BAR_WIDTH = state.RECT.w - state.RECT.h
@@ -175,10 +176,13 @@ class Surface(objects.Surface):
                 return
         raise NotImplementedError(f'Cannot add item to full inventory: {name}')
 
+    def _relative_pos(self, pos):
+        return tuple(pos[i] - self.RECT.topleft[i] for i in range(2))
+
     def handle_click(self, pos) -> Union[bool, str]:
         if not self.collidepoint(pos):
             return False
-        pos = tuple(pos[i] - self.RECT.topleft[i] for i in range(2))
+        pos = self._relative_pos(pos)
         for item_cell in self._item_cells:
             if item_cell.collidepoint(pos):
                 break
@@ -186,9 +190,30 @@ class Surface(objects.Surface):
             return True
         return item_cell.item or True
 
-    def consume_item(self, name):
+    def consume_item(self, name, pos):
+        pos = pos and self._relative_pos(pos)
+        matched = []
         for item_cell in self._item_cells:
             if item_cell.item == name:
-                item_cell.del_item()
-                return
-        raise ValueError(f'Did not find item: {name}')
+                if not pos or item_cell.collidepoint(pos):
+                    item_cell.del_item()
+                    return
+                else:
+                    matched.append(item_cell)
+        if matched:
+            matched[0].del_item()
+        else:
+            raise ValueError(f'Did not find item: {name}')
+
+    def has_space_for(self, item_effects):
+        num_free_cells = sum(1 for cell in self._item_cells if not cell.item)
+        for effect in item_effects:
+            if effect.type is interactions.ItemEffectType.REMOVE:
+                if num_free_cells < 8:
+                    num_free_cells += 1
+            else:
+                assert effect.type is interactions.ItemEffectType.ADD
+                if not num_free_cells:
+                    return False
+                num_free_cells -= 1
+        return True

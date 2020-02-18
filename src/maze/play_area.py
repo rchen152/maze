@@ -145,7 +145,7 @@ class Surface(objects.Surface):
             return False
         return rect.inflate(100, 100).colliderect(self.player.RECT)
 
-    def _apply_effects(self, effects):
+    def apply_object_effects(self, effects):
         for effect in effects:
             target = effect.target
             if effect.type is interactions.ObjectEffectType.REMOVE:
@@ -164,17 +164,17 @@ class Surface(objects.Surface):
                 break
         else:
             return True
-        if not item:
-            return True
-        self._apply_effects(item.object_effects)
-        return item
+        # Note that we can't apply the effects of picking up the item yet: we
+        # have to first check whether we have space for it.
+        return item or True
 
     def use_item(self, name) -> Optional[interactions.Use]:
         uses: Sequence[interactions.Use] = interactions.use(name)
         for use in uses:
-            if use.activator not in self._objects or not self._player_close_to(
-                    use.activator):
+            activator: Optional[str] = use.activator
+            if activator and (activator not in self._objects or
+                              not self._player_close_to(activator)):
                 continue
-            self._apply_effects(use.object_effects)
+            self.apply_object_effects(use.object_effects)
             return use
         return None

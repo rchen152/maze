@@ -135,6 +135,18 @@ class SurfaceTest(test_utils.ImgTestCase):
         assert collision  # for pytype
         self.assertIn('flaming shrubbery', collision.reason)
 
+    def test_remove_object(self):
+        self.assertIn('key', self.play_area._objects)
+        self.play_area.apply_object_effects(
+            (interactions.Effect.remove_object('key'),))
+        self.assertNotIn('key', self.play_area._objects)
+
+    def test_add_object(self):
+        self.assertNotIn('happy_cat', self.play_area._objects)
+        self.play_area.apply_object_effects(
+            (interactions.Effect.add_object('happy_cat'),))
+        self.assertIn('happy_cat', self.play_area._objects)
+
     def test_can_collide(self):
         for name in itertools.chain(self.play_area._objects,
                                     self.play_area._hidden_objects):

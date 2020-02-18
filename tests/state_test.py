@@ -154,13 +154,36 @@ class GameTest(test_utils.GameStateTestCase):
         del self.game._play_area._objects['fishing_rod']
         self.game._side_bar.add_item('fishing_rod')
         self.game._side_bar.text_area.show(None)
-        self.assertTrue(self.game.handle_click(
+        self.game.handle_click(
             test_utils.MockEvent(
                 typ=MOUSEBUTTONDOWN, button=1,
-                pos=self.game._side_bar.item_cell0.RECT.move((576, 0)).center)))
+                pos=self.game._side_bar.item_cell0.RECT.move((576, 0)).center))
         text = ' '.join(
             block.value for block in self.game._side_bar.text_area._text)
         self.assertIn('fishing rod', text)
+
+    def test_item_multiples(self):
+        self.game._side_bar.add_item('peach')
+        self.game._side_bar.add_item('peach')
+        self.game.handle_click(
+            test_utils.MockEvent(
+                typ=MOUSEBUTTONDOWN, button=1,
+                pos=self.game._side_bar.item_cell1.RECT.move((576, 0)).center))
+        self.assertIsNotNone(self.game._side_bar.item_cell0.item)
+        self.assertIsNone(self.game._side_bar.item_cell1.item)
+
+    def test_inventory_overflow(self):
+        for obj in self.game._play_area._objects.values():
+            obj.move((800, 0))
+        self.game._side_bar.text_area.show(None)
+        for _ in range(9):
+            self.game.handle_click(
+                test_utils.MockEvent(
+                    typ=MOUSEBUTTONDOWN, button=1,
+                    pos=self.game._play_area.tree_peach.RECT.center))
+        text = ' '.join(
+            block.value for block in self.game._side_bar.text_area._text)
+        self.assertEqual(text, self.game._OBTAIN_FAIL_TEXT)
 
 
 if __name__ == '__main__':

@@ -39,6 +39,7 @@ class Game(common_state.GameState):
 
     _INTRO_TEXT = ("You've escaped the house, but you're lost in a maze. Try "
                    "to find an exit.")
+    _OBTAIN_FAIL_TEXT = 'Your arms are too full to pick up anything.'
     _USE_FAIL_TEXT = "You can't do anything with the {} right now."
     _END_TEXT = ("Roses are red, I've a confession to make. There is no exit, "
                  "it's a closed heart shape. You've reached the end, Happy "
@@ -92,10 +93,10 @@ class Game(common_state.GameState):
         self.draw()
         return True
 
-    def _apply_effects(self, effects):
+    def _apply_item_effects(self, effects, pos=None):
         for effect in effects:
             if effect.type is interactions.ItemEffectType.REMOVE:
-                self._side_bar.consume_item(effect.target)
+                self._side_bar.consume_item(effect.target, pos)
             else:
                 assert effect.type is interactions.ItemEffectType.ADD
                 self._side_bar.add_item(effect.target)
@@ -109,8 +110,13 @@ class Game(common_state.GameState):
             self._play_area.handle_click(event.pos))
         if click_result:
             if isinstance(click_result, interactions.Item):
-                self._apply_effects(click_result.item_effects)
-                self._side_bar.text_area.show(click_result.reason)
+                if self._side_bar.has_space_for(click_result.item_effects):
+                    self._play_area.apply_object_effects(
+                        click_result.object_effects)
+                    self._apply_item_effects(click_result.item_effects)
+                    self._side_bar.text_area.show(click_result.reason)
+                else:
+                    self._side_bar.text_area.show(self._OBTAIN_FAIL_TEXT)
         else:
             click_result: Union[bool, str] = self._side_bar.handle_click(
                 event.pos)
@@ -119,7 +125,7 @@ class Game(common_state.GameState):
                 use_result: Optional[interactions.Use] = (
                     self._play_area.use_item(click_result))
                 if use_result:
-                    self._apply_effects(use_result.item_effects)
+                    self._apply_item_effects(use_result.item_effects, event.pos)
                     self._side_bar.text_area.show(use_result.reason)
                 else:
                     self._side_bar.text_area.show(

@@ -311,6 +311,8 @@ VISIBLE = {
         'partial_wall_vertical', play_map.square_to_pos(3, 1), (-0.5, 0)),
     'cake': _load('cake', play_map.shift_pos(
         play_map.square_to_pos(3, 1), (50, 400))),
+    'invisible_wall': _load('invisible_wall', play_map.shift_pos(
+        play_map.square_to_pos(4, 1), (-10, 0))),
     'bucket': _load('bucket', play_map.shift_pos(
         play_map.square_to_pos(0, 2), (400, 400))),
     'matches': _load('matches', play_map.shift_pos(

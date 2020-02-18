@@ -112,6 +112,8 @@ def _collision_reason(name):
         return 'The well-fed cat purrs when you pet it.'
     elif name == 'cake':
         return 'A huge chocolate cake!'
+    elif name == 'invisible_wall':
+        return 'Thinking of the cake, you suddenly crave something sweet.'
     elif name == 'bucket':
         return 'You wonder why random stuff is scattered all over the place.'
     elif name == 'matches':
@@ -175,10 +177,16 @@ def obtain(name) -> Optional[Item]:
         return None
 
 
-def use(name) -> Sequence[Use]:
+def use(name, player_craving_started) -> Sequence[Use]:
     if name in ('peach', 'apple'):
-        return [Use(None, (Effect.remove_item(name),), (),
-                    f'You eat the {name}. Yum.')]
+        reason = f'You eat the {name}. '
+        if player_craving_started:
+            object_effects = (Effect.remove_object('invisible_wall'),)
+            reason += 'Your sweet craving is satisfied.'
+        else:
+            object_effects = ()
+            reason += 'Yum.'
+        return [Use(None, (Effect.remove_item(name),), object_effects, reason)]
     elif name == 'key':
         object_effects = (Effect.remove_object('gate'),
                           Effect.add_object('open_gate_left'),

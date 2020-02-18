@@ -50,10 +50,10 @@ class ObtainTest(unittest.TestCase):
     def test_key(self):
         item = interactions.obtain('key')
         assert item  # for pytype
-        self.assertCountEqual(item.item_effects,
-                              (interactions.Effect.add_item('key'),))
-        self.assertCountEqual(item.object_effects,
-                              (interactions.Effect.remove_object('key'),))
+        self.assertSequenceEqual(item.item_effects,
+                                 (interactions.Effect.add_item('key'),))
+        self.assertSequenceEqual(item.object_effects,
+                                 (interactions.Effect.remove_object('key'),))
         self.assertIn('key', item.reason)
 
     def test_noop(self):
@@ -63,21 +63,30 @@ class ObtainTest(unittest.TestCase):
 class UseTest(unittest.TestCase):
 
     def test_name(self):
-        use, = interactions.use('key')
+        use, = interactions.use('key', False)
         self.assertEqual(use.activator, 'gate')
 
     def test_reason(self):
-        use, = interactions.use('key')
+        use, = interactions.use('key', False)
         self.assertIn('gate', use.reason)
 
     def test_effects(self):
-        use, = interactions.use('key')
-        self.assertCountEqual(use.item_effects, (
-            interactions.Effect.remove_item('key'),))
-        self.assertCountEqual(use.object_effects, (
+        use, = interactions.use('key', False)
+        self.assertSequenceEqual(use.item_effects,
+                                 (interactions.Effect.remove_item('key'),))
+        self.assertSequenceEqual(use.object_effects, (
             interactions.Effect.remove_object('gate'),
             interactions.Effect.add_object('open_gate_left'),
             interactions.Effect.add_object('open_gate_right')))
+
+    def test_eat_fruit_no_craving(self):
+        use, = interactions.use('apple', False)
+        self.assertFalse(use.object_effects)
+
+    def test_eat_fruit_with_craving(self):
+        use, = interactions.use('apple', True)
+        self.assertSequenceEqual(use.object_effects, (
+            interactions.Effect.remove_object('invisible_wall'),))
 
 
 if __name__ == '__main__':

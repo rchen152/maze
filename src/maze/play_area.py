@@ -57,6 +57,7 @@ class Surface(objects.Surface):
         self._player_feet_rect = pygame.Rect(
             self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
             self.player.RECT.w, _PLAYER_FEET_HEIGHT)
+        self._player_craving_started = False
 
     def _effective_rect(self, rect):
         return rect.move(
@@ -128,6 +129,8 @@ class Surface(objects.Surface):
             speed = collision.max_nocollision_speed
             move_result = collision.reason
             self._scroll_speed = None
+            if 'crave' in collision.reason:
+                self._player_craving_started = True
         else:
             speed = self._scroll_speed
             move_result = True
@@ -169,7 +172,8 @@ class Surface(objects.Surface):
         return item or True
 
     def use_item(self, name) -> Optional[interactions.Use]:
-        uses: Sequence[interactions.Use] = interactions.use(name)
+        uses: Sequence[interactions.Use] = interactions.use(
+            name, self._player_craving_started)
         for use in uses:
             activator: Optional[str] = use.activator
             if activator and (activator not in self._objects or

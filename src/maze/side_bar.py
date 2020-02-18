@@ -174,7 +174,7 @@ class Surface(objects.Surface):
             if not item_cell.item:
                 item_cell.set_item(name)
                 return
-        raise NotImplementedError(f'Cannot add item to full inventory: {name}')
+        raise ValueError(f'Cannot add item to full inventory: {name}')
 
     def _relative_pos(self, pos):
         return tuple(pos[i] - self.RECT.topleft[i] for i in range(2))

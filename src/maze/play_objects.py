@@ -265,12 +265,48 @@ def _load(name, *args, **kwargs):
     return lambda screen: img.PngFactory(name, screen, *args, **kwargs)
 
 
-VISIBLE = {
-    **walls.ALL,
+_SCENERY = {
     'house': House,
-    'tree_peach': TreePeach,
     'flowers_7': _load('flowers', play_map.shift_pos(
         play_map.square_to_pos(-1, 1), (500, 200))),
+    'tree_3': Tree(play_map.shift_pos(
+        play_map.square_to_pos(1, -1), (350, 25))),
+    'flowers_4': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(1, 0), (450, 600))),
+    'flowers_5': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(1, 1), (225, 450))),
+    'tree_6': Tree(
+        play_map.shift_pos(play_map.square_to_pos(0, 1), (100, 300))),
+    'tree_11': Tree(play_map.shift_pos(
+        play_map.square_to_pos(1, 2), (0, 200))),
+    'flowers_12': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(0, 2), (550, 500))),
+    'flowers_19': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(1, 3), (400, 400))),
+    'flowers_18': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(2, 3), (175, 425))),
+}
+
+
+_RED_HERRINGS = {
+    'billboard_2': _load('billboard_down', play_map.shift_pos(
+        play_map.square_to_pos(0, -1), (200, 400))),
+    'billboard_3': _load('billboard_left', play_map.shift_pos(
+        play_map.square_to_pos(1, -1), (50, 400))),
+    'billboard_4': _load('billboard_down', play_map.shift_pos(
+        play_map.square_to_pos(1, 0), (300, 50))),
+    'bunny_prints': BunnyPrints,
+    'bunny': _load('bunny', play_map.shift_pos(
+        play_map.square_to_pos(5, 0), (200, 125))),
+    'hole': Hole,
+    'billboard_16': _load('billboard_right', play_map.shift_pos(
+        play_map.square_to_pos(3, 2), (485, 400)), (0, -0.5)),
+    'billboard_10': _load('billboard_right', play_map.shift_pos(
+        play_map.square_to_pos(2, 2), (625, 400)), (0, -0.5)),
+}
+
+
+_GATE = {
     'key': _load('key', play_map.shift_pos(
         play_map.square_to_pos(-1, 1), (150, 600))),
     'partial_wall_gateleft': _load(
@@ -282,38 +318,10 @@ VISIBLE = {
         'gate', play_map.shift_pos(
             play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 15)),
         (-0.5, -1)),
-    'block_V': _load('block_V', play_map.shift_pos(
-        play_map.square_to_pos(0, -1), (50, 700))),
-    'block_O': _load(
-        'block_O', play_map.shift_pos(play_map.square_to_pos(1, 3), (25, 50))),
-    'block_E': _load('block_E', play_map.shift_pos(
-        play_map.square_to_pos(5, 1), (625, 150))),
-    'block_L': _load('block_L', play_map.shift_pos(
-        play_map.square_to_pos(3, 3), (600, 700))),
-    'billboard_2': _load('billboard_down', play_map.shift_pos(
-        play_map.square_to_pos(0, -1), (200, 400))),
-    'billboard_3': _load('billboard_left', play_map.shift_pos(
-        play_map.square_to_pos(1, -1), (50, 400))),
-    'billboard_4': _load('billboard_down', play_map.shift_pos(
-        play_map.square_to_pos(1, 0), (300, 50))),
-    'tree_3': Tree(play_map.shift_pos(
-        play_map.square_to_pos(1, -1), (350, 25))),
-    'flowers_4': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(1, 0), (450, 600))),
-    'flowers_5': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(1, 1), (225, 450))),
-    'tree_6': Tree(
-        play_map.shift_pos(play_map.square_to_pos(0, 1), (100, 300))),
-    'tree_apple': TreeApple,
-    'tree_11': Tree(play_map.shift_pos(
-        play_map.square_to_pos(1, 2), (0, 200))),
-    'flowers_12': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(0, 2), (550, 500))),
-    'flowers_19': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(1, 3), (400, 400))),
-    'bunny_prints': BunnyPrints,
-    'bunny': _load('bunny', play_map.shift_pos(
-        play_map.square_to_pos(5, 0), (200, 125))),
+}
+
+
+_ANGRY_CAT = {
     'eggplant': _load('eggplant', play_map.shift_pos(
         play_map.square_to_pos(1, 1), (300, 200))),
     'trash_can': _load('trash_can', play_map.shift_pos(
@@ -326,12 +334,22 @@ VISIBLE = {
         'partial_wall_vertical', play_map.square_to_pos(2, 2), (-0.5, -1)),
     'angry_cat': _load('angry_cat', play_map.shift_pos(
         play_map.square_to_pos(2, 1), (0, 400)), (-0.75, -0.5)),
+}
+
+
+_INVISIBLE_WALL = {
+    'tree_peach': TreePeach,
+    'tree_apple': TreeApple,
     'partial_wall_cakeabove': _load(
         'partial_wall_vertical', play_map.square_to_pos(3, 1), (-0.5, 0)),
     'cake': _load('cake', play_map.shift_pos(
         play_map.square_to_pos(3, 1), (50, 400))),
     'invisible_wall': _load('invisible_wall', play_map.shift_pos(
         play_map.square_to_pos(4, 1), (-10, 0))),
+}
+
+
+_SHRUBBERY = {
     'bucket': _load('bucket', play_map.shift_pos(
         play_map.square_to_pos(0, 2), (400, 400))),
     'matches': _load('matches', play_map.shift_pos(
@@ -340,13 +358,30 @@ VISIBLE = {
         play_map.square_to_pos(3, 0), (250, 475))),
     'shrubbery': _load('shrubbery', play_map.shift_pos(
         play_map.square_to_pos(4, 2), (-5, -50))),
-    'hole': Hole,
-    'billboard_16': _load('billboard_right', play_map.shift_pos(
-        play_map.square_to_pos(3, 2), (485, 400)), (0, -0.5)),
-    'billboard_10': _load('billboard_right', play_map.shift_pos(
-        play_map.square_to_pos(2, 2), (625, 400)), (0, -0.5)),
-    'flowers_18': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(2, 3), (175, 425))),
+}
+
+
+_BLOCK_PUZZLE = {
+    'block_V': _load('block_V', play_map.shift_pos(
+        play_map.square_to_pos(0, -1), (50, 700))),
+    'block_O': _load(
+        'block_O', play_map.shift_pos(play_map.square_to_pos(1, 3), (25, 50))),
+    'block_E': _load('block_E', play_map.shift_pos(
+        play_map.square_to_pos(5, 1), (625, 150))),
+    'block_L': _load('block_L', play_map.shift_pos(
+        play_map.square_to_pos(3, 3), (600, 700))),
+}
+
+
+VISIBLE = {
+    **walls.ALL,
+    **_SCENERY,
+    **_RED_HERRINGS,
+    **_GATE,
+    **_ANGRY_CAT,
+    **_INVISIBLE_WALL,
+    **_SHRUBBERY,
+    **_BLOCK_PUZZLE,
 }
 
 

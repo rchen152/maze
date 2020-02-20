@@ -39,7 +39,7 @@ class Game(common_state.GameState):
 
     _INTRO_TEXT = ("You've escaped the house, but you're lost in a maze. Try "
                    "to find an exit.")
-    _OBTAIN_FAIL_TEXT = 'Your arms are too full to pick up anything.'
+    _OBTAIN_FAIL_TEXT = 'Your arms are too full to pick anything up.'
     _USE_FAIL_TEXT = "You can't do anything with the {} right now."
     _END_TEXT = ("Roses are red, I've a confession to make. There is no exit, "
                  "it's a closed heart shape. You've reached the end, Happy "

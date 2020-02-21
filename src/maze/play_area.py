@@ -3,7 +3,7 @@
 import itertools
 import pygame
 from pygame.locals import *
-from typing import Optional, Union
+from typing import Optional, Sequence, Union
 
 from common import color
 from common import img
@@ -45,11 +45,13 @@ class Surface(objects.Surface):
     # We don't include the player here because he is a special fixed object.
     OBJECTS = play_objects.VISIBLE
     _HIDDEN_OBJECTS: objects.ObjectsType = play_objects.HIDDEN
+    _STATE: Sequence[str] = play_objects.STATE
 
     def __init__(self, screen):
         super().__init__(screen)
         self._hidden_objects = {name: cls(self._surface)
                                 for name, cls in self._HIDDEN_OBJECTS.items()}
+        self._state = {name: object() for name in self._STATE}
         self.player = img.load('player', self._surface,
                                (state.RECT.h / 2, state.RECT.h / 2),
                                (-0.5, -0.5))
@@ -57,7 +59,6 @@ class Surface(objects.Surface):
         self._player_feet_rect = pygame.Rect(
             self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
             self.player.RECT.w, _PLAYER_FEET_HEIGHT)
-        self._player_craving_started = False
 
     def _effective_rect(self, rect):
         return rect.move(
@@ -130,7 +131,8 @@ class Surface(objects.Surface):
             move_result = collision.reason
             self._scroll_speed = None
             if 'crave' in collision.reason:
-                self._player_craving_started = True
+                if 'pre_crave' in self._state:
+                    del self._state['pre_crave']
         else:
             speed = self._scroll_speed
             move_result = True
@@ -142,8 +144,12 @@ class Surface(objects.Surface):
 
     def _player_close_to(self, name):
         rect = self._objects[name].RECT
-        close_enough_squares = play_objects.CUSTOM_INTERACTION_SQUARES.get(
-            name, {self._square(rect)})
+        if name in play_objects.CUSTOM_INTERACTION_SQUARES:
+            close_enough_squares = play_objects.CUSTOM_INTERACTION_SQUARES[name]
+            if close_enough_squares is play_objects.ALL_SQUARES:
+                return True
+        else:
+            close_enough_squares = {self._square(rect)}
         if self.current_square not in close_enough_squares:
             return False
         return rect.inflate(100, 100).colliderect(self.player.RECT)
@@ -171,13 +177,15 @@ class Surface(objects.Surface):
         # have to first check whether we have space for it.
         return item or True
 
+    def _activate_item(self, activator):
+        if not activator or activator in self._state:
+            return True
+        return activator in self._objects and self._player_close_to(activator)
+
     def use_item(self, name) -> Optional[interactions.Use]:
-        uses: Sequence[interactions.Use] = interactions.use(
-            name, self._player_craving_started)
+        uses: Sequence[interactions.Use] = interactions.use(name)
         for use in uses:
-            activator: Optional[str] = use.activator
-            if activator and (activator not in self._objects or
-                              not self._player_close_to(activator)):
+            if not self._activate_item(use.activator):
                 continue
             self.apply_object_effects(use.object_effects)
             return use

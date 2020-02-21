@@ -178,16 +178,15 @@ def obtain(name) -> Optional[Item]:
         return None
 
 
-def use(name, player_craving_started) -> Sequence[Use]:
+def use(name) -> Sequence[Use]:
     if name in play_objects.FRUITS:
+        item_effects = (Effect.remove_item(name),)
         reason = f'You eat the {name}. '
-        if player_craving_started:
-            object_effects = (Effect.remove_object('invisible_wall'),)
-            reason += 'Your sweet craving is satisfied.'
-        else:
-            object_effects = ()
-            reason += 'Yum.'
-        return [Use(None, (Effect.remove_item(name),), object_effects, reason)]
+        return [Use('pre_crave', item_effects, (), reason + 'Yum.'),
+                Use('invisible_wall', item_effects,
+                    (Effect.remove_object('invisible_wall'),),
+                    reason + 'Your sweet craving is satisfied.'),
+                Use(None, item_effects, (), reason + 'You feel bloated.')]
     elif name == 'key':
         object_effects = (Effect.remove_object('gate'),
                           Effect.add_object('open_gate_left'),

@@ -170,7 +170,7 @@ class SurfaceTest(test_utils.ImgTestCase):
                 effect = effects.pop(0)
                 if effect.type is not interactions.ItemEffectType.ADD:
                     continue
-                for use in interactions.use(effect.target, False):
+                for use in interactions.use(effect.target):
                     self.assertIsInstance(use, interactions.Use)
                     effects.extend(use.item_effects)
 
@@ -179,20 +179,39 @@ class SurfaceTest(test_utils.ImgTestCase):
                                    self.play_area._hidden_objects.values()):
             obj.move((-2400, -800))
         self.play_area._scroll_speed = (-800, 0)
-        self.assertFalse(self.play_area._player_craving_started)
+        self.assertIn('pre_crave', self.play_area._state)
         self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=play_area._TICK))
-        self.assertTrue(self.play_area._player_craving_started)
+        self.assertNotIn('pre_crave', self.play_area._state)
+
+    def test_collide_invisible_wall_twice(self):
+        for obj in itertools.chain(self.play_area._objects.values(),
+                                   self.play_area._hidden_objects.values()):
+            obj.move((-2400, -800))
+        self.play_area._scroll_speed = (-800, 0)
+        self.play_area.handle_player_movement(
+            test_utils.MockEvent(typ=play_area._TICK))
+        self.play_area._scroll_speed = (-800, 0)
+        self.play_area.handle_player_movement(
+            test_utils.MockEvent(typ=play_area._TICK))
 
     def test_eat_fruit_no_craving(self):
-        self.play_area._player_craving_started = False
-        self.play_area.use_item('peach')
+        self.play_area._state = {'pre_crave': object()}
+        use = cast(interactions.Use, self.play_area.use_item('peach'))
+        self.assertIn('Yum', use.reason)
         self.assertIn('invisible_wall', self.play_area._objects)
 
     def test_eat_fruit_with_craving(self):
-        self.play_area._player_craving_started = True
-        self.play_area.use_item('peach')
+        self.play_area._state = {}
+        use = cast(interactions.Use, self.play_area.use_item('peach'))
+        self.assertIn('craving', use.reason)
         self.assertNotIn('invisible_wall', self.play_area._objects)
+
+    def test_eat_fruit_after_craving(self):
+        self.play_area._state = {}
+        self.play_area.use_item('peach')
+        use = cast(interactions.Use, self.play_area.use_item('peach'))
+        self.assertIn('bloated', use.reason)
 
 
 if __name__ == '__main__':

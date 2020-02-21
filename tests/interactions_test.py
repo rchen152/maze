@@ -63,30 +63,21 @@ class ObtainTest(unittest.TestCase):
 class UseTest(unittest.TestCase):
 
     def test_name(self):
-        use, = interactions.use('key', False)
+        use, = interactions.use('key')
         self.assertEqual(use.activator, 'gate')
 
     def test_reason(self):
-        use, = interactions.use('key', False)
+        use, = interactions.use('key')
         self.assertIn('gate', use.reason)
 
     def test_effects(self):
-        use, = interactions.use('key', False)
+        use, = interactions.use('key')
         self.assertSequenceEqual(use.item_effects,
                                  (interactions.Effect.remove_item('key'),))
         self.assertSequenceEqual(use.object_effects, (
             interactions.Effect.remove_object('gate'),
             interactions.Effect.add_object('open_gate_left'),
             interactions.Effect.add_object('open_gate_right')))
-
-    def test_eat_fruit_no_craving(self):
-        use, = interactions.use('apple', False)
-        self.assertFalse(use.object_effects)
-
-    def test_eat_fruit_with_craving(self):
-        use, = interactions.use('apple', True)
-        self.assertSequenceEqual(use.object_effects, (
-            interactions.Effect.remove_object('invisible_wall'),))
 
 
 if __name__ == '__main__':

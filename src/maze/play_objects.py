@@ -401,9 +401,16 @@ HIDDEN = {
 }
 
 
+ALL_SQUARES = object()
+
+
 # By default, the player can interact with an object when he is in the same
 # square as the middle of the bottom of the object.
 CUSTOM_INTERACTION_SQUARES = {
+    'invisible_wall': ALL_SQUARES,
     'shrubbery': {(3, 1), (4, 1)},
     'fire': {(3, 1), (4, 1)},
 }
+
+
+STATE = ('pre_crave',)

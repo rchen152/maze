@@ -114,6 +114,12 @@ class LakeTest(test_utils.GameStateTestCase):
             pygame.Rect(self.lake.RECT.topleft, (10, 10))))
 
 
+class InvisibleWallTest(test_utils.GameStateTestCase):
+
+    def draw(self):
+        play_objects.InvisibleWall(self.screen).draw()
+
+
 class HoleTest(test_utils.GameStateTestCase):
 
     def setUp(self):

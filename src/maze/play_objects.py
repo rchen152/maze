@@ -222,6 +222,13 @@ class Lake(_CustomShapePngFactory):
         super().__init__('lake', screen, pos, (-0.5, -0.5))
 
 
+class InvisibleWall(objects.Rect):
+
+    RECT = pygame.Rect(
+        play_map.shift_pos(play_map.square_to_pos(4, 1), (-10, 10)), (0, 775))
+    COLOR = color.BLUE
+
+
 class _HoleRect(_MultiRect):
 
     _WIDTHS = (180, 260, 320, 370, 410, 430, 450)
@@ -344,8 +351,7 @@ _INVISIBLE_WALL = {
         'partial_wall_vertical', play_map.square_to_pos(3, 1), (-0.5, 0)),
     'cake': _load('cake', play_map.shift_pos(
         play_map.square_to_pos(3, 1), (50, 400))),
-    'invisible_wall': _load('invisible_wall', play_map.shift_pos(
-        play_map.square_to_pos(4, 1), (-10, 0))),
+    'invisible_wall': InvisibleWall,
 }
 
 

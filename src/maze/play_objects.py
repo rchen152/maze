@@ -217,8 +217,7 @@ class Lake(_CustomShapePngFactory):
     _ShapeFactory = _LakeRect
 
     def __init__(self, screen):
-        pos = play_map.shift_pos(
-            play_map.square_to_pos(4, -1), (play_map.SQUARE_LENGTH / 2,) * 2)
+        pos = play_map.shift_pos(play_map.square_to_pos(4, -1), (410, 400))
         super().__init__('lake', screen, pos, (-0.5, -0.5))
 
 

@@ -84,8 +84,8 @@ class TreePeach(_CustomShapePngFactory):
     _ShapeFactory = _TreeRect
 
     def __init__(self, screen):
-        super().__init__('tree_peach', screen, play_map.shift_pos(
-            play_map.square_to_pos(-1, 0), (300, 150)))
+        super().__init__('tree_peach', screen, play_map.shifted_square_to_pos(
+            (-1, 0), (300, 150)))
 
 
 class _OpenGateHalf(objects.Rect):
@@ -100,27 +100,26 @@ class _OpenGateHalf(objects.Rect):
 class OpenGateLeft(_OpenGateHalf):
 
     RECT = pygame.Rect(
-        play_map.shift_pos(
-            play_map.square_to_pos(0, 0), (316, -_OPEN_GATE_SIZE[1])),
+        play_map.shifted_square_to_pos((0, 0), (316, -_OPEN_GATE_SIZE[1])),
         _OPEN_GATE_SIZE)
 
 
 class OpenGateRight(_OpenGateHalf):
 
     RECT = pygame.Rect(
-        play_map.shift_pos(
-            play_map.square_to_pos(1, 0), (-320, -_OPEN_GATE_SIZE[1])),
+        play_map.shifted_square_to_pos((1, 0), (-320, -_OPEN_GATE_SIZE[1])),
         _OPEN_GATE_SIZE)
 
 
-def Tree(*args, **kwargs):
+def Tree(square, square_shift):
+    pos = play_map.shifted_square_to_pos(square, square_shift)
 
     class Tree(_CustomShapePngFactory):
 
         _ShapeFactory = _TreeRect
 
         def __init__(self, screen):
-            return super().__init__('tree', screen, *args, **kwargs)
+            return super().__init__('tree', screen, pos)
 
     return Tree
 
@@ -130,8 +129,9 @@ class TreeApple(_CustomShapePngFactory):
     _ShapeFactory = _TreeRect
 
     def __init__(self, screen):
-        return super().__init__('tree_apple', screen, play_map.shift_pos(
-            play_map.square_to_pos(2, 0), (200, -200)))
+        return super().__init__(
+            'tree_apple', screen,
+            play_map.shifted_square_to_pos((2, 0), (200, -200)))
 
 
 class _BunnyPrintsRect(_MultiRect):
@@ -148,8 +148,8 @@ class BunnyPrints(_CustomShapePngFactory):
     _ShapeFactory = _BunnyPrintsRect
 
     def __init__(self, screen):
-        super().__init__('bunny_prints', screen, play_map.shift_pos(
-            play_map.square_to_pos(4, 0), (600, 200)))
+        super().__init__('bunny_prints', screen, play_map.shifted_square_to_pos(
+            (4, 0), (600, 200)))
 
 
 class _FishingRodRect(_MultiRect):
@@ -176,8 +176,8 @@ class FishingRod(_CustomShapePngFactory):
     _ShapeFactory = _FishingRodRect
 
     def __init__(self, screen):
-        super().__init__('fishing_rod', screen, play_map.shift_pos(
-            play_map.square_to_pos(1, 2), (500, 750)), (0, -1))
+        super().__init__('fishing_rod', screen, play_map.shifted_square_to_pos(
+            (1, 2), (500, 750)), (0, -1))
 
 
 class _LakeRect(_MultiRect):
@@ -217,14 +217,14 @@ class Lake(_CustomShapePngFactory):
     _ShapeFactory = _LakeRect
 
     def __init__(self, screen):
-        pos = play_map.shift_pos(play_map.square_to_pos(4, -1), (410, 400))
+        pos = play_map.shifted_square_to_pos((4, -1), (410, 400))
         super().__init__('lake', screen, pos, (-0.5, -0.5))
 
 
 class InvisibleWall(objects.Rect):
 
     RECT = pygame.Rect(
-        play_map.shift_pos(play_map.square_to_pos(4, 1), (-10, 10)), (0, 775))
+        play_map.shifted_square_to_pos((4, 1), (-10, 10)), (0, 775))
     COLOR = color.BLUE
 
 
@@ -259,132 +259,100 @@ class _HoleRect(_MultiRect):
 
 class Hole(img.RectFactory):
 
-    RECT = _HoleRect(play_map.shift_pos(
-        play_map.square_to_pos(4, 2), (100, 100)), (500, 500))
+    RECT = _HoleRect(play_map.shifted_square_to_pos(
+        (4, 2), (100, 100)), (500, 500))
 
     def draw(self):
         pygame.draw.circle(
             self._screen, color.BLACK, self.RECT.center, self.RECT.radius)
 
 
-def _load(name, *args, **kwargs):
-    return lambda screen: img.PngFactory(name, screen, *args, **kwargs)
+def _load(name, pos_info, shift=(0, 0)):
+    assert len(pos_info) == 2
+    if isinstance(pos_info[0], int):
+        square = pos_info
+        position = play_map.square_to_pos(square)
+    else:
+        square, square_shift = pos_info
+        position = play_map.shifted_square_to_pos(square, square_shift)
+    return lambda screen: img.PngFactory(name, screen, position, shift)
 
 
 _SCENERY = {
     'house': House,
-    'flowers_7': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(-1, 1), (500, 200))),
-    'tree_3': Tree(play_map.shift_pos(
-        play_map.square_to_pos(1, -1), (350, 25))),
-    'flowers_4': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(1, 0), (450, 600))),
-    'flowers_5': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(1, 1), (225, 450))),
-    'tree_6': Tree(
-        play_map.shift_pos(play_map.square_to_pos(0, 1), (100, 300))),
-    'tree_11': Tree(play_map.shift_pos(
-        play_map.square_to_pos(1, 2), (0, 200))),
-    'flowers_12': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(0, 2), (550, 500))),
-    'flowers_19': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(1, 3), (400, 400))),
-    'tree_13': Tree(play_map.shift_pos(
-        play_map.square_to_pos(3, -1), (250, 300))),
-    'flowers_14': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(3, 0), (700, 500))),
-    'flowers_21': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(4, 0), (150, 300))),
-    'tree_24': Tree(play_map.shift_pos(
-        play_map.square_to_pos(5, 0), (375, 400))),
-    'flowers_25': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(5, 1), (400, 525))),
-    'flowers_18': _load('flowers', play_map.shift_pos(
-        play_map.square_to_pos(2, 3), (175, 425))),
+    'flowers_7': _load('flowers', ((-1, 1), (500, 200))),
+    'tree_3': Tree((1, -1), (350, 25)),
+    'flowers_4': _load('flowers', ((1, 0), (450, 600))),
+    'flowers_5': _load('flowers', ((1, 1), (225, 450))),
+    'tree_6': Tree((0, 1), (100, 300)),
+    'tree_11': Tree((1, 2), (0, 200)),
+    'flowers_12': _load('flowers', ((0, 2), (550, 500))),
+    'flowers_19': _load('flowers', ((1, 3), (400, 400))),
+    'tree_13': Tree((3, -1), (250, 300)),
+    'flowers_14': _load('flowers', ((3, 0), (700, 500))),
+    'flowers_21': _load('flowers', ((4, 0), (150, 300))),
+    'tree_24': Tree((5, 0), (375, 400)),
+    'flowers_25': _load('flowers', ((5, 1), (400, 525))),
+    'flowers_18': _load('flowers', ((2, 3), (175, 425))),
 }
 
 
 _RED_HERRINGS = {
-    'billboard_2': _load('billboard_down', play_map.shift_pos(
-        play_map.square_to_pos(0, -1), (200, 400))),
-    'billboard_3': _load('billboard_left', play_map.shift_pos(
-        play_map.square_to_pos(1, -1), (50, 400))),
-    'billboard_4': _load('billboard_down', play_map.shift_pos(
-        play_map.square_to_pos(1, 0), (300, 50))),
+    'billboard_2': _load('billboard_down', ((0, -1), (200, 400))),
+    'billboard_3': _load('billboard_left', ((1, -1), (50, 400))),
+    'billboard_4': _load('billboard_down', ((1, 0), (300, 50))),
     'bunny_prints': BunnyPrints,
-    'bunny': _load('bunny', play_map.shift_pos(
-        play_map.square_to_pos(5, 0), (200, 125))),
+    'bunny': _load('bunny', ((5, 0), (200, 125))),
     'hole': Hole,
-    'billboard_16': _load('billboard_right', play_map.shift_pos(
-        play_map.square_to_pos(3, 2), (485, 400)), (0, -0.5)),
-    'billboard_10': _load('billboard_right', play_map.shift_pos(
-        play_map.square_to_pos(2, 2), (625, 400)), (0, -0.5)),
+    'billboard_16': _load('billboard_right', ((3, 2), (485, 400)), (0, -0.5)),
+    'billboard_10': _load('billboard_right', ((2, 2), (625, 400)), (0, -0.5)),
 }
 
 
 _GATE = {
-    'key': _load('key', play_map.shift_pos(
-        play_map.square_to_pos(-1, 1), (150, 600))),
+    'key': _load('key', ((-1, 1), (150, 600))),
     'partial_wall_gateleft': _load(
-        'partial_wall_horizontal', play_map.square_to_pos(0, 0), (0, -0.5)),
+        'partial_wall_horizontal', (0, 0), (0, -0.5)),
     'partial_wall_gateright': _load(
-        'partial_wall_horizontal', play_map.square_to_pos(1, 0),
-        (-1, -0.5)),
+        'partial_wall_horizontal', (1, 0), (-1, -0.5)),
     'gate': _load(
-        'gate', play_map.shift_pos(
-            play_map.square_to_pos(0, 0), (play_map.SQUARE_LENGTH / 2, 15)),
-        (-0.5, -1)),
+        'gate', ((0, 0), (play_map.SQUARE_LENGTH / 2, 15)), (-0.5, -1)),
 }
 
 
 _ANGRY_CAT = {
-    'eggplant': _load('eggplant', play_map.shift_pos(
-        play_map.square_to_pos(1, 1), (300, 200))),
-    'trash_can': _load('trash_can', play_map.shift_pos(
-        play_map.square_to_pos(2, 1), (400, 100))),
+    'eggplant': _load('eggplant', ((1, 1), (300, 200))),
+    'trash_can': _load('trash_can', ((2, 1), (400, 100))),
     'fishing_rod': FishingRod,
     'lake': Lake,
-    'partial_wall_catabove': _load(
-        'partial_wall_vertical', play_map.square_to_pos(2, 1), (-0.5, 0)),
-    'partial_wall_catbelow': _load(
-        'partial_wall_vertical', play_map.square_to_pos(2, 2), (-0.5, -1)),
-    'angry_cat': _load('angry_cat', play_map.shift_pos(
-        play_map.square_to_pos(2, 1), (0, 400)), (-0.75, -0.5)),
+    'partial_wall_catabove': _load('partial_wall_vertical', (2, 1), (-0.5, 0)),
+    'partial_wall_catbelow': _load('partial_wall_vertical', (2, 2), (-0.5, -1)),
+    'angry_cat': _load('angry_cat', ((2, 1), (0, 400)), (-0.75, -0.5)),
 }
 
 
 _INVISIBLE_WALL = {
     'tree_peach': TreePeach,
     'tree_apple': TreeApple,
-    'partial_wall_cakeabove': _load(
-        'partial_wall_vertical', play_map.square_to_pos(3, 1), (-0.5, 0)),
-    'cake': _load('cake', play_map.shift_pos(
-        play_map.square_to_pos(3, 1), (50, 400))),
+    'partial_wall_cakeabove': _load('partial_wall_vertical', (3, 1), (-0.5, 0)),
+    'cake': _load('cake', ((3, 1), (50, 400))),
     'invisible_wall': InvisibleWall,
 }
 
 
 _SHRUBBERY = {
-    'bucket': _load('bucket', play_map.shift_pos(
-        play_map.square_to_pos(0, 2), (400, 400))),
-    'matches': _load('matches', play_map.shift_pos(
-        play_map.square_to_pos(3, -1), (100, 150))),
-    'doll': _load('doll', play_map.shift_pos(
-        play_map.square_to_pos(3, 0), (250, 475))),
-    'shrubbery': _load('shrubbery', play_map.shift_pos(
-        play_map.square_to_pos(4, 2), (-5, -50))),
+    'bucket': _load('bucket', ((0, 2), (400, 400))),
+    'matches': _load('matches', ((3, -1), (100, 150))),
+    'doll': _load('doll', ((3, 0), (250, 475))),
+    'shrubbery': _load('shrubbery', ((4, 2), (-5, -50))),
 }
 
 
 _BLOCK_PUZZLE = {
-    'block_V': _load('block_V', play_map.shift_pos(
-        play_map.square_to_pos(0, -1), (50, 700))),
-    'block_O': _load(
-        'block_O', play_map.shift_pos(play_map.square_to_pos(1, 3), (25, 50))),
-    'block_E': _load('block_E', play_map.shift_pos(
-        play_map.square_to_pos(5, 1), (625, 150))),
-    'block_L': _load('block_L', play_map.shift_pos(
-        play_map.square_to_pos(3, 3), (600, 700))),
+    'block_V': _load('block_V', ((0, -1), (50, 700))),
+    'block_O': _load('block_O', ((1, 3), (25, 50))),
+    'block_E': _load('block_E', ((5, 1), (625, 150))),
+    'block_L': _load('block_L', ((3, 3), (600, 700))),
 }
 
 
@@ -403,10 +371,8 @@ VISIBLE = {
 HIDDEN = {
     'open_gate_left': OpenGateLeft,
     'open_gate_right': OpenGateRight,
-    'happy_cat': _load('happy_cat', play_map.shift_pos(
-        play_map.square_to_pos(2, 1), (25, 25))),
-    'fire': _load('fire', play_map.shift_pos(
-        play_map.square_to_pos(4, 2), (-5, -50))),
+    'happy_cat': _load('happy_cat', ((2, 1), (25, 25))),
+    'fire': _load('fire', ((4, 2), (-5, -50))),
 }
 
 

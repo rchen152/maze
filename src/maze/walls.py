@@ -39,7 +39,7 @@ def _Wall(coord_x, coord_y, side):
       coord_y: Vertical distance from starting square in number of squares.
       side: Which side of the square the wall is on.
     """
-    wall_x, wall_y = play_map.square_to_pos(coord_x, coord_y)
+    wall_x, wall_y = play_map.square_to_pos((coord_x, coord_y))
     if side is Side.RIGHT:
         wall_x += play_map.SQUARE_LENGTH
     elif side is Side.BOTTOM:

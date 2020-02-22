@@ -20,6 +20,14 @@ class SquareToPosTest(unittest.TestCase):
                           play_map.START_POS[1] + play_map.SQUARE_LENGTH))
 
 
+class ShiftedSquareToPosTest(unittest.TestCase):
+
+    def test_shift(self):
+        self.assertEqual(
+            play_map.shifted_square_to_pos((0, 0), (10, 20)),
+            (play_map.START_POS[0] + 10, play_map.START_POS[1] + 20))
+
+
 class PosToSquareTest(unittest.TestCase):
 
     def test_start_square(self):

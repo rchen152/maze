@@ -289,6 +289,16 @@ _SCENERY = {
         play_map.square_to_pos(0, 2), (550, 500))),
     'flowers_19': _load('flowers', play_map.shift_pos(
         play_map.square_to_pos(1, 3), (400, 400))),
+    'tree_13': Tree(play_map.shift_pos(
+        play_map.square_to_pos(3, -1), (250, 300))),
+    'flowers_14': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(3, 0), (700, 500))),
+    'flowers_21': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(4, 0), (150, 300))),
+    'tree_24': Tree(play_map.shift_pos(
+        play_map.square_to_pos(5, 0), (375, 400))),
+    'flowers_25': _load('flowers', play_map.shift_pos(
+        play_map.square_to_pos(5, 1), (400, 525))),
     'flowers_18': _load('flowers', play_map.shift_pos(
         play_map.square_to_pos(2, 3), (175, 425))),
 }

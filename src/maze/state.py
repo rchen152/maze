@@ -61,7 +61,7 @@ class Game(common_state.GameState):
     def _debug_draw(self):
         rects = [self._play_area._player_feet_rect]
         for obj in self._play_area._objects.values():
-            if isinstance(obj, play_objects._CustomShapePngFactory):
+            if isinstance(obj.RECT, play_objects._MultiRect):
                 rects.extend(obj.RECT._get_rects())
             else:
                 rects.append(obj.RECT)

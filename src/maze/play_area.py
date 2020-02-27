@@ -144,15 +144,21 @@ class Surface(objects.Surface):
 
     def _player_close_to(self, name):
         rect = self._objects[name].RECT
-        if name in play_objects.CUSTOM_INTERACTION_SQUARES:
-            close_enough_squares = play_objects.CUSTOM_INTERACTION_SQUARES[name]
-            if close_enough_squares is play_objects.ALL_SQUARES:
+        if name in play_objects.CUSTOM_INTERACTION_CONFIG:
+            config = play_objects.CUSTOM_INTERACTION_CONFIG[name]
+            close_enough_squares: play_objects.InteractionSquaresType = (
+                config.squares)
+            if close_enough_squares is play_objects.InteractionSquares.ALL:
                 return True
+            inflation = config.inflation
         else:
+            close_enough_squares = play_objects.InteractionSquares.DEFAULT
+            inflation = play_objects.DEFAULT_INTERACTION_INFLATION
+        if close_enough_squares is play_objects.InteractionSquares.DEFAULT:
             close_enough_squares = {self._square(rect)}
         if self.current_square not in close_enough_squares:
             return False
-        return rect.inflate(100, 100).colliderect(self.player.RECT)
+        return rect.inflate(*inflation).colliderect(self.player.RECT)
 
     def apply_object_effects(self, effects):
         for effect in effects:

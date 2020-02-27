@@ -1,9 +1,11 @@
 """Objects in the play area."""
 
 import abc
+import dataclasses
+import enum
 import math
 import pygame
-from typing import Type
+from typing import Set, Tuple, Type, Union
 
 from common import color
 from common import img
@@ -390,15 +392,28 @@ HIDDEN = {
 }
 
 
-ALL_SQUARES = object()
+class InteractionSquares(enum.Enum):
+    DEFAULT = enum.auto()
+    ALL = enum.auto()
 
 
-# By default, the player can interact with an object when he is in the same
-# square as the middle of the bottom of the object.
-CUSTOM_INTERACTION_SQUARES = {
-    'invisible_wall': ALL_SQUARES,
-    'shrubbery': {(3, 1), (4, 1)},
-    'fire': {(3, 1), (4, 1)},
+InteractionSquaresType = Union[Set[Tuple[int, int]], InteractionSquares]
+DEFAULT_INTERACTION_INFLATION = (100, 100)
+
+
+@dataclasses.dataclass
+class InteractionConfig:
+    # Which squares a player has to be in to interact with an object.
+    squares: InteractionSquaresType = InteractionSquares.DEFAULT
+    # How much to inflate the object size when determining whether the player is
+    # close enough to interact with it.
+    inflation: Tuple[int, int] = DEFAULT_INTERACTION_INFLATION
+
+
+CUSTOM_INTERACTION_CONFIG = {
+    'invisible_wall': InteractionConfig(squares=InteractionSquares.ALL),
+    'shrubbery': InteractionConfig(squares={(3, 1), (4, 1)}),
+    'fire': InteractionConfig(squares={(3, 1), (4, 1)}),
 }
 
 

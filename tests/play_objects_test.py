@@ -144,5 +144,20 @@ class HoleTest(test_utils.GameStateTestCase):
         self.hole.draw()
 
 
+class InteractionConfigTest(unittest.TestCase):
+
+    def test_squares(self):
+        config = play_objects.InteractionConfig(squares={(0, 0)})
+        self.assertEqual(config.squares, {(0, 0)})
+        self.assertEqual(config.inflation,
+                         play_objects.DEFAULT_INTERACTION_INFLATION)
+
+    def test_inflation(self):
+        config = play_objects.InteractionConfig(inflation=(50, 50))
+        self.assertEqual(config.inflation, (50, 50))
+        self.assertEqual(config.squares,
+                         play_objects.InteractionSquares.DEFAULT)
+
+
 if __name__ == '__main__':
     unittest.main()

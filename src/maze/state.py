@@ -50,6 +50,10 @@ class Game(common_state.GameState):
         self._side_bar = side_bar.Surface(screen)
         self._side_bar.text_area.show(self._INTRO_TEXT)
         self._debug = debug
+        if debug:
+            self._interact_objects = self._debug_compute_interact_objects()
+        else:
+            self._interact_objects = None
         if cheat:
             x, y = cheat
             for obj in itertools.chain(
@@ -58,16 +62,44 @@ class Game(common_state.GameState):
                 obj.move((-x * 800, -y * 800))
         super().__init__(screen)
 
+    def _debug_compute_interact_objects(self):
+        interact_objects = set()
+        for name in itertools.chain(self._play_area._objects,
+                                    self._play_area._hidden_objects):
+            item = interactions.obtain(name)
+            if not item:
+                continue
+            interact_objects.add(name)
+            effects = list(item.item_effects)
+            while effects:
+                effect = effects.pop(0)
+                if effect.type is not interactions.ItemEffectType.ADD:
+                    continue
+                for use in interactions.use(effect.target):
+                    if use.activator:
+                        interact_objects.add(use.activator)
+                    effects.extend(use.item_effects)
+        return interact_objects
+
     def _debug_draw(self):
-        rects = [self._play_area._player_feet_rect]
-        for obj in self._play_area._objects.values():
-            if isinstance(obj.RECT, play_objects._MultiRect):
-                rects.extend(obj.RECT._get_rects())
+        rects = [(self._play_area._player_feet_rect, color.BRIGHT_GREEN)]
+        for name, obj in self._play_area._objects.items():
+            rects.append((obj.RECT, color.BRIGHT_GREEN))
+            if name not in self._interact_objects:
+                continue
+            if name in play_objects.CUSTOM_INTERACTION_CONFIG:
+                inflation = (
+                    play_objects.CUSTOM_INTERACTION_CONFIG[name].inflation)
             else:
-                rects.append(obj.RECT)
-        for rect in rects:
-            pygame.draw.rect(
-                self._play_area._surface, color.BRIGHT_GREEN, rect, 2)
+                inflation = play_objects.DEFAULT_INTERACTION_INFLATION
+            rects.append((obj.RECT.inflate(*inflation), color.LIGHT_CREAM))
+        for rect, rect_color in rects:
+            if isinstance(rect, play_objects._MultiRect):
+                rects_to_draw = rect._get_rects()
+            else:
+                rects_to_draw = [rect]
+            for rect in rects_to_draw:
+                pygame.draw.rect(self._play_area._surface, rect_color, rect, 2)
 
     def draw(self):
         self._play_area.draw()

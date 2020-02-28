@@ -253,6 +253,9 @@ def use(name) -> Sequence[Use]:
 
 
 _CUSTOM_CONFIG = {
+    'tree_peach': _Config(squares={(0, 0), (-1, 0), (-1, 1)}),
+    'fishing_rod': _Config(squares={(1, 2), (1, 3)}),
+    'cake': _Config(squares={(2, 1), (3, 1)}),
     'invisible_wall': _Config(squares=Squares.ALL),
     'shrubbery': _Config(squares={(3, 1), (4, 1)}),
     'fire': _Config(squares={(3, 1), (4, 1)}),

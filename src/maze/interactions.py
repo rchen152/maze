@@ -2,11 +2,13 @@
 
 import dataclasses
 import enum
-from typing import Optional, Sequence, Tuple, Union
+from typing import Optional, Sequence, Set, Tuple, Union
 from . import play_objects
 from . import walls
 
 Speed = Tuple[int, int]
+SquaresType = Union[Set[Tuple[int, int]], 'Squares']
+_DEFAULT_INFLATION = (100, 100)
 
 
 @dataclasses.dataclass
@@ -71,6 +73,23 @@ class Use:
     item_effects: Sequence[Effect]
     object_effects: Sequence[Effect]
     reason: str
+
+
+class Squares(enum.Enum):
+    DEFAULT = enum.auto()
+    ALL = enum.auto()
+
+
+@dataclasses.dataclass
+class _Config:
+    # Which squares a player has to be in to interact with an object.
+    squares: SquaresType = Squares.DEFAULT
+    # How much to inflate the object size when determining whether the player is
+    # close enough to interact with it.
+    inflation: Tuple[int, int] = _DEFAULT_INFLATION
+
+
+_Config.DEFAULT = _Config()
 
 
 def _collision_reason(name):
@@ -231,3 +250,14 @@ def use(name) -> Sequence[Use]:
                 'Your way is now blocked by a flaming shrubbery.')]
     else:
         raise NotImplementedError(f'Used {name}')
+
+
+_CUSTOM_CONFIG = {
+    'invisible_wall': _Config(squares=Squares.ALL),
+    'shrubbery': _Config(squares={(3, 1), (4, 1)}),
+    'fire': _Config(squares={(3, 1), (4, 1)}),
+}
+
+
+def config(name, attr):
+    return getattr(_CUSTOM_CONFIG.get(name, _Config.DEFAULT), attr)

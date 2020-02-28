@@ -87,11 +87,7 @@ class Game(common_state.GameState):
             rects.append((obj.RECT, color.BRIGHT_GREEN))
             if name not in self._interact_objects:
                 continue
-            if name in play_objects.CUSTOM_INTERACTION_CONFIG:
-                inflation = (
-                    play_objects.CUSTOM_INTERACTION_CONFIG[name].inflation)
-            else:
-                inflation = play_objects.DEFAULT_INTERACTION_INFLATION
+            inflation = interactions.config(name, 'inflation')
             rects.append((obj.RECT.inflate(*inflation), color.LIGHT_CREAM))
         for rect, rect_color in rects:
             if isinstance(rect, play_objects._MultiRect):

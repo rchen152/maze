@@ -1,11 +1,9 @@
 """Objects in the play area."""
 
 import abc
-import dataclasses
-import enum
 import math
 import pygame
-from typing import Set, Tuple, Type, Union
+from typing import Type
 
 from common import color
 from common import img
@@ -389,31 +387,6 @@ HIDDEN = {
     'open_gate_right': OpenGateRight,
     'happy_cat': _load('happy_cat', ((2, 1), (25, 25))),
     'fire': _load('fire', ((4, 2), (-5, -50))),
-}
-
-
-class InteractionSquares(enum.Enum):
-    DEFAULT = enum.auto()
-    ALL = enum.auto()
-
-
-InteractionSquaresType = Union[Set[Tuple[int, int]], InteractionSquares]
-DEFAULT_INTERACTION_INFLATION = (100, 100)
-
-
-@dataclasses.dataclass
-class InteractionConfig:
-    # Which squares a player has to be in to interact with an object.
-    squares: InteractionSquaresType = InteractionSquares.DEFAULT
-    # How much to inflate the object size when determining whether the player is
-    # close enough to interact with it.
-    inflation: Tuple[int, int] = DEFAULT_INTERACTION_INFLATION
-
-
-CUSTOM_INTERACTION_CONFIG = {
-    'invisible_wall': InteractionConfig(squares=InteractionSquares.ALL),
-    'shrubbery': InteractionConfig(squares={(3, 1), (4, 1)}),
-    'fire': InteractionConfig(squares={(3, 1), (4, 1)}),
 }
 
 

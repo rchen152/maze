@@ -80,5 +80,20 @@ class UseTest(unittest.TestCase):
             interactions.Effect.add_object('open_gate_right')))
 
 
+class ConfigTest(unittest.TestCase):
+
+    def test_squares(self):
+        squares = interactions.config('invisible_wall', 'squares')
+        self.assertIs(squares, interactions.Squares.ALL)
+
+    def test_squares_default(self):
+        squares = interactions.config('doesnotexist', 'squares')
+        self.assertIs(squares, interactions.Squares.DEFAULT)
+
+    def test_inflation_default(self):
+        inflation = interactions.config('doesnotexist', 'inflation')
+        self.assertEqual(inflation, interactions._DEFAULT_INFLATION)
+
+
 if __name__ == '__main__':
     unittest.main()

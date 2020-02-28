@@ -213,6 +213,33 @@ class SurfaceTest(test_utils.ImgTestCase):
         use = cast(interactions.Use, self.play_area.use_item('peach'))
         self.assertIn('bloated', use.reason)
 
+    def test_slot_block(self):
+        for obj in itertools.chain(self.play_area._objects.values(),
+                                   self.play_area._hidden_objects.values()):
+            obj.move((-1400, -2600))
+        self.play_area.use_item('block_L')
+        self.assertNotIn('puzzle_slot_L', self.play_area._objects)
+        self.assertIn('slotted_block_L_in_L', self.play_area._objects)
+
+    def test_slot_block_wrong(self):
+        for obj in itertools.chain(self.play_area._objects.values(),
+                                   self.play_area._hidden_objects.values()):
+            obj.move((-1400, -2600))
+        self.play_area.use_item('block_E')
+        self.assertNotIn('puzzle_slot_L', self.play_area._objects)
+        self.assertIn('slotted_block_E_in_L', self.play_area._objects)
+
+    def test_unslot_block(self):
+        for obj in itertools.chain(self.play_area._objects.values(),
+                                   self.play_area._hidden_objects.values()):
+            obj.move((-1400, -2600))
+        self.play_area.use_item('block_E')
+        item = cast(interactions.Item,
+                    interactions.obtain('slotted_block_E_in_L'))
+        self.play_area.apply_object_effects(item.object_effects)
+        self.assertNotIn('slotted_block_E_in_L', self.play_area._objects)
+        self.assertIn('puzzle_slot_L', self.play_area._objects)
+
 
 if __name__ == '__main__':
     unittest.main()

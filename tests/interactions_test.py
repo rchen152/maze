@@ -19,22 +19,27 @@ class EffectTest(unittest.TestCase):
 
     def test_remove_item(self):
         effect = interactions.Effect.remove_item('key')
-        self.assertEqual(effect.type, interactions.ItemEffectType.REMOVE)
+        self.assertIs(effect.type, interactions.ItemEffectType.REMOVE)
         self.assertEqual(effect.target, 'key')
 
     def test_add_item(self):
         effect = interactions.Effect.add_item('key')
-        self.assertEqual(effect.type, interactions.ItemEffectType.ADD)
+        self.assertIs(effect.type, interactions.ItemEffectType.ADD)
         self.assertEqual(effect.target, 'key')
 
     def test_remove_object(self):
         effect = interactions.Effect.remove_object('key')
-        self.assertEqual(effect.type, interactions.ObjectEffectType.REMOVE)
+        self.assertIs(effect.type, interactions.ObjectEffectType.REMOVE)
         self.assertEqual(effect.target, 'key')
 
     def test_add_object(self):
         effect = interactions.Effect.add_object('key')
-        self.assertEqual(effect.type, interactions.ObjectEffectType.ADD)
+        self.assertIs(effect.type, interactions.ObjectEffectType.ADD)
+        self.assertEqual(effect.target, 'key')
+
+    def test_hide_object(self):
+        effect = interactions.Effect.hide_object('key')
+        self.assertIs(effect.type, interactions.ObjectEffectType.HIDE)
         self.assertEqual(effect.target, 'key')
 
 

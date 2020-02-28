@@ -70,7 +70,7 @@ class _Item:
     icon: img.PngFactory
 
 
-def ItemCell(idx):
+def _ItemCell(idx):
 
     # Item cells are laid out in a 3x3 grid. The center square is empty because
     # the minimap goes there.
@@ -162,7 +162,7 @@ class Surface(objects.Surface):
 
     RECT = pygame.Rect(state.RECT.h, 0, _SIDE_BAR_WIDTH, state.RECT.h)
     OBJECTS = {'mini_map': MiniMap, 'text_area': TextArea,
-               **{f'item_cell{i}': ItemCell(i) for i in range(8)}}
+               **{f'item_cell{i}': _ItemCell(i) for i in range(8)}}
 
     @property
     def _item_cells(self):

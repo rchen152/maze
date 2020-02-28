@@ -85,7 +85,8 @@ class Game(common_state.GameState):
         rects = [(self._play_area._player_feet_rect, color.BRIGHT_GREEN)]
         for name, obj in self._play_area._objects.items():
             rects.append((obj.RECT, color.BRIGHT_GREEN))
-            if name not in self._interact_objects:
+            if (name not in self._interact_objects or interactions.config(
+                    name, 'squares') is interactions.Squares.ALL):
                 continue
             inflation = interactions.config(name, 'inflation')
             rects.append((obj.RECT.inflate(*inflation), color.LIGHT_CREAM))

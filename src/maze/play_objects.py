@@ -449,6 +449,10 @@ HIDDEN = {
     'open_gate_right': OpenGateRight,
     'happy_cat': _load('happy_cat', ((2, 1), (25, 25))),
     'fire': _load('fire', ((4, 2), (-5, -50))),
+    'slotted_block_L': _load('slotted_block_L', ((2, 4), (140, -40))),
+    'slotted_block_O': _load('slotted_block_O', ((2, 4), (260, -40))),
+    'slotted_block_V': _load('slotted_block_V', ((2, 4), (460, -40))),
+    'slotted_block_E': _load('slotted_block_E', ((2, 4), (580, -40))),
 }
 
 

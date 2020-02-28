@@ -160,10 +160,13 @@ class Surface(objects.Surface):
             target = effect.target
             if effect.type is interactions.ObjectEffectType.REMOVE:
                 del self._objects[target]
-            else:
-                assert effect.type is interactions.ObjectEffectType.ADD
+            elif effect.type is interactions.ObjectEffectType.ADD:
                 self._objects[target] = self._hidden_objects[target]
                 del self._hidden_objects[target]
+            else:
+                assert effect.type is interactions.ObjectEffectType.HIDE
+                self._hidden_objects[target] = self._objects[target]
+                del self._objects[target]
 
     def handle_click(self, pos) -> Union[bool, interactions.Item]:
         if not self.collidepoint(pos):

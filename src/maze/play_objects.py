@@ -1,6 +1,7 @@
 """Objects in the play area."""
 
 import abc
+import itertools
 import math
 import pygame
 from typing import Type
@@ -267,23 +268,29 @@ class Hole(img.RectFactory):
             self._screen, color.BLACK, self.RECT.center, self.RECT.radius)
 
 
+_PUZZLE_SLOT_SHIFT = {'L': 140, 'O': 260, 'V': 460, 'E': 580}
+
+
 class _PuzzleWallRect(_MultiRect):
 
     def _get_rects(self):
-        return (pygame.Rect(self.topleft, (140, 5)),
-                pygame.Rect(self.x + 220, self.y, 40, 5),
-                pygame.Rect(self.x + 540, self.y, 40, 5),
-                pygame.Rect(self.x + 660, self.y, 140, 5))
+        rects = tuple(pygame.Rect(self.x + shift, self.y, 79, 80)
+                      for shift in _PUZZLE_SLOT_SHIFT.values())
+        rects += (pygame.Rect(self.x, self.y + 37.5, 140, 5),
+                  pygame.Rect(self.x + 220, self.y + 37.5, 40, 5),
+                  pygame.Rect(self.x + 540, self.y + 37.5, 40, 5),
+                  pygame.Rect(self.x + 660, self.y + 37.5, 140, 5))
+        return rects
 
 
 class PuzzleWall(img.RectFactory):
 
     RECT = _PuzzleWallRect(play_map.shifted_square_to_pos(
-        (2, 4), (0, -2.5)), (800, 5))
+        (2, 4), (0, -40)), (800, 80))
 
     def draw(self):
-        for rect in self.RECT._get_rects():
-            pygame.draw.rect(self._screen, color.BROWN, rect)
+        for i, rect in enumerate(self.RECT._get_rects()):
+            pygame.draw.rect(self._screen, color.BROWN, rect, 5 if i < 4 else 0)
 
 
 class PuzzleDoor(objects.Rect):
@@ -296,31 +303,32 @@ class PuzzleDoor(objects.Rect):
 class _PuzzleSlot(img.RectFactory):
 
     def draw(self):
-        pygame.draw.rect(self._screen, color.BROWN, self.RECT, 5)
+        pygame.draw.rect(
+            self._screen, color.BLUE, self.RECT.inflate(-10, -10), 5)
 
 
 class PuzzleSlotL(_PuzzleSlot):
 
     RECT = pygame.Rect(play_map.shifted_square_to_pos(
-        (2, 4), (140, -40)), (79, 80))
+        (2, 4), (_PUZZLE_SLOT_SHIFT['L'], -40)), (79, 80))
 
 
 class PuzzleSlotO(_PuzzleSlot):
 
     RECT = pygame.Rect(play_map.shifted_square_to_pos(
-        (2, 4), (260, -40)), (79, 80))
+        (2, 4), (_PUZZLE_SLOT_SHIFT['O'], -40)), (79, 80))
 
 
 class PuzzleSlotV(_PuzzleSlot):
 
     RECT = pygame.Rect(play_map.shifted_square_to_pos(
-        (2, 4), (460, -40)), (79, 80))
+        (2, 4), (_PUZZLE_SLOT_SHIFT['V'], -40)), (79, 80))
 
 
 class PuzzleSlotE(_PuzzleSlot):
 
     RECT = pygame.Rect(play_map.shifted_square_to_pos(
-        (2, 4), (580, -40)), (79, 80))
+        (2, 4), (_PUZZLE_SLOT_SHIFT['E'], -40)), (79, 80))
 
 
 def _load(name, pos_info, shift=(0, 0)):
@@ -449,11 +457,14 @@ HIDDEN = {
     'open_gate_right': OpenGateRight,
     'happy_cat': _load('happy_cat', ((2, 1), (25, 25))),
     'fire': _load('fire', ((4, 2), (-5, -50))),
-    'slotted_block_L': _load('slotted_block_L', ((2, 4), (140, -40))),
-    'slotted_block_O': _load('slotted_block_O', ((2, 4), (260, -40))),
-    'slotted_block_V': _load('slotted_block_V', ((2, 4), (460, -40))),
-    'slotted_block_E': _load('slotted_block_E', ((2, 4), (580, -40))),
 }
+
+
+for block_char, slot_char in itertools.product('LOVE', repeat=2):
+    HIDDEN[f'slotted_block_{block_char}_in_{slot_char}'] = _load(
+        f'slotted_block_{block_char}',
+        ((2, 4), (_PUZZLE_SLOT_SHIFT[slot_char], -40)))
+del block_char, slot_char
 
 
 STATE = ('pre_crave',)

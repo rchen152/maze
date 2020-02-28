@@ -2,6 +2,7 @@
 
 import dataclasses
 import enum
+import itertools
 from typing import Optional, Sequence, Set, Tuple, Union
 from . import play_objects
 from . import walls
@@ -36,6 +37,7 @@ class ItemEffectType(enum.Enum):
 class ObjectEffectType(enum.Enum):
     REMOVE = enum.auto()
     ADD = enum.auto()
+    HIDE = enum.auto()
 
 
 @dataclasses.dataclass
@@ -58,6 +60,10 @@ class Effect:
     @classmethod
     def add_object(cls, obj):
         return cls(ObjectEffectType.ADD, obj)
+
+    @classmethod
+    def hide_object(cls, obj):
+        return cls(ObjectEffectType.HIDE, obj)
 
 
 @dataclasses.dataclass
@@ -195,6 +201,13 @@ def obtain(name) -> Optional[Item]:
         return Item(
             (), (),
             'You fall into the hole and climb back out. You feel foolish.')
+    elif name.startswith('slotted_block_'):
+        block_char = name[len('slotted_block_')]
+        slot_char = name[-1]
+        return Item((Effect.add_item(f'block_{block_char}'),),
+                    (Effect.hide_object(name),
+                     Effect.add_object(f'puzzle_slot_{slot_char}')),
+                    'You pry the block back out of the wall slot.')
     else:
         return None
 
@@ -215,11 +228,16 @@ def use(name) -> Sequence[Use]:
         return [Use('gate', (Effect.remove_item('key'),), object_effects,
                     'You unlock the gate.')]
     elif name.startswith('block_'):
-        char = name[len('block_'):]
-        return [
-            Use(f'puzzle_slot_{char}', (Effect.remove_item(f'block_{char}'),),
-                (Effect.add_object(f'slotted_block_{char}'),),
-                'The block fits perfectly in this slot in the wall.')]
+        block_char = name[len('block_'):]
+        uses = []
+        for slot_char in 'LOVE':
+            slot = f'puzzle_slot_{slot_char}'
+            slotted_block = f'slotted_block_{block_char}_in_{slot_char}'
+            uses.append(Use(
+                slot, (Effect.remove_item(name),),
+                (Effect.hide_object(slot), Effect.add_object(slotted_block)),
+                'The block fits perfectly in this slot in the wall.'))
+        return uses
     elif name == 'eggplant':
         return [
             Use('angry_cat', (Effect.remove_item('eggplant'),), (),
@@ -265,11 +283,17 @@ _CUSTOM_CONFIG = {
     'invisible_wall': _Config(squares=Squares.ALL),
     'shrubbery': _Config(squares={(3, 1), (4, 1)}),
     'fire': _Config(squares={(3, 1), (4, 1)}),
-    'puzzle_slot_L': _Config(squares={(2, 3)}, inflation=(40, 100)),
-    'puzzle_slot_O': _Config(squares={(2, 3)}, inflation=(40, 100)),
-    'puzzle_slot_V': _Config(squares={(2, 3)}, inflation=(40, 100)),
-    'puzzle_slot_E': _Config(squares={(2, 3)}, inflation=(40, 100)),
+    'puzzle_slot_L': _Config(squares={(2, 3)}, inflation=(-40, 100)),
+    'puzzle_slot_O': _Config(squares={(2, 3)}, inflation=(-40, 100)),
+    'puzzle_slot_V': _Config(squares={(2, 3)}, inflation=(-40, 100)),
+    'puzzle_slot_E': _Config(squares={(2, 3)}, inflation=(-40, 100)),
 }
+
+
+for block_char, slot_char in itertools.product('LOVE', repeat=2):
+    _CUSTOM_CONFIG[f'slotted_block_{block_char}_in_{slot_char}'] = _Config(
+        squares={(2, 3)}, inflation=(-40, 100))
+del block_char, slot_char
 
 
 def config(name, attr):

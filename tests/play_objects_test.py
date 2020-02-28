@@ -144,5 +144,17 @@ class HoleTest(test_utils.GameStateTestCase):
         self.hole.draw()
 
 
+class PuzzleTest(test_utils.GameStateTestCase):
+
+    def test_draw_wall(self):
+        play_objects.PuzzleWall(self.screen).draw()
+
+    def test_draw_door(self):
+        play_objects.PuzzleDoor(self.screen).draw()
+
+    def test_draw_slot(self):
+        play_objects.PuzzleSlotL(self.screen).draw()
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -153,6 +153,8 @@ def _collision_reason(name):
     elif name == 'billboard_10':
         return ('"Roses are red, violets are blue. Believe it or not, I '
                 'sometimes tell the truth =P"')
+    elif name.startswith('puzzle_'):
+        return 'This wall looks unusual.'
     else:
         raise NotImplementedError(f'Collided with {name}')
 
@@ -213,7 +215,10 @@ def use(name) -> Sequence[Use]:
         return [Use('gate', (Effect.remove_item('key'),), object_effects,
                     'You unlock the gate.')]
     elif name.startswith('block_'):
-        return []
+        return [Use('puzzle_slot_L', (), (), ''),
+                Use('puzzle_slot_O', (), (), ''),
+                Use('puzzle_slot_V', (), (), ''),
+                Use('puzzle_slot_E', (), (), '')]
     elif name == 'eggplant':
         return [
             Use('angry_cat', (Effect.remove_item('eggplant'),), (),
@@ -259,6 +264,10 @@ _CUSTOM_CONFIG = {
     'invisible_wall': _Config(squares=Squares.ALL),
     'shrubbery': _Config(squares={(3, 1), (4, 1)}),
     'fire': _Config(squares={(3, 1), (4, 1)}),
+    'puzzle_slot_L': _Config(inflation=(40, 100)),
+    'puzzle_slot_O': _Config(inflation=(40, 100)),
+    'puzzle_slot_V': _Config(inflation=(40, 100)),
+    'puzzle_slot_E': _Config(inflation=(40, 100)),
 }
 
 

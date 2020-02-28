@@ -90,6 +90,10 @@ class ConfigTest(unittest.TestCase):
         squares = interactions.config('doesnotexist', 'squares')
         self.assertIs(squares, interactions.Squares.DEFAULT)
 
+    def test_inflation(self):
+        inflation = interactions.config('puzzle_slot_L', 'inflation')
+        self.assertEqual(inflation, (40, 100))
+
     def test_inflation_default(self):
         inflation = interactions.config('doesnotexist', 'inflation')
         self.assertEqual(inflation, interactions._DEFAULT_INFLATION)

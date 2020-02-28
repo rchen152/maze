@@ -267,6 +267,62 @@ class Hole(img.RectFactory):
             self._screen, color.BLACK, self.RECT.center, self.RECT.radius)
 
 
+class _PuzzleWallRect(_MultiRect):
+
+    def _get_rects(self):
+        return (pygame.Rect(self.topleft, (140, 5)),
+                pygame.Rect(self.x + 220, self.y, 40, 5),
+                pygame.Rect(self.x + 540, self.y, 40, 5),
+                pygame.Rect(self.x + 660, self.y, 140, 5))
+
+
+class PuzzleWall(img.RectFactory):
+
+    RECT = _PuzzleWallRect(play_map.shifted_square_to_pos(
+        (2, 4), (0, -2.5)), (800, 5))
+
+    def draw(self):
+        for rect in self.RECT._get_rects():
+            pygame.draw.rect(self._screen, color.BROWN, rect)
+
+
+class PuzzleDoor(objects.Rect):
+
+    RECT = pygame.Rect(play_map.shifted_square_to_pos(
+        (2, 4), (340, -2.5)), (120, 5))
+    COLOR = color.BROWN
+
+
+class _PuzzleSlot(img.RectFactory):
+
+    def draw(self):
+        pygame.draw.rect(self._screen, color.BROWN, self.RECT, 5)
+
+
+class PuzzleSlotL(_PuzzleSlot):
+
+    RECT = pygame.Rect(play_map.shifted_square_to_pos(
+        (2, 4), (140, -40)), (79, 80))
+
+
+class PuzzleSlotO(_PuzzleSlot):
+
+    RECT = pygame.Rect(play_map.shifted_square_to_pos(
+        (2, 4), (260, -40)), (79, 80))
+
+
+class PuzzleSlotV(_PuzzleSlot):
+
+    RECT = pygame.Rect(play_map.shifted_square_to_pos(
+        (2, 4), (460, -40)), (79, 80))
+
+
+class PuzzleSlotE(_PuzzleSlot):
+
+    RECT = pygame.Rect(play_map.shifted_square_to_pos(
+        (2, 4), (580, -40)), (79, 80))
+
+
 def _load(name, pos_info, shift=(0, 0)):
     assert len(pos_info) == 2
     if isinstance(pos_info[0], int):
@@ -367,6 +423,12 @@ _BLOCK_PUZZLE = {
     'block_O': _load('block_O', ((1, 3), (25, 50))),
     'block_E': _load('block_E', ((5, 1), (625, 150))),
     'block_L': _load('block_L', ((3, 3), (600, 700))),
+    'puzzle_wall': PuzzleWall,
+    'puzzle_door': PuzzleDoor,
+    'puzzle_slot_L': PuzzleSlotL,
+    'puzzle_slot_O': PuzzleSlotO,
+    'puzzle_slot_V': PuzzleSlotV,
+    'puzzle_slot_E': PuzzleSlotE,
 }
 
 

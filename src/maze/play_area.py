@@ -183,9 +183,12 @@ class Surface(objects.Surface):
         return item or True
 
     def _activate_item(self, activator):
-        if not activator or activator in self._state:
-            return True
-        return activator in self._objects and self._player_close_to(activator)
+        for one_activator in activator:
+            if (one_activator not in self._state and (
+                    one_activator not in self._objects or
+                    not self._player_close_to(one_activator))):
+                return False
+        return True
 
     def use_item(self, name) -> Optional[interactions.Use]:
         uses: Sequence[interactions.Use] = interactions.use(name)

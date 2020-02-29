@@ -77,7 +77,7 @@ class Game(common_state.GameState):
                     continue
                 for use in interactions.use(effect.target):
                     if use.activator:
-                        interact_objects.add(use.activator)
+                        interact_objects.update(use.activator)
                     effects.extend(use.item_effects)
         return interact_objects
 

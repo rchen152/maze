@@ -74,7 +74,7 @@ class UseTest(unittest.TestCase):
 
     def test_name(self):
         use, = interactions.use('key')
-        self.assertEqual(use.activator, 'gate')
+        self.assertEqual(use.activator, ('gate',))
 
     def test_reason(self):
         use, = interactions.use('key')

@@ -85,7 +85,7 @@ class Item:
 @dataclasses.dataclass
 class Use:
     reason: str
-    activator: Optional[str]
+    activator: Tuple[str, ...]
     item_effects: Sequence[Effect] = ()
     play_area_effects: Sequence[Effect] = ()
 
@@ -225,65 +225,72 @@ def obtain(name) -> Optional[Item]:
         return None
 
 
+def _use_block(block_char, slot_char):
+    block = f'block_{block_char}'
+    slot = f'puzzle_slot_{slot_char}'
+    slotted_block = f'slotted_{block}_in_{slot_char}'
+    item_effects = (Effect.remove_item(block),)
+    play_area_effects = (Effect.hide_object(slot),
+                         Effect.add_object(slotted_block))
+    yield Use('The block fits perfectly in this slot in the wall.', (slot,),
+              item_effects, play_area_effects)
+
+
 def use(name) -> Sequence[Use]:
     if name in play_objects.FRUITS:
         item_effects = (Effect.remove_item(name),)
         reason = f'You eat the {name}. '
-        return [Use(reason + 'Yum.', 'pre_crave', item_effects),
+        return [Use(reason + 'Yum.', ('pre_crave',), item_effects),
                 Use(reason + 'Your sweet craving is satisfied.',
-                    'invisible_wall', item_effects,
+                    ('invisible_wall',), item_effects,
                     (Effect.remove_object('invisible_wall'),)),
-                Use(reason + 'You feel bloated.', None, item_effects)]
+                Use(reason + 'You feel bloated.', (), item_effects)]
     elif name == 'key':
         play_area_effects = (Effect.remove_object('gate'),
                              Effect.add_object('open_gate_left'),
                              Effect.add_object('open_gate_right'))
-        return [Use('You unlock the gate.', 'gate',
+        return [Use('You unlock the gate.', ('gate',),
                     (Effect.remove_item('key'),), play_area_effects)]
     elif name.startswith('block_'):
         block_char = name[len('block_'):]
         uses = []
         for slot_char in 'LOVE':
-            slot = f'puzzle_slot_{slot_char}'
-            slotted_block = f'slotted_block_{block_char}_in_{slot_char}'
-            uses.append(Use(
-                'The block fits perfectly in this slot in the wall.',
-                slot, (Effect.remove_item(name),),
-                (Effect.hide_object(slot), Effect.add_object(slotted_block))))
+            uses.extend(_use_block(block_char, slot_char))
         return uses
     elif name == 'eggplant':
         return [
             Use('You feed the cat the eggplant. The cat is even angrier now.',
-                'angry_cat', (Effect.remove_item('eggplant'),)),
-            Use("Yeah, you don't need that.", 'trash_can',
+                ('angry_cat',), (Effect.remove_item('eggplant'),)),
+            Use("Yeah, you don't need that.", ('trash_can',),
                 (Effect.remove_item('eggplant'),))]
     elif name == 'fishing_rod':
         item_effects = (Effect.remove_item('fishing_rod'),
                         Effect.add_item('fish'))
-        return [Use("You catch a tasty-looking fish.", 'lake', item_effects)]
+        return [Use("You catch a tasty-looking fish.", ('lake',), item_effects)]
     elif name == 'fish':
         play_area_effects = (Effect.remove_object('angry_cat'),
                              Effect.add_object('happy_cat'))
         return [
-            Use('You feed the cat the fish. The cat is happy.', 'angry_cat',
+            Use('You feed the cat the fish. The cat is happy.', ('angry_cat',),
                 (Effect.remove_item('fish'),), play_area_effects)]
     elif name == 'bucket':
         item_effects = (Effect.remove_item('bucket'),
                         Effect.add_item('filled_bucket'))
-        return [Use('You fill the bucket with lake water.', 'lake',
+        return [Use('You fill the bucket with lake water.', ('lake',),
                     item_effects)]
     elif name == 'filled_bucket':
         play_area_effects = (Effect.remove_object('shrubbery'),
                              Effect.remove_object('fire'))
-        return [Use(
-            'You put out the fire. The shrubbery has been burned down.',
-            'fire', (Effect.remove_item('filled_bucket'),), play_area_effects)]
+        return [Use('You put out the fire. The shrubbery has been burned down.',
+                    ('fire',), (Effect.remove_item('filled_bucket'),),
+                    play_area_effects)]
     elif name == 'matches':
         return [
-            Use('You burn the well-loved doll to ashes. You monster.', 'doll',
-                play_area_effects=(Effect.remove_object('doll'),)),
-            Use('Your way is now blocked by a flaming shrubbery.', 'shrubbery',
-                (Effect.remove_item('matches'),), (Effect.add_object('fire'),))]
+            Use('You burn the well-loved doll to ashes. You monster.',
+                ('doll',), play_area_effects=(Effect.remove_object('doll'),)),
+            Use('Your way is now blocked by a flaming shrubbery.',
+                ('shrubbery',), (Effect.remove_item('matches'),),
+                (Effect.add_object('fire'),))]
     else:
         raise NotImplementedError(f'Used {name}')
 

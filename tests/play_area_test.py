@@ -242,6 +242,30 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.play_area.use_item('block_E')
         self.assertNotIn('puzzle_door', self.play_area._objects)
 
+    def test_solve_block_puzzle_twice(self):
+        # Solve the puzzle.
+        self._move_player(1400, 2600)
+        self.play_area.use_item('block_L')
+        self._move_player(120, 0)
+        self.play_area.use_item('block_O')
+        self._move_player(200, 0)
+        self.play_area.use_item('block_V')
+        self._move_player(140, 0)
+        self.play_area.use_item('block_E')
+        # Take block E out and put it back in.
+        item = cast(interactions.Item,
+                    interactions.obtain('slotted_block_E_in_E'))
+        self.play_area.apply_effects(item.play_area_effects)
+        self.play_area.use_item('block_E')
+
+    def test_remove_slotted_block_from_below(self):
+        self._move_player(1400, 2600)
+        self.play_area.use_item('block_L')
+        self._move_player(0, 100)
+        item = cast(interactions.Item, self.play_area.handle_click((300, 300)))
+        self.assertSequenceEqual(item.item_effects,
+                                 (interactions.Effect.add_item('block_L'),))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -175,7 +175,8 @@ class Surface(objects.Surface):
         for name, obj in self._objects.items():
             if obj.collidepoint(pos) and self._player_close_to(name):
                 item: Optional[interactions.Item] = interactions.obtain(name)
-                break
+                if item:
+                    break
         else:
             return True
         # Note that we can't apply the effects of picking up the item yet: we

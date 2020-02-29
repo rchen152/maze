@@ -229,17 +229,19 @@ def _use_block(block_char, slot_char):
     block = f'block_{block_char}'
     slot = f'puzzle_slot_{slot_char}'
     slotted_block = f'slotted_{block}_in_{slot_char}'
+    activator = (slot,)
     item_effects = (Effect.remove_item(block),)
     play_area_effects = (Effect.hide_object(slot),
                          Effect.add_object(slotted_block))
     if block_char == slot_char:
-        activator = tuple(f'slotted_block_{char}_in_{char}'
-                          for char in 'LOVE' if char != block_char)
+        solver = activator + ('puzzle_door',) + tuple(
+            f'slotted_block_{char}_in_{char}'
+            for char in 'LOVE' if char != block_char)
         yield Use(
             'As you slot the block in, you hear a rumbling sound. The middle '
-            'of the wall sinks into the ground.', activator, item_effects,
+            'of the wall sinks into the ground.', solver, item_effects,
             play_area_effects + (Effect.remove_object('puzzle_door'),))
-    yield Use('The block fits perfectly in this slot in the wall.', (slot,),
+    yield Use('The block fits perfectly in this slot in the wall.', activator,
               item_effects, play_area_effects)
 
 
@@ -309,17 +311,18 @@ _CUSTOM_CONFIG = {
     'invisible_wall': _Config(squares=Squares.ALL),
     'shrubbery': _Config(squares={(3, 1), (4, 1)}),
     'fire': _Config(squares={(3, 1), (4, 1)}),
-    'puzzle_slot_L': _Config(squares={(2, 3)}, inflation=(-40, 100)),
-    'puzzle_slot_O': _Config(squares={(2, 3)}, inflation=(-40, 100)),
-    'puzzle_slot_V': _Config(squares={(2, 3)}, inflation=(-40, 100)),
-    'puzzle_slot_E': _Config(squares={(2, 3)}, inflation=(-40, 100)),
+    'puzzle_door': _Config(squares={(2, 3), (2, 4)}, inflation=(360, 175)),
+    'puzzle_slot_L': _Config(squares={(2, 3), (2, 4)}, inflation=(-40, 100)),
+    'puzzle_slot_O': _Config(squares={(2, 3), (2, 4)}, inflation=(-40, 100)),
+    'puzzle_slot_V': _Config(squares={(2, 3), (2, 4)}, inflation=(-40, 100)),
+    'puzzle_slot_E': _Config(squares={(2, 3), (2, 4)}, inflation=(-40, 100)),
 }
 
 
 for block_char, slot_char in itertools.product('LOVE', repeat=2):
     inflate_x = 840 if slot_char in 'LE' else 600
     _CUSTOM_CONFIG[f'slotted_block_{block_char}_in_{slot_char}'] = _Config(
-        squares={(2, 3)}, inflation=(inflate_x, 100))
+        squares={(2, 3), (2, 4)}, inflation=(inflate_x, 100))
 del block_char, slot_char, inflate_x
 
 

@@ -232,6 +232,13 @@ def _use_block(block_char, slot_char):
     item_effects = (Effect.remove_item(block),)
     play_area_effects = (Effect.hide_object(slot),
                          Effect.add_object(slotted_block))
+    if block_char == slot_char:
+        activator = tuple(f'slotted_block_{char}_in_{char}'
+                          for char in 'LOVE' if char != block_char)
+        yield Use(
+            'As you slot the block in, you hear a rumbling sound. The middle '
+            'of the wall sinks into the ground.', activator, item_effects,
+            play_area_effects + (Effect.remove_object('puzzle_door'),))
     yield Use('The block fits perfectly in this slot in the wall.', (slot,),
               item_effects, play_area_effects)
 
@@ -310,9 +317,10 @@ _CUSTOM_CONFIG = {
 
 
 for block_char, slot_char in itertools.product('LOVE', repeat=2):
+    inflate_x = 840 if slot_char in 'LE' else 600
     _CUSTOM_CONFIG[f'slotted_block_{block_char}_in_{slot_char}'] = _Config(
-        squares={(2, 3)}, inflation=(-40, 100))
-del block_char, slot_char
+        squares={(2, 3)}, inflation=(inflate_x, 100))
+del block_char, slot_char, inflate_x
 
 
 def config(name, attr):

@@ -22,6 +22,11 @@ class SurfaceTest(test_utils.ImgTestCase):
         # this speed should result in a collision.
         self.play_area._scroll_speed = (0, self.play_area.player.RECT.h)
 
+    def _move_player(self, x, y):
+        for obj in itertools.chain(self.play_area._objects.values(),
+                                   self.play_area._hidden_objects.values()):
+            obj.move((-x, -y))
+
     def test_move(self):
         house_rect = self.play_area.house.RECT
         self.play_area.house.move((1, 1))
@@ -76,8 +81,7 @@ class SurfaceTest(test_utils.ImgTestCase):
             test_utils.MockEvent(typ=play_area._TICK)), str)
 
     def test_collide_with_closest_object(self):
-        for obj in self.play_area._objects.values():
-            obj.move((-800, 153))
+        self._move_player(800, -153)
         self.play_area._scroll_speed = (800, 0)
         collision = self.play_area._check_player_collision()
         assert collision  # for pytype
@@ -85,15 +89,13 @@ class SurfaceTest(test_utils.ImgTestCase):
 
     def test_current_square(self):
         self.assertEqual(self.play_area.current_square, (0, 0))
-        for obj in self.play_area._objects.values():
-            obj.move((800, 0))
+        self._move_player(-800, 0)
         self.assertEqual(self.play_area.current_square, (-1, 0))
 
     def test_visible_walls(self):
         self.play_area.draw()
         self.assertFalse(self.play_area.visible_walls)
-        for obj in self.play_area._objects.values():
-            obj.move((-400, 0))
+        self._move_player(400, 0)
         self.play_area.draw()
         wall, = self.play_area.visible_walls
         self.assertEqual(wall.SQUARE, (0, 0))
@@ -103,8 +105,7 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.assertIs(self.play_area.handle_click((288, 288)), True)
 
     def test_handle_key(self):
-        for obj in self.play_area._objects.values():
-            obj.move((950, -950))
+        self._move_player(-950, 950)
         click_result = cast(interactions.Item, self.play_area.handle_click(
             self.play_area.key.RECT.center))
         self.assertIn('key', click_result.reason)
@@ -113,8 +114,7 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.assertIs(self.play_area.handle_click((580, 288)), False)
 
     def test_use_key(self):
-        for obj in self.play_area._objects.values():
-            obj.move((-50, 450))
+        self._move_player(50, -450)
         use_result = cast(interactions.Use, self.play_area.use_item('key'))
         self.assertIn('gate', use_result.reason)
         self.assertNotIn('gate', self.play_area._objects)
@@ -126,9 +126,7 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.assertIsNone(self.play_area.use_item('key'))
 
     def test_collide_flaming_shrubbery(self):
-        for obj in itertools.chain(self.play_area._objects.values(),
-                                   self.play_area._hidden_objects.values()):
-            obj.move((-3200, -1000))
+        self._move_player(3200, 1000)
         self.play_area.use_item('matches')
         self.play_area._scroll_speed = (0, -100)
         collision = self.play_area._check_player_collision()
@@ -175,9 +173,7 @@ class SurfaceTest(test_utils.ImgTestCase):
                     effects.extend(use.item_effects)
 
     def test_start_player_craving(self):
-        for obj in itertools.chain(self.play_area._objects.values(),
-                                   self.play_area._hidden_objects.values()):
-            obj.move((-2400, -800))
+        self._move_player(2400, 800)
         self.play_area._scroll_speed = (-800, 0)
         self.assertIn('pre_crave', self.play_area._state)
         self.play_area.handle_player_movement(
@@ -185,9 +181,7 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.assertNotIn('pre_crave', self.play_area._state)
 
     def test_collide_invisible_wall_twice(self):
-        for obj in itertools.chain(self.play_area._objects.values(),
-                                   self.play_area._hidden_objects.values()):
-            obj.move((-2400, -800))
+        self._move_player(2400, 800)
         self.play_area._scroll_speed = (-800, 0)
         self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=play_area._TICK))
@@ -214,31 +208,39 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.assertIn('bloated', use.reason)
 
     def test_slot_block(self):
-        for obj in itertools.chain(self.play_area._objects.values(),
-                                   self.play_area._hidden_objects.values()):
-            obj.move((-1400, -2600))
+        self._move_player(1400, 2600)
         self.play_area.use_item('block_L')
         self.assertNotIn('puzzle_slot_L', self.play_area._objects)
         self.assertIn('slotted_block_L_in_L', self.play_area._objects)
 
     def test_slot_block_wrong(self):
-        for obj in itertools.chain(self.play_area._objects.values(),
-                                   self.play_area._hidden_objects.values()):
-            obj.move((-1400, -2600))
+        self._move_player(1400, 2600)
         self.play_area.use_item('block_E')
         self.assertNotIn('puzzle_slot_L', self.play_area._objects)
         self.assertIn('slotted_block_E_in_L', self.play_area._objects)
 
     def test_unslot_block(self):
-        for obj in itertools.chain(self.play_area._objects.values(),
-                                   self.play_area._hidden_objects.values()):
-            obj.move((-1400, -2600))
+        self._move_player(1400, 2600)
         self.play_area.use_item('block_E')
         item = cast(interactions.Item,
                     interactions.obtain('slotted_block_E_in_L'))
         self.play_area.apply_effects(item.play_area_effects)
         self.assertNotIn('slotted_block_E_in_L', self.play_area._objects)
         self.assertIn('puzzle_slot_L', self.play_area._objects)
+
+    def test_solve_block_puzzle(self):
+        self._move_player(1400, 2600)
+        self.play_area.use_item('block_L')
+        self.assertIn('puzzle_door', self.play_area._objects)
+        self._move_player(120, 0)
+        self.play_area.use_item('block_O')
+        self.assertIn('puzzle_door', self.play_area._objects)
+        self._move_player(200, 0)
+        self.play_area.use_item('block_V')
+        self.assertIn('puzzle_door', self.play_area._objects)
+        self._move_player(140, 0)
+        self.play_area.use_item('block_E')
+        self.assertNotIn('puzzle_door', self.play_area._objects)
 
 
 if __name__ == '__main__':

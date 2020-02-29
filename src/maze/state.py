@@ -140,8 +140,8 @@ class Game(common_state.GameState):
         if click_result:
             if isinstance(click_result, interactions.Item):
                 if self._side_bar.has_space_for(click_result.item_effects):
-                    self._play_area.apply_object_effects(
-                        click_result.object_effects)
+                    self._play_area.apply_effects(
+                        click_result.play_area_effects)
                     self._apply_item_effects(click_result.item_effects)
                     self._side_bar.text_area.show(click_result.reason)
                 else:

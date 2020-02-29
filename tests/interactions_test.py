@@ -57,7 +57,7 @@ class ObtainTest(unittest.TestCase):
         assert item  # for pytype
         self.assertSequenceEqual(item.item_effects,
                                  (interactions.Effect.add_item('key'),))
-        self.assertSequenceEqual(item.object_effects,
+        self.assertSequenceEqual(item.play_area_effects,
                                  (interactions.Effect.remove_object('key'),))
         self.assertIn('key', item.reason)
 
@@ -79,7 +79,7 @@ class UseTest(unittest.TestCase):
         use, = interactions.use('key')
         self.assertSequenceEqual(use.item_effects,
                                  (interactions.Effect.remove_item('key'),))
-        self.assertSequenceEqual(use.object_effects, (
+        self.assertSequenceEqual(use.play_area_effects, (
             interactions.Effect.remove_object('gate'),
             interactions.Effect.add_object('open_gate_left'),
             interactions.Effect.add_object('open_gate_right')))

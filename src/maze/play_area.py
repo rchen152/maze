@@ -155,7 +155,7 @@ class Surface(objects.Surface):
         inflation = interactions.config(name, 'inflation')
         return rect.inflate(*inflation).colliderect(self.player.RECT)
 
-    def apply_object_effects(self, effects):
+    def apply_effects(self, effects):
         for effect in effects:
             target = effect.target
             if effect.type is interactions.ObjectEffectType.REMOVE:
@@ -191,6 +191,6 @@ class Surface(objects.Surface):
         for use in uses:
             if not self._activate_item(use.activator):
                 continue
-            self.apply_object_effects(use.object_effects)
+            self.apply_effects(use.play_area_effects)
             return use
         return None

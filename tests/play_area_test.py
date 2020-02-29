@@ -137,13 +137,13 @@ class SurfaceTest(test_utils.ImgTestCase):
 
     def test_remove_object(self):
         self.assertIn('key', self.play_area._objects)
-        self.play_area.apply_object_effects(
+        self.play_area.apply_effects(
             (interactions.Effect.remove_object('key'),))
         self.assertNotIn('key', self.play_area._objects)
 
     def test_add_object(self):
         self.assertNotIn('happy_cat', self.play_area._objects)
-        self.play_area.apply_object_effects(
+        self.play_area.apply_effects(
             (interactions.Effect.add_object('happy_cat'),))
         self.assertIn('happy_cat', self.play_area._objects)
 
@@ -236,7 +236,7 @@ class SurfaceTest(test_utils.ImgTestCase):
         self.play_area.use_item('block_E')
         item = cast(interactions.Item,
                     interactions.obtain('slotted_block_E_in_L'))
-        self.play_area.apply_object_effects(item.object_effects)
+        self.play_area.apply_effects(item.play_area_effects)
         self.assertNotIn('slotted_block_E_in_L', self.play_area._objects)
         self.assertIn('puzzle_slot_L', self.play_area._objects)
 

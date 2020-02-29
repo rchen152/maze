@@ -69,7 +69,7 @@ class Effect:
 @dataclasses.dataclass
 class Item:
     item_effects: Sequence[Effect]
-    object_effects: Sequence[Effect]
+    play_area_effects: Sequence[Effect]
     reason: str
 
 
@@ -77,7 +77,7 @@ class Item:
 class Use:
     activator: Optional[str]
     item_effects: Sequence[Effect]
-    object_effects: Sequence[Effect]
+    play_area_effects: Sequence[Effect]
     reason: str
 
 
@@ -222,10 +222,10 @@ def use(name) -> Sequence[Use]:
                     reason + 'Your sweet craving is satisfied.'),
                 Use(None, item_effects, (), reason + 'You feel bloated.')]
     elif name == 'key':
-        object_effects = (Effect.remove_object('gate'),
-                          Effect.add_object('open_gate_left'),
-                          Effect.add_object('open_gate_right'))
-        return [Use('gate', (Effect.remove_item('key'),), object_effects,
+        play_area_effects = (Effect.remove_object('gate'),
+                             Effect.add_object('open_gate_left'),
+                             Effect.add_object('open_gate_right'))
+        return [Use('gate', (Effect.remove_item('key'),), play_area_effects,
                     'You unlock the gate.')]
     elif name.startswith('block_'):
         block_char = name[len('block_'):]
@@ -250,20 +250,21 @@ def use(name) -> Sequence[Use]:
         return [
             Use('lake', item_effects, (), "You catch a tasty-looking fish.")]
     elif name == 'fish':
-        object_effects = (Effect.remove_object('angry_cat'),
-                          Effect.add_object('happy_cat'))
-        return [Use('angry_cat', (Effect.remove_item('fish'),), object_effects,
-                    'You feed the cat the fish. The cat is happy.')]
+        play_area_effects = (Effect.remove_object('angry_cat'),
+                             Effect.add_object('happy_cat'))
+        return [
+            Use('angry_cat', (Effect.remove_item('fish'),), play_area_effects,
+                'You feed the cat the fish. The cat is happy.')]
     elif name == 'bucket':
         item_effects = (Effect.remove_item('bucket'),
                         Effect.add_item('filled_bucket'))
         return [Use('lake', item_effects, (),
                     'You fill the bucket with lake water.')]
     elif name == 'filled_bucket':
-        object_effects = (Effect.remove_object('shrubbery'),
-                          Effect.remove_object('fire'))
+        play_area_effects = (Effect.remove_object('shrubbery'),
+                             Effect.remove_object('fire'))
         return [Use(
-            'fire', (Effect.remove_item('filled_bucket'),), object_effects,
+            'fire', (Effect.remove_item('filled_bucket'),), play_area_effects,
             'You put out the fire. The shrubbery has been burned down.')]
     elif name == 'matches':
         return [

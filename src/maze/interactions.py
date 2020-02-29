@@ -12,23 +12,6 @@ SquaresType = Union[Set[Tuple[int, int]], 'Squares']
 _DEFAULT_INFLATION = (100, 100)
 
 
-@dataclasses.dataclass
-class Collision:
-    max_nocollision_speed: Optional[Speed]
-    reason: str
-
-    def closer_than(self, speed):
-        # See play_area.Surface._check_player_collision. When two possible
-        # collisions are in the same direction, the closer one is the one for
-        # which the maximum speed that avoids collision is less.
-        if self.max_nocollision_speed and speed:
-            return abs(sum(self.max_nocollision_speed)) < abs(sum(speed))
-        elif speed:
-            return True
-        else:
-            return False
-
-
 class ItemEffectType(enum.Enum):
     REMOVE = enum.auto()
     ADD = enum.auto()
@@ -40,9 +23,13 @@ class ObjectEffectType(enum.Enum):
     HIDE = enum.auto()
 
 
+class StateEffectType(enum.Enum):
+    REMOVE = enum.auto()
+
+
 @dataclasses.dataclass
 class Effect:
-    type: Union[ItemEffectType, ObjectEffectType]
+    type: Union[ItemEffectType, ObjectEffectType, StateEffectType]
     target: str
 
     @classmethod
@@ -64,6 +51,28 @@ class Effect:
     @classmethod
     def hide_object(cls, obj):
         return cls(ObjectEffectType.HIDE, obj)
+
+    @classmethod
+    def remove_state(cls, state):
+        return cls(StateEffectType.REMOVE, state)
+
+
+@dataclasses.dataclass
+class Collision:
+    max_nocollision_speed: Optional[Speed]
+    play_area_effects: Sequence[Effect]
+    reason: str
+
+    def closer_than(self, speed):
+        # See play_area.Surface._check_player_collision. When two possible
+        # collisions are in the same direction, the closer one is the one for
+        # which the maximum speed that avoids collision is less.
+        if self.max_nocollision_speed and speed:
+            return abs(sum(self.max_nocollision_speed)) < abs(sum(speed))
+        elif speed:
+            return True
+        else:
+            return False
 
 
 @dataclasses.dataclass
@@ -166,7 +175,11 @@ def _collision_reason(name):
 
 
 def collide(speed, name) -> Collision:
-    return Collision(speed, _collision_reason(name))
+    if name == 'invisible_wall':
+        effects = (Effect.remove_state('pre_crave'),)
+    else:
+        effects = ()
+    return Collision(speed, effects, _collision_reason(name))
 
 
 def _simple_obtain_effects(name):

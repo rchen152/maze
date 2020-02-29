@@ -7,11 +7,11 @@ from maze import interactions
 class CloserThanTest(unittest.TestCase):
 
     def test_closer_than(self):
-        collision = interactions.Collision((-3, 0), '')
+        collision = interactions.Collision((-3, 0), (), '')
         self.assertTrue(collision.closer_than((-4, 0)))
 
     def test_not_closer_than(self):
-        collision = interactions.Collision((-3, 0), '')
+        collision = interactions.Collision((-3, 0), (), '')
         self.assertFalse(collision.closer_than((-2, 0)))
 
 
@@ -41,6 +41,11 @@ class EffectTest(unittest.TestCase):
         effect = interactions.Effect.hide_object('key')
         self.assertIs(effect.type, interactions.ObjectEffectType.HIDE)
         self.assertEqual(effect.target, 'key')
+
+    def test_remove_state(self):
+        effect = interactions.Effect.remove_state('invisible_wall')
+        self.assertIs(effect.type, interactions.StateEffectType.REMOVE)
+        self.assertEqual(effect.target, 'invisible_wall')
 
 
 class CollideTest(unittest.TestCase):

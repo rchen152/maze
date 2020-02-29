@@ -130,9 +130,7 @@ class Surface(objects.Surface):
             speed = collision.max_nocollision_speed
             move_result = collision.reason
             self._scroll_speed = None
-            if 'crave' in collision.reason:
-                if 'pre_crave' in self._state:
-                    del self._state['pre_crave']
+            self.apply_effects(collision.play_area_effects)
         else:
             speed = self._scroll_speed
             move_result = True
@@ -163,10 +161,13 @@ class Surface(objects.Surface):
             elif effect.type is interactions.ObjectEffectType.ADD:
                 self._objects[target] = self._hidden_objects[target]
                 del self._hidden_objects[target]
-            else:
-                assert effect.type is interactions.ObjectEffectType.HIDE
+            elif effect.type is interactions.ObjectEffectType.HIDE:
                 self._hidden_objects[target] = self._objects[target]
                 del self._objects[target]
+            else:
+                assert effect.type is interactions.StateEffectType.REMOVE
+                if target in self._state:
+                    del self._state[target]
 
     def handle_click(self, pos) -> Union[bool, interactions.Item]:
         if not self.collidepoint(pos):

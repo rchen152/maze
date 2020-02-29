@@ -150,7 +150,7 @@ class SurfaceTest(test_utils.ImgTestCase):
     def test_can_collide(self):
         for name in itertools.chain(self.play_area._objects,
                                     self.play_area._hidden_objects):
-            self.assertIsInstance(interactions.collide((0, 0), name),
+            self.assertIsInstance(interactions.collide(name, (0, 0)),
                                   interactions.Collision)
 
     def test_can_obtain(self):

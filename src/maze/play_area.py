@@ -105,7 +105,7 @@ class Surface(objects.Surface):
                     speed = _decelerate(speed)
                 if closest_collision and closest_collision.closer_than(speed):
                     continue
-                closest_collision = interactions.collide(speed, name)
+                closest_collision = interactions.collide(name, speed)
         return closest_collision
 
     def handle_player_movement(self, event) -> Union[bool, str]:

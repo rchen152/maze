@@ -59,9 +59,9 @@ class Effect:
 
 @dataclasses.dataclass
 class Collision:
-    max_nocollision_speed: Optional[Speed]
-    play_area_effects: Sequence[Effect]
     reason: str
+    max_nocollision_speed: Optional[Speed]
+    play_area_effects: Sequence[Effect] = ()
 
     def closer_than(self, speed):
         # See play_area.Surface._check_player_collision. When two possible
@@ -77,17 +77,17 @@ class Collision:
 
 @dataclasses.dataclass
 class Item:
-    item_effects: Sequence[Effect]
-    play_area_effects: Sequence[Effect]
     reason: str
+    item_effects: Sequence[Effect] = ()
+    play_area_effects: Sequence[Effect] = ()
 
 
 @dataclasses.dataclass
 class Use:
-    activator: Optional[str]
-    item_effects: Sequence[Effect]
-    play_area_effects: Sequence[Effect]
     reason: str
+    activator: Optional[str]
+    item_effects: Sequence[Effect] = ()
+    play_area_effects: Sequence[Effect] = ()
 
 
 class Squares(enum.Enum):
@@ -107,7 +107,7 @@ class _Config:
 _Config.DEFAULT = _Config()
 
 
-def _collision_reason(name):
+def _collision(name) -> Union[str, Tuple[str, Sequence[Effect]]]:
     if walls.match(name) or walls.partial_match(name):
         return "That's a wall..."
     elif name == 'house':
@@ -150,7 +150,8 @@ def _collision_reason(name):
     elif name == 'cake':
         return 'A huge chocolate cake!'
     elif name == 'invisible_wall':
-        return 'Thinking of the cake, you suddenly crave something sweet.'
+        return ('Thinking of the cake, you suddenly crave something sweet.',
+                (Effect.remove_state('pre_crave'),))
     elif name == 'bucket':
         return 'You wonder why random stuff is scattered all over the place.'
     elif name == 'matches':
@@ -174,12 +175,13 @@ def _collision_reason(name):
         raise NotImplementedError(f'Collided with {name}')
 
 
-def collide(speed, name) -> Collision:
-    if name == 'invisible_wall':
-        effects = (Effect.remove_state('pre_crave'),)
+def collide(name, speed) -> Collision:
+    result: Union[str, Tuple[str, Sequence[Effect]]] = _collision(name)
+    if isinstance(result, str):
+        return Collision(result, speed)
     else:
-        effects = ()
-    return Collision(speed, effects, _collision_reason(name))
+        reason, effects = result
+        return Collision(reason, speed, effects)
 
 
 def _simple_obtain_effects(name):
@@ -189,38 +191,36 @@ def _simple_obtain_effects(name):
 def obtain(name) -> Optional[Item]:
     if name in (f'tree_{fruit}' for fruit in play_objects.FRUITS):
         fruit = name[len('tree_'):]
-        return Item((Effect.add_item(fruit),), (), f'You pick a ripe {fruit}.')
+        return Item(f'You pick a ripe {fruit}.', (Effect.add_item(fruit),))
     elif name == 'key':
-        return Item(*_simple_obtain_effects(name), 'You pick up the key.')
+        return Item('You pick up the key.', *_simple_obtain_effects(name))
     elif name.startswith('block_'):
         return Item(
-            *_simple_obtain_effects(name),
-            'You decide to carry the giant wooden block around with you.')
+            'You decide to carry the giant wooden block around with you.',
+            *_simple_obtain_effects(name))
     elif name == 'eggplant':
-        return Item(*_simple_obtain_effects(name),
-                    'You gingerly pick up the disgusting vegetable.')
+        return Item('You gingerly pick up the disgusting vegetable.',
+                    *_simple_obtain_effects(name))
     elif name == 'fishing_rod':
-        return Item(*_simple_obtain_effects(name),
-                    "You steal someone's fishing rod.")
+        return Item("You steal someone's fishing rod.",
+                    *_simple_obtain_effects(name))
     elif name == 'cake':
-        return Item((), (),
-                    'On closer inspection, the cake is made of styrofoam.')
+        return Item('On closer inspection, the cake is made of styrofoam.')
     elif name == 'bucket':
-        return Item(*_simple_obtain_effects(name), 'Finders keepers, right?')
+        return Item('Finders keepers, right?', *_simple_obtain_effects(name))
     elif name == 'matches':
-        return Item(*_simple_obtain_effects(name),
-                    'You never know what you may want to set on fire.')
+        return Item('You never know what you may want to set on fire.',
+                    *_simple_obtain_effects(name))
     elif name == 'hole':
         return Item(
-            (), (),
             'You fall into the hole and climb back out. You feel foolish.')
     elif name.startswith('slotted_block_'):
         block_char = name[len('slotted_block_')]
         slot_char = name[-1]
-        return Item((Effect.add_item(f'block_{block_char}'),),
+        return Item('You pry the block back out of the wall slot.',
+                    (Effect.add_item(f'block_{block_char}'),),
                     (Effect.hide_object(name),
-                     Effect.add_object(f'puzzle_slot_{slot_char}')),
-                    'You pry the block back out of the wall slot.')
+                     Effect.add_object(f'puzzle_slot_{slot_char}')))
     else:
         return None
 
@@ -229,17 +229,17 @@ def use(name) -> Sequence[Use]:
     if name in play_objects.FRUITS:
         item_effects = (Effect.remove_item(name),)
         reason = f'You eat the {name}. '
-        return [Use('pre_crave', item_effects, (), reason + 'Yum.'),
-                Use('invisible_wall', item_effects,
-                    (Effect.remove_object('invisible_wall'),),
-                    reason + 'Your sweet craving is satisfied.'),
-                Use(None, item_effects, (), reason + 'You feel bloated.')]
+        return [Use(reason + 'Yum.', 'pre_crave', item_effects),
+                Use(reason + 'Your sweet craving is satisfied.',
+                    'invisible_wall', item_effects,
+                    (Effect.remove_object('invisible_wall'),)),
+                Use(reason + 'You feel bloated.', None, item_effects)]
     elif name == 'key':
         play_area_effects = (Effect.remove_object('gate'),
                              Effect.add_object('open_gate_left'),
                              Effect.add_object('open_gate_right'))
-        return [Use('gate', (Effect.remove_item('key'),), play_area_effects,
-                    'You unlock the gate.')]
+        return [Use('You unlock the gate.', 'gate',
+                    (Effect.remove_item('key'),), play_area_effects)]
     elif name.startswith('block_'):
         block_char = name[len('block_'):]
         uses = []
@@ -247,45 +247,43 @@ def use(name) -> Sequence[Use]:
             slot = f'puzzle_slot_{slot_char}'
             slotted_block = f'slotted_block_{block_char}_in_{slot_char}'
             uses.append(Use(
+                'The block fits perfectly in this slot in the wall.',
                 slot, (Effect.remove_item(name),),
-                (Effect.hide_object(slot), Effect.add_object(slotted_block)),
-                'The block fits perfectly in this slot in the wall.'))
+                (Effect.hide_object(slot), Effect.add_object(slotted_block))))
         return uses
     elif name == 'eggplant':
         return [
-            Use('angry_cat', (Effect.remove_item('eggplant'),), (),
-                'You feed the cat the eggplant. The cat is even angrier now.'),
-            Use('trash_can', (Effect.remove_item('eggplant'),), (),
-                "Yeah, you don't need that.")]
+            Use('You feed the cat the eggplant. The cat is even angrier now.',
+                'angry_cat', (Effect.remove_item('eggplant'),)),
+            Use("Yeah, you don't need that.", 'trash_can',
+                (Effect.remove_item('eggplant'),))]
     elif name == 'fishing_rod':
         item_effects = (Effect.remove_item('fishing_rod'),
                         Effect.add_item('fish'))
-        return [
-            Use('lake', item_effects, (), "You catch a tasty-looking fish.")]
+        return [Use("You catch a tasty-looking fish.", 'lake', item_effects)]
     elif name == 'fish':
         play_area_effects = (Effect.remove_object('angry_cat'),
                              Effect.add_object('happy_cat'))
         return [
-            Use('angry_cat', (Effect.remove_item('fish'),), play_area_effects,
-                'You feed the cat the fish. The cat is happy.')]
+            Use('You feed the cat the fish. The cat is happy.', 'angry_cat',
+                (Effect.remove_item('fish'),), play_area_effects)]
     elif name == 'bucket':
         item_effects = (Effect.remove_item('bucket'),
                         Effect.add_item('filled_bucket'))
-        return [Use('lake', item_effects, (),
-                    'You fill the bucket with lake water.')]
+        return [Use('You fill the bucket with lake water.', 'lake',
+                    item_effects)]
     elif name == 'filled_bucket':
         play_area_effects = (Effect.remove_object('shrubbery'),
                              Effect.remove_object('fire'))
         return [Use(
-            'fire', (Effect.remove_item('filled_bucket'),), play_area_effects,
-            'You put out the fire. The shrubbery has been burned down.')]
+            'You put out the fire. The shrubbery has been burned down.',
+            'fire', (Effect.remove_item('filled_bucket'),), play_area_effects)]
     elif name == 'matches':
         return [
-            Use('doll', (), (Effect.remove_object('doll'),),
-                'You burn the well-loved doll to ashes. You monster.'),
-            Use('shrubbery', (Effect.remove_item('matches'),),
-                (Effect.add_object('fire'),),
-                'Your way is now blocked by a flaming shrubbery.')]
+            Use('You burn the well-loved doll to ashes. You monster.', 'doll',
+                play_area_effects=(Effect.remove_object('doll'),)),
+            Use('Your way is now blocked by a flaming shrubbery.', 'shrubbery',
+                (Effect.remove_item('matches'),), (Effect.add_object('fire'),))]
     else:
         raise NotImplementedError(f'Used {name}')
 

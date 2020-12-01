@@ -3,7 +3,7 @@
 import os
 from setuptools import find_packages, setup
 
-_VERSION = '1.0.0'
+_VERSION = '1.0.1'
 
 
 def get_long_description():
@@ -31,8 +31,8 @@ setup(
         'console_scripts': ['kitty-maze = maze.main:main'],
     },
     install_requires=[
-        'kitty-common>=0.5.1',
-        'kitty-escape>=1.2.0',
-        'pygame==1.9.6',
+        'kitty-common>=0.5.2',
+        'kitty-escape>=1.2.1',
+        'pygame',
     ],
 )

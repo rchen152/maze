@@ -3,7 +3,7 @@
 import os
 from setuptools import find_packages, setup
 
-_VERSION = '1.0.1'
+_VERSION = '1.0.2'
 
 
 def get_long_description():
@@ -26,13 +26,13 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: POSIX :: Linux',
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.10',
     entry_points={
         'console_scripts': ['kitty-maze = maze.main:main'],
     },
     install_requires=[
-        'kitty-common>=0.5.2',
-        'kitty-escape>=1.2.1',
-        'pygame',
+        'kitty-common>=0.5.4',
+        'kitty-escape>=1.2.2',
+        'pygame>=2.1.2',
     ],
 )

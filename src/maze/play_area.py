@@ -59,6 +59,7 @@ class Surface(objects.Surface):
         self._player_feet_rect = pygame.Rect(
             self.player.RECT.x, self.player.RECT.bottom - _PLAYER_FEET_HEIGHT,
             self.player.RECT.w, _PLAYER_FEET_HEIGHT)
+        pygame.time.set_timer(_TICK, _TICK_INTERVAL_MS)
 
     def _effective_rect(self, rect):
         return rect.move(
@@ -111,11 +112,9 @@ class Surface(objects.Surface):
     def handle_player_movement(self, event) -> Union[bool, str]:
         if event.type == KEYUP and event.key in _PLAYER_MOVES:
             self._scroll_speed = None
-            pygame.time.set_timer(_TICK, 0)
             return True
         elif event.type == KEYDOWN and event.key in _PLAYER_MOVES:
             self._scroll_speed = _PLAYER_MOVES[event.key]
-            pygame.time.set_timer(_TICK, _TICK_INTERVAL_MS)
         elif event.type == _TICK:
             if not self._scroll_speed:
                 # The player has been stopped by an obstacle.

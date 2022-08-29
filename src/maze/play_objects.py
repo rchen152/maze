@@ -225,7 +225,7 @@ class Lake(_CustomShapePngFactory):
 class InvisibleWall(objects.Rect):
 
     RECT = pygame.Rect(
-        play_map.shifted_square_to_pos((4, 1), (-10, 10)), (0, 775))
+        play_map.shifted_square_to_pos((4, 1), (-10, 10)), (1, 775))
     COLOR = color.BLUE
 
 

@@ -31,6 +31,24 @@ class Side(enum.Enum):
             return (rect.bottomleft, rect.bottomright)
 
 
+class WallBase(img.PngFactory):
+    SQUARE: tuple[int, int]
+    SIDE: int
+
+    @property
+    def adjacent_squares(self):
+        if self.SIDE is Side.LEFT:
+            square = (self.SQUARE[0] - 1, self.SQUARE[1])
+        elif self.SIDE is Side.RIGHT:
+            square = (self.SQUARE[0] + 1, self.SQUARE[1])
+        elif self.SIDE is Side.TOP:
+            square = (self.SQUARE[0], self.SQUARE[1] - 1)
+        else:
+            assert self.SIDE is Side.BOTTOM
+            square = (self.SQUARE[0], self.SQUARE[1] + 1)
+        return {self.SQUARE, square}
+
+
 def _Wall(coord_x, coord_y, side):
     """Returns a wall.
 
@@ -54,26 +72,13 @@ def _Wall(coord_x, coord_y, side):
         img_name = 'wall_horizontal'
         shift = (0, -0.5)
 
-    class Wall(img.PngFactory):
+    class Wall(WallBase):
 
         SQUARE = (coord_x, coord_y)
         SIDE = side
 
         def __init__(self, screen):
             super().__init__(img_name, screen, (wall_x, wall_y), shift)
-
-        @property
-        def adjacent_squares(self):
-            if self.SIDE is Side.LEFT:
-                square = (self.SQUARE[0] - 1, self.SQUARE[1])
-            elif self.SIDE is Side.RIGHT:
-                square = (self.SQUARE[0] + 1, self.SQUARE[1])
-            elif self.SIDE is Side.TOP:
-                square = (self.SQUARE[0], self.SQUARE[1] - 1)
-            else:
-                assert self.SIDE is Side.BOTTOM
-                square = (self.SQUARE[0], self.SQUARE[1] + 1)
-            return {self.SQUARE, square}
 
     return Wall
 

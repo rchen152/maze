@@ -3,7 +3,7 @@
 import dataclasses
 import enum
 import itertools
-from typing import Optional, Sequence, Set, Tuple, Union
+from typing import ClassVar, Optional, Sequence, Set, Tuple, Union
 from . import play_objects
 from . import walls
 
@@ -102,6 +102,8 @@ class _Config:
     # How much to inflate the object size when determining whether the player is
     # close enough to interact with it.
     inflation: Tuple[int, int] = _DEFAULT_INFLATION
+
+    DEFAULT: ClassVar['_Config']
 
 
 _Config.DEFAULT = _Config()
@@ -323,7 +325,7 @@ for block_char, slot_char in itertools.product('LOVE', repeat=2):
     inflate_x = 840 if slot_char in 'LE' else 600
     _CUSTOM_CONFIG[f'slotted_block_{block_char}_in_{slot_char}'] = _Config(
         squares={(2, 3), (2, 4)}, inflation=(inflate_x, 100))
-del block_char, slot_char, inflate_x
+del block_char, slot_char, inflate_x  # pyrefly: ignore[unbound-name]
 
 
 def config(name, attr):

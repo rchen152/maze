@@ -3,7 +3,7 @@
 import itertools
 import pygame
 from pygame.locals import *
-from typing import Optional, Sequence, Union
+from typing import Iterable, Optional, Sequence, Union, cast
 
 from common import color
 from common import img
@@ -75,7 +75,9 @@ class Surface(objects.Surface):
 
     @property
     def visible_walls(self):
-        return {wall for name, wall in self._objects.items()
+        items = cast(
+            Iterable[tuple[str, walls.WallBase]], self._objects.items())
+        return {wall for name, wall in items
                 if walls.match(name) and self._visible(wall) and
                 self.current_square in wall.adjacent_squares}
 
@@ -149,7 +151,7 @@ class Surface(objects.Surface):
             close_enough_squares = {self._square(rect)}
         if self.current_square not in close_enough_squares:
             return False
-        inflation = interactions.config(name, 'inflation')
+        inflation: tuple[int, int] = interactions.config(name, 'inflation')
         return rect.inflate(*inflation).colliderect(self.player.RECT)
 
     def apply_effects(self, effects):

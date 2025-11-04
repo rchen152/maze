@@ -52,6 +52,7 @@ class SurfaceTest(test_utils.ImgTestCase):
             self.play_area._hidden_objects['open_gate_left'].RECT.x)
         self.assertIs(self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT)), True)
+        self.assertIsNotNone(self.play_area._scroll_speed)
         speed_x, speed_y = self.play_area._scroll_speed
         self.assertGreater(speed_x, 0)
         self.assertFalse(speed_y)
@@ -68,6 +69,7 @@ class SurfaceTest(test_utils.ImgTestCase):
     def test_tick(self):
         self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=KEYDOWN, key=K_LEFT))
+        self.assertIsNotNone(self.play_area._scroll_speed)
         speed_x = self.play_area._scroll_speed[0]
         self.assertIs(self.play_area.handle_player_movement(
             test_utils.MockEvent(typ=play_area._TICK)), True)

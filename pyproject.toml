@@ -17,6 +17,7 @@ requires-python = ">=3.10"
 dependencies = [
     "kitty-common>=0.5.5",
     "kitty-escape>=1.3.1",
+    "pyrefly==0.40.0",
     "pygame>=2.1.2",
 ]
 
@@ -49,3 +50,7 @@ namespaces = false
 [tool.flake8]
 extend-ignore = ["F403", "F405", "W504"]
 max-line-length = 80
+
+[tool.pyrefly]
+untyped-def-behavior = "check-and-infer-return-any"
+errors.bad-override = false

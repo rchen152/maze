@@ -30,9 +30,9 @@ class MiniMap(objects.Rect):
         self._current_square = (0, 0)
         self._explored_squares = {self._current_square}
         self._seen_walls = set()
-        self._current_square_color = color.BRIGHT_GREEN
-        self._square_color = color.BLUE
-        self._wall_color = color.LIGHT_CREAM
+        self._current_square_color: tuple[int, int, int] = color.BRIGHT_GREEN
+        self._square_color: tuple[int, int, int] = color.BLUE
+        self._wall_color: tuple[int, int, int] = color.LIGHT_CREAM
 
     def update(self, square, visible_walls):
         self._current_square = square

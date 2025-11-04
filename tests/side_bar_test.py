@@ -55,6 +55,7 @@ class TextAreaTest(test_utils.GameStateTestCase):
         self.assertEqual(block.value, 'This is some text.')
 
     def test_multiple_lines(self):
+        # pyrefly: ignore[missing-attribute]
         pygame.font.SysFont.return_value.size = (
             lambda text: (self.max_width * len(text.split()), 10))
         self.text_area.show('Two lines.')
@@ -66,6 +67,7 @@ class TextAreaTest(test_utils.GameStateTestCase):
         self.assertEqual(block2.value, 'lines.')
 
     def test_whitespace(self):
+        # pyrefly: ignore[missing-attribute]
         pygame.font.SysFont.return_value.size = (
             lambda text: (self.max_width * len(text.split()) // 2, 10))
         self.text_area.show('Two words per line.')

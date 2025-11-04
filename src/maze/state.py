@@ -88,7 +88,7 @@ class Game(common_state.GameState):
             if (name not in self._interact_objects or interactions.config(
                     name, 'squares') is interactions.Squares.ALL):
                 continue
-            inflation = interactions.config(name, 'inflation')
+            inflation: tuple[int, int] = interactions.config(name, 'inflation')
             rects.append((obj.RECT.inflate(*inflation), color.LIGHT_CREAM))
         for rect, rect_color in rects:
             if isinstance(rect, play_objects._MultiRect):
@@ -135,7 +135,7 @@ class Game(common_state.GameState):
                 not self._play_area.collidepoint(event.pos) and
                 not self._side_bar.collidepoint(event.pos)):
             return False
-        click_result: Union[bool, interactions.Item] = (
+        click_result: Union[bool, str, interactions.Item] = (
             self._play_area.handle_click(event.pos))
         if click_result:
             if isinstance(click_result, interactions.Item):
@@ -147,7 +147,7 @@ class Game(common_state.GameState):
                 else:
                     self._side_bar.text_area.show(self._OBTAIN_FAIL_TEXT)
         else:
-            click_result: Union[bool, str] = self._side_bar.handle_click(
+            click_result = self._side_bar.handle_click(
                 event.pos)
             assert click_result
             if isinstance(click_result, str):

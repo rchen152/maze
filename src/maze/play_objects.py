@@ -22,7 +22,7 @@ class _MultiRect(pygame.Rect, metaclass=abc.ABCMeta):
     def _get_rects(self):
         pass
 
-    def colliderect(self, rect):
+    def colliderect(self, rect):  # pyrefly: ignore[bad-param-name-override]
         if not super().colliderect(rect):
             return False
         return any(
@@ -73,11 +73,11 @@ class _TreeRect(_MultiRect):
             self.x + self.w / 4 - 20, rect1.bottom, self.w / 2, 2 * self.h / 5)
         return (rect1, rect2)
 
-    def collidepoint(self, pos):
-        if not super().collidepoint(pos):
+    def collidepoint(self, x):
+        if not super().collidepoint(x):
             return False
         return any(
-            self_rect.collidepoint(pos) for self_rect in self._get_rects())
+            self_rect.collidepoint(x) for self_rect in self._get_rects())
 
 
 class TreePeach(_CustomShapePngFactory):
@@ -165,11 +165,11 @@ class _FishingRodRect(_MultiRect):
                             grow * w, grow * w))
         return rects
 
-    def collidepoint(self, pos):
-        if not super().collidepoint(pos):
+    def collidepoint(self, x):
+        if not super().collidepoint(x):
             return False
         return any(
-            self_rect.collidepoint(pos) for self_rect in self._get_rects())
+            self_rect.collidepoint(x) for self_rect in self._get_rects())
 
 
 class FishingRod(_CustomShapePngFactory):
@@ -251,16 +251,16 @@ class _HoleRect(_MultiRect):
                                      width, self._HEIGHT))
         return rects
 
-    def collidepoint(self, pos):
-        if not super().collidepoint(pos):
+    def collidepoint(self, x):
+        if not super().collidepoint(x):
             return False
         return math.hypot(
-            *(pos[i] - self.center[i] for i in range(2))) <= self.radius
+            *(x[i] - self.center[i] for i in range(2))) <= self.radius
 
 
 class Hole(img.RectFactory):
 
-    RECT = _HoleRect(play_map.shifted_square_to_pos(
+    RECT: _HoleRect = _HoleRect(play_map.shifted_square_to_pos(
         (4, 2), (100, 100)), (500, 500))
 
     def draw(self):
@@ -285,7 +285,7 @@ class _PuzzleWallRect(_MultiRect):
 
 class PuzzleWall(img.RectFactory):
 
-    RECT = _PuzzleWallRect(play_map.shifted_square_to_pos(
+    RECT: _PuzzleWallRect = _PuzzleWallRect(play_map.shifted_square_to_pos(
         (2, 4), (0, -40)), (800, 80))
 
     def draw(self):

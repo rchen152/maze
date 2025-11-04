@@ -29,6 +29,9 @@ jobs:
     - name: Lint
       run: flake8
 
+    - name: Type Check
+      run: pyrefly check
+
     - name: Test
       env:
         SDL_VIDEODRIVER: "dummy"

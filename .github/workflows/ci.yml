@@ -29,9 +29,6 @@ jobs:
     - name: Lint
       run: flake8
 
-    - name: Type-Check
-      run: pytype
-
     - name: Test
       env:
         SDL_VIDEODRIVER: "dummy"

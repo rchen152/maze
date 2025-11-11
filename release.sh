@@ -12,7 +12,7 @@ else
     false
 fi
 
-python setup.py sdist bdist_wheel
+python -m build
 if $test_release; then
     twine upload --repository testpypi dist/*
 else

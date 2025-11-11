@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kitty-maze"
-version = "1.1.0"
+version = "1.1.1"
 description = "kitty maze game"
 classifiers = [
     "Programming Language :: Python :: 3",
